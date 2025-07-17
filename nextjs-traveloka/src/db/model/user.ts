@@ -1,8 +1,10 @@
+import { ObjectId } from "mongodb";
 import { GetDb } from "../config";
 import { hashPassword } from "../helpers/bcrypt";
 import { signToken } from "../helpers/jwt";
 import { sendVerificationEmail } from "../service/emailService";
 import { User } from "../type/user";
+import * as jose from "jose";
 
 const COLLECTION_NAME = "users";
 
@@ -75,4 +77,46 @@ export async function createUser(input: InputCreateUser) {
   await sendVerificationEmail(user.email, token);
 
   return result;
+}
+
+export async function verifyEmail(token: string) {
+  const db = await GetDb();
+
+  const secret = new TextEncoder().encode(process.env.SECRET);
+
+  const decoded = await jose.jwtVerify<{ _id: string }>(token, secret);
+
+  const UserId = decoded.payload._id;
+
+  const findUser = (await db.collection(COLLECTION_NAME).findOne({
+    _id: new ObjectId(UserId),
+  })) as unknown as User;
+
+  if (!findUser) {
+    throw new Error("User not found");
+  }
+
+  if (findUser.isEmailVerified) {
+    throw new Error("Email is already verified");
+  }
+
+  const updateResult = await db.collection(COLLECTION_NAME).updateOne(
+    {
+      _id: new ObjectId(UserId),
+    },
+    {
+      $set: {
+        isEmailVerified: true,
+        updatedAt: new Date(),
+      },
+    }
+  );
+
+  if (updateResult.modifiedCount === 0) {
+    throw new Error("Failed to verify email");
+  }
+
+  return {
+    message: "Email verified successfully",
+  };
 }

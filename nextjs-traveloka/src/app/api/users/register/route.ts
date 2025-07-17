@@ -1,4 +1,5 @@
-import { NextRequest } from "next/server";
+import { createUser } from "@/db/model/user";
+import { NextRequest, NextResponse } from "next/server";
 import z from "zod";
 
 const schemaRegister = z.object({
@@ -27,15 +28,48 @@ export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
 
-    // const validatedData
-  } catch (error) {}
-}
+    const validatedData = schemaRegister.safeParse(data);
 
-// firstName: string;
-//     lastName: string;
-//     username: string;
-//     email: string;
-//     password: string;
-//     phoneNumber: string;
-//     dateOfBirth: Date;
-//     address: string
+    if (!validatedData.success) {
+      throw validatedData.error;
+    }
+
+    const creatingUser = await createUser(data);
+
+    return NextResponse.json(
+      {
+        message: "User created successfully",
+      },
+      {
+        status: 201,
+      }
+    );
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const path = error.issues[0].path[0];
+      const message = error.issues[0].message;
+
+      return NextResponse.json({
+        message: `Validation error on path ${String(path)}: ${message}`,
+      });
+    } else if (error instanceof Error) {
+      return NextResponse.json(
+        {
+          message: error.message,
+        },
+        {
+          status: 400,
+        }
+      );
+    } else {
+      return NextResponse.json(
+        {
+          message: "Internal Server Error",
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+  }
+}
