@@ -1,8 +1,11 @@
 import { ObjectId } from "mongodb";
 import { GetDb } from "../config";
-import { hashPassword } from "../helpers/bcrypt";
+import { comparePassword, hashPassword } from "../helpers/bcrypt";
 import { signToken } from "../helpers/jwt";
-import { sendVerificationEmail } from "../service/emailService";
+import {
+  sendNotificationLogin,
+  sendVerificationEmail,
+} from "../service/emailService";
 import { User } from "../type/user";
 import * as jose from "jose";
 
@@ -20,6 +23,11 @@ type InputCreateUser = Omit<
   | "role"
   | "isEmailVerified"
 >;
+
+type InputLoginUser = {
+  identifier: string;
+  password: string;
+};
 
 export async function createUser(input: InputCreateUser) {
   const db = await GetDb();
@@ -119,4 +127,54 @@ export async function verifyEmail(token: string) {
   return {
     message: "Email verified successfully",
   };
+}
+
+export async function loginUser(input: InputLoginUser) {
+  const db = await GetDb();
+
+  // Find user by username or email
+  const user = (await db.collection(COLLECTION_NAME).findOne({
+    $or: [{ username: input.identifier }, { email: input.identifier }],
+  })) as User | null;
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  // Check password
+  const checkPassword = comparePassword(input.password, user.password);
+
+  if (!checkPassword) {
+    throw new Error("Invalid password");
+  }
+
+  // Check if email is verified
+  if (!user.isEmailVerified) {
+    throw new Error("Can't log in, Email is not verified");
+  }
+
+  // Update last login time
+  const updateLogin = await db.collection(COLLECTION_NAME).updateOne(
+    {
+      _id: new ObjectId(user._id),
+    },
+    {
+      $set: {
+        lastLoginAt: new Date(),
+      },
+    }
+  );
+
+  if (updateLogin.modifiedCount === 0) {
+    throw new Error("Failed to update last login time");
+  }
+
+  // Create sign Token
+  const access_token = signToken({
+    _id: user._id,
+  });
+
+  await sendNotificationLogin(user.email);
+
+  return access_token;
 }

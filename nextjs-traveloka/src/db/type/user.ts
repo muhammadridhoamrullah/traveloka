@@ -15,9 +15,4 @@ export interface User {
   profilePicture?: string;
   isEmailVerified: boolean;
   lastLoginAt?: Date;
-  loginHistory?: {
-    ipAddress: string;
-    userAgent: string;
-    loginAt: Date;
-  }[];
 }

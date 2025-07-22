@@ -10,12 +10,10 @@ export default function VerifyEmail() {
   const params = useSearchParams();
 
   const token = params.get("token");
-  console.log("Token from URL:", token);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState("");
 
   const url = process.env.NEXT_PUBLIC_CLIENT_URL;
-  console.log("Client URL:", url);
 
   async function verifyEmail() {
     try {

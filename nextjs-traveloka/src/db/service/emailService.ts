@@ -32,3 +32,25 @@ export async function sendVerificationEmail(to: string, token: string) {
 
   await transporter.sendMail(mailOptions);
 }
+
+export async function sendNotificationLogin(to: string) {
+  const mailOptions = {
+    from: `Traveloka <${process.env.EMAIL_USER}>`,
+    to,
+    subject: "Traveloka Login Notification",
+    html: `
+    <h1>Login Notification</h1>
+    <p>We noticed a login to your account. If this was you, no further action is needed.</p>
+    <p>If you did not log in, please secure your account immediately.</p>
+    <p>---------------------------------------</p>
+    <p>If you have any questions, please contact our support team.</p>
+
+    <p>Thank you for choosing Traveloka!</p>
+    <p>Best regards,</p>
+    <p>Traveloka Team</p>
+    <p><small>This is an automated message, please do not reply to this email.</small></p>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+}
