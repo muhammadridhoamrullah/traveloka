@@ -49,9 +49,14 @@ export async function POST(request: NextRequest) {
       const path = error.issues[0].path[0];
       const message = error.issues[0].message;
 
-      return NextResponse.json({
-        message: `Validation error on path ${String(path)}: ${message}`,
-      });
+      return NextResponse.json(
+        {
+          message: `Validation error on path ${String(path)}: ${message}`,
+        },
+        {
+          status: 400,
+        }
+      );
     } else if (error instanceof Error) {
       return NextResponse.json(
         {

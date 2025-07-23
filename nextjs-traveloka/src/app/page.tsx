@@ -23,6 +23,9 @@ export default function Home() {
         <Link className={classButtonLoginHome()} href={"/login"}>
           Log In
         </Link>
+        <Link className={classButtonLoginHome()} href={"/register"}>
+          Register
+        </Link>
         <Link className={classButtonLoginHome()} href={"/home"}>
           Home
         </Link>

@@ -1,16 +1,124 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { AiOutlineEye } from "react-icons/ai";
 import { AiOutlineEyeInvisible } from "react-icons/ai";
 import { FaApple } from "react-icons/fa";
 import { FaFacebook } from "react-icons/fa";
 import { AiFillTikTok } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
+import { AiOutlineLoading } from "react-icons/ai";
 import Link from "next/link";
 import Image from "next/image";
+import { NextSeo } from "next-seo";
+import { generateMetaData } from "@/db/utils/metadata";
+import z from "zod";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
 export default function Register() {
+  const navigate = useRouter();
+  const url = process.env.NEXT_PUBLIC_CLIENT_URL;
+
+  const [formRegister, setFormRegister] = useState({
+    firstName: "",
+    lastName: "",
+    username: "",
+    email: "",
+    password: "",
+    phoneNumber: "",
+    dateOfBirth: "",
+    address: "",
+  });
+
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordMismatch, setPasswordMismatch] = useState("");
+
+  const [loading, setLoading] = useState(false);
+
+  function changeHandler(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target;
+    setFormRegister({
+      ...formRegister,
+
+      [name]: value,
+    });
+  }
+
+  function confirmPasswordHandler(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    setConfirmPassword(value);
+  }
+
+  function handleConfirmPasswordBlur() {
+    if (confirmPassword !== formRegister.password) {
+      setPasswordMismatch("Passwords do not match");
+    } else {
+      setPasswordMismatch("");
+    }
+  }
+
+  async function submitHandler(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    try {
+      setLoading(true);
+
+      const response = await fetch(`${url}/api/users/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formRegister),
+        cache: "no-cache",
+      });
+      console.log("Response status:", response);
+
+      const result = await response.json();
+      console.log("Response data:", result);
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to register");
+      }
+
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "Registration successful! Please check your email to verify your account.",
+        timer: 3000,
+        showConfirmButton: false,
+        timerProgressBar: true,
+      }).then(() => {
+        navigate.push("/login");
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const path = error.issues[0].path[0];
+        const message = error.issues[0].message;
+
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: `Error on path: ${String(path)}, error message: ${message}`,
+        });
+      } else if (error instanceof Error) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: error.message,
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Internal Server Error",
+        });
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
 
@@ -27,8 +135,21 @@ export default function Register() {
   }
 
   function classInput() {
-    return "bg-transparent text-white w-full h-10 p-2 border border-slate-500 rounded-md focus:outline-none focus:border-blue-500 transition-colors duration-1000";
+    return " text-white w-full h-10 p-2 border border-slate-500 rounded-md focus:outline-none focus:border-blue-500 transition-colors duration-1000";
   }
+
+  generateMetaData({
+    title: "Register - Traveloka",
+    description: "Halaman register akun traveloka",
+    canonical: "https://traveloka.com/register",
+    icons: {
+      icon: "/traveloka_logo.png",
+    },
+    ogTitle: "Register - Traveloka",
+    ogDescription: "Halaman register akun traveloka",
+    ogUrl: "http://localhost:3000/register",
+    ogImage: "/traveloka_logo.png",
+  });
   return (
     <div className="flex flex-col gap-2 justify-center items-center w-full min-h-screen bg-[url('/bg_traveloka5.png')] bg-cover bg-center">
       <div className="flex justify-center items-center gap-2 ">
@@ -43,7 +164,10 @@ export default function Register() {
 
       <div className="bg-black/80 shadow-2xl flex flex-col justify-center gap-6 items-center w-3/4 h-[530px] rounded-2xl text-white p-4">
         {/* Awal Form */}
-        <form className="flex flex-col items-center w-3/4 gap-4">
+        <form
+          onSubmit={submitHandler}
+          className="flex flex-col items-center w-3/4 gap-4"
+        >
           <div className={divInput()}>
             <input
               type="text"
@@ -51,6 +175,8 @@ export default function Register() {
               id="firstName"
               placeholder="First Name"
               className={classInput()}
+              value={formRegister.firstName}
+              onChange={changeHandler}
             />
             <input
               type="text"
@@ -58,6 +184,8 @@ export default function Register() {
               id="lastName"
               placeholder="Last Name"
               className={classInput()}
+              value={formRegister.lastName}
+              onChange={changeHandler}
             />
           </div>
           <div className={divInput()}>
@@ -67,6 +195,8 @@ export default function Register() {
               id="username"
               placeholder="Username"
               className={classInput()}
+              value={formRegister.username}
+              onChange={changeHandler}
             />
             <input
               type="email"
@@ -74,6 +204,8 @@ export default function Register() {
               id="email"
               placeholder="Email"
               className={classInput()}
+              value={formRegister.email}
+              onChange={changeHandler}
             />
           </div>
 
@@ -85,6 +217,8 @@ export default function Register() {
                 id="password"
                 placeholder="Password"
                 className="w-full h-10 p-2 border border-slate-500 rounded-md focus:outline-none focus:border-blue-500 transition-colors duration-1000 bg-transparent text-white"
+                value={formRegister.password}
+                onChange={changeHandler}
               />
 
               <button
@@ -106,7 +240,14 @@ export default function Register() {
                 name="confirmPassword"
                 id="confirmPassword"
                 placeholder="Confirm Password"
-                className={classInput()}
+                value={confirmPassword}
+                onChange={confirmPasswordHandler}
+                onBlur={handleConfirmPasswordBlur}
+                className={`${classInput()} ${
+                  passwordMismatch
+                    ? "border-red-500 focus:border-red-500 bg-red-500/70 "
+                    : "border-slate-500 focus:border-blue-500"
+                }`}
               />
 
               <button
@@ -121,6 +262,11 @@ export default function Register() {
                 )}
               </button>
             </div>
+            {/* {passwordMismatch && (
+              <div className="text-red-400 text-sm mt-1 w-full text-center">
+                {passwordMismatch}
+              </div>
+            )} */}
           </div>
           <div className={divInput()}>
             <input
@@ -129,6 +275,8 @@ export default function Register() {
               id="phoneNumber"
               placeholder="Phone Number"
               className={classInput()}
+              value={formRegister.phoneNumber}
+              onChange={changeHandler}
             />
 
             <input
@@ -137,6 +285,8 @@ export default function Register() {
               id="dateOfBirth"
               placeholder="Date of Birth"
               className={classInput()}
+              value={formRegister.dateOfBirth}
+              onChange={changeHandler}
             />
           </div>
 
@@ -146,10 +296,22 @@ export default function Register() {
             id="address"
             placeholder="Address"
             className="w-full h-10 p-2 text-white border border-slate-500 rounded-md focus:outline-none focus:border-blue-500 transition-colors duration-1000 bg-transparent"
+            value={formRegister.address}
+            onChange={changeHandler}
           />
 
-          <button className="bg-blue-950 w-2/3 py-3 rounded-md cursor-pointer hover:bg-[#0B98F0] font-semibold">
-            SUBMIT
+          <button
+            type="submit"
+            disabled={passwordMismatch !== ""}
+            className="bg-blue-950 w-2/3 py-3 rounded-md cursor-pointer hover:bg-[#0B98F0] font-semibold"
+          >
+            {loading ? (
+              <div className="flex items-center justify-center gap-2">
+                <AiOutlineLoading className="animate-spin text-lg" />
+              </div>
+            ) : (
+              <div>SUBMIT</div>
+            )}
           </button>
         </form>
         {/* Akhir Form */}

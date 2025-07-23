@@ -8,6 +8,7 @@ import {
 } from "../service/emailService";
 import { User } from "../type/user";
 import * as jose from "jose";
+import { date } from "zod";
 
 const COLLECTION_NAME = "users";
 
@@ -64,6 +65,7 @@ export async function createUser(input: InputCreateUser) {
     ...input,
     password: hashPassword(input.password),
     role: "User",
+    dateOfBirth: new Date(input.dateOfBirth),
     isEmailVerified: false,
     createdAt: new Date(),
     updatedAt: new Date(),
