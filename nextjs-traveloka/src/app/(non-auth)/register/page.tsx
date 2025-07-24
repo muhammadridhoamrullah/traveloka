@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 
 export default function Register() {
   const navigate = useRouter();
-  const url = process.env.NEXT_PUBLIC_CLIENT_URL;
+  const url = process.env.NEXT_PUBLIC_CLIENT_URL!;
 
   const [formRegister, setFormRegister] = useState({
     firstName: "",
@@ -72,10 +72,8 @@ export default function Register() {
         body: JSON.stringify(formRegister),
         cache: "no-cache",
       });
-      console.log("Response status:", response);
 
       const result = await response.json();
-      console.log("Response data:", result);
 
       if (!response.ok) {
         throw new Error(result.message || "Failed to register");
@@ -306,7 +304,7 @@ export default function Register() {
             className="bg-blue-950 w-2/3 py-3 rounded-md cursor-pointer hover:bg-[#0B98F0] font-semibold"
           >
             {loading ? (
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex items-center justify-center">
                 <AiOutlineLoading className="animate-spin text-lg" />
               </div>
             ) : (
