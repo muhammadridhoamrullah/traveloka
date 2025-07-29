@@ -16,3 +16,5 @@ export interface User {
   isEmailVerified: boolean;
   lastLoginAt?: Date;
 }
+
+

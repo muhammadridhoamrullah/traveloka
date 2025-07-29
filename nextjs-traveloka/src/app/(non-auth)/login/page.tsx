@@ -4,14 +4,17 @@ import { generateMetaData } from "@/db/utils/metadata";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineEye } from "react-icons/ai";
 import { AiOutlineEyeInvisible } from "react-icons/ai";
 import Swal from "sweetalert2";
 import z from "zod";
 import { AiOutlineLoading } from "react-icons/ai";
+import Cookies from "js-cookie";
 
 export default function Login() {
+  const cookies = Cookies.get("access_token");
+
   const navigate = useRouter();
   const url = process.env.NEXT_PUBLIC_CLIENT_URL!;
   // State for login form
@@ -54,7 +57,7 @@ export default function Login() {
         throw new Error(result.message || "Login failed");
       }
 
-      // If login is successful, redirect to home page
+      Cookies.set("access_token", result.access_token);
       navigate.push("/home");
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -90,6 +93,13 @@ export default function Login() {
   function toggleShowPassword() {
     setShowPassword(!showPassword);
   }
+
+  // Check if user is already logged in
+  useEffect(() => {
+    if (cookies) {
+      navigate.push("/home");
+    }
+  }, []);
 
   // For generate metadata
   generateMetaData({

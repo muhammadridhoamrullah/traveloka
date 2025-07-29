@@ -27,6 +27,7 @@ const schemaRegister = z.object({
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
+    console.log("Received data:", data.dateOfBirth);
 
     const validatedData = schemaRegister.safeParse(data);
 
