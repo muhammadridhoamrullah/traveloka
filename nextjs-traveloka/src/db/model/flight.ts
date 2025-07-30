@@ -11,7 +11,7 @@ type InputSearchFlight = {
   departureAirport: string;
   arrivalAirport: string;
   departureTime: Date;
-  cabinClass?: string;
+  cabinClass: string;
   passengerCount: number;
 };
 
@@ -53,6 +53,14 @@ export async function CreateFlight(input: InputCreateFlight) {
       ...el,
       seatsAvailable: el.seatsAvailable ?? el.totalSeats,
     })),
+    departure: {
+      ...input.departure,
+      time: new Date(input.departure.time), // Ensure it's a Date object
+    },
+    arrival: {
+      ...input.arrival,
+      time: new Date(input.arrival.time), // Ensure it's a Date object
+    },
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -72,10 +80,26 @@ export async function CreateFlight(input: InputCreateFlight) {
 
 export async function GetAllFlights(input: InputSearchFlight) {
   const db = await GetDb();
+  console.log("input", input.passengerCount);
+
+  // Awal hari
+  const inputDate = new Date(input.departureTime);
+  const startOfDay = new Date(inputDate);
+  startOfDay.setHours(0, 0, 0, 0);
+  console.log("startOfDay MODEL", startOfDay);
+
+  // Akhir hari
+  const endOfDay = new Date(inputDate);
+  endOfDay.setHours(23, 59, 59, 999);
+
+  console.log("endOfDay MODEL", endOfDay);
+
+  const currentDate = new Date();
+  const today = new Date(currentDate);
+  today.setHours(0, 0, 0, 0);
 
   // Cek tanggal keberangkatan tidak boleh di masa lalu
-  const currentDate = new Date();
-  if (input.departureTime.getTime() < currentDate.getTime()) {
+  if (startOfDay < today) {
     throw new Error("Departure time cannot be in the past");
   }
 
@@ -83,24 +107,24 @@ export async function GetAllFlights(input: InputSearchFlight) {
   const query: any = {
     "departure.airport": input.departureAirport,
     "departure.time": {
-      $gte: input.departureTime,
-      $lt: new Date(input.departureTime.getTime() + 24 * 60 * 60 * 1000), // within the next 24 hours
+      $gt: startOfDay,
+      $lt: endOfDay, // within the same day
     },
     "arrival.airport": input.arrivalAirport,
     ...(input.airline && { airline: input.airline }),
-    ...(input.cabinClass && {
-      cabinClasses: {
-        $elemMatch: {
-          class: input.cabinClass,
-          seatsAvailable: { $gte: input.passengerCount },
-        },
+    cabinClasses: {
+      $elemMatch: {
+        class: input.cabinClass,
+        seatsAvailable: { $gte: input.passengerCount },
       },
-    }),
+    },
   };
+
+  // console.log("query", query);
 
   // Find flights in the database
   const findFlights = await db
-    .collection<Flight>(COLLECTION_NAME)
+    .collection(COLLECTION_NAME)
     .find(query)
     .sort({
       "departure.time": 1,
