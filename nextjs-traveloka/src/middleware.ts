@@ -5,8 +5,9 @@ import * as jose from "jose";
 export async function middleware(request: NextRequest) {
   try {
     // Ambil token dari cookie
+
     const cookiesAuth = (await cookies()).get("access_token");
-    console.log("cookiesAuthMid", cookiesAuth);
+    console.log("cookiesAuth", cookiesAuth);
 
     // Jika token tidak ada, redirect ke halaman login
     if (!cookiesAuth) {
@@ -18,8 +19,12 @@ export async function middleware(request: NextRequest) {
 
     // Ambil tokennya
     const token = cookiesAuth.value;
+    console.log("token", token);
+    
 
     const secret = new TextEncoder().encode(process.env.SECRET!);
+    console.log("secret", secret);
+    
 
     // Verifikasi token menggunakan jose
     const decoded = await jose.jwtVerify<{
@@ -28,7 +33,8 @@ export async function middleware(request: NextRequest) {
       email: string;
       role: string;
     }>(token, secret);
-
+    console.log("decoded", decoded);
+    
     // Setelah verifikasi dan suntik data di dalam token berhasil, lanjutkan request
 
     const reqHeaders = new Headers(request.headers);
@@ -72,5 +78,8 @@ export const config = {
   matcher: [
     // untuk page
     "/home/:path*",
+
+    // untuk API route
+    "/api/flights/:path*",
   ],
 };
