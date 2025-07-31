@@ -1,4 +1,4 @@
-import { CreateFlight } from "@/db/model/flight";
+import { CreateFlight, GetAllFlightsUnfiltered } from "@/db/model/flight";
 import { NextRequest, NextResponse } from "next/server";
 import z from "zod";
 
@@ -74,6 +74,41 @@ export async function POST(request: NextRequest) {
         }
       );
     } else if (error instanceof Error) {
+      return NextResponse.json(
+        {
+          message: error.message,
+        },
+        {
+          status: 400,
+        }
+      );
+    } else {
+      return NextResponse.json(
+        {
+          message: "Internal Server Error",
+        },
+        {
+          status: 500,
+        }
+      );
+    }
+  }
+}
+
+export async function GET(request: NextRequest) {
+  try {
+    const findAllFlights = await GetAllFlightsUnfiltered();
+
+    return NextResponse.json(
+      {
+        flights: findAllFlights,
+      },
+      {
+        status: 200,
+      }
+    );
+  } catch (error) {
+    if (error instanceof Error) {
       return NextResponse.json(
         {
           message: error.message,

@@ -34,32 +34,28 @@ export async function CreateFlight(input: InputCreateFlight) {
   if (input.departure.time >= input.arrival.time) {
     throw new Error("Departure time must be before arrival time");
   }
+
   const duration2 = Math.floor(
     (new Date(input.arrival.time).getTime() -
       new Date(input.departure.time).getTime()) /
       (1000 * 60)
   );
-  console.log("Duration in minutes:", duration2);
 
   // Create flight
   const flight = {
     ...input,
-    duration: Math.floor(
-      (new Date(input.arrival.time).getTime() -
-        new Date(input.departure.time).getTime()) /
-        (1000 * 60)
-    ),
+    duration: duration2,
     cabinClasses: input.cabinClasses.map((el) => ({
       ...el,
       seatsAvailable: el.seatsAvailable ?? el.totalSeats,
     })),
     departure: {
       ...input.departure,
-      time: new Date(input.departure.time), // Ensure it's a Date object
+      time: new Date(input.departure.time),
     },
     arrival: {
       ...input.arrival,
-      time: new Date(input.arrival.time), // Ensure it's a Date object
+      time: new Date(input.arrival.time),
     },
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -134,6 +130,20 @@ export async function GetAllFlights(input: InputSearchFlight) {
   console.log("findFlights", findFlights);
 
   return findFlights;
+}
+
+export async function GetAllFlightsUnfiltered() {
+  const db = await GetDb();
+
+  const findAllFlights = await db
+    .collection(COLLECTION_NAME)
+    .find()
+    .sort({
+      "departure.time": 1,
+    })
+    .toArray();
+
+  return findAllFlights;
 }
 
 // type InputCreateFlight = {
