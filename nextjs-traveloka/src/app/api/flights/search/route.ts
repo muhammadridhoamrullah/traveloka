@@ -12,12 +12,6 @@ export async function GET(request: NextRequest) {
     const cabinClass = searchParams.get("cabinClass");
     const passengerCount = searchParams.get("passengerCount");
     const airline = searchParams.get("airline");
-    console.log("departureAirport API", departureAirport);
-    console.log("departureTime API", departureTime);
-    console.log("arrivalAirport API", arrivalAirport);
-    console.log("cabinClass API", cabinClass);
-    console.log("passengerCount API", passengerCount);
-    console.log("airline API", airline);
 
     // Validasi query parameters
     if (

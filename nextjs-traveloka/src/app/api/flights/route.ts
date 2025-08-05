@@ -1,4 +1,5 @@
 import { CreateFlight, GetAllFlightsUnfiltered } from "@/db/model/flight";
+import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import z from "zod";
 
@@ -43,13 +44,32 @@ const schemaCreateFlight = z
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
+    const headerList = headers();
+
+    const UserId = (await headerList).get("UserId");
+    const UserRole = (await headerList).get("role");
+
     const validatedData = schemaCreateFlight.safeParse(data);
 
+    if (UserRole !== "Admin") {
+      return NextResponse.json(
+        {
+          message: "You are not authorized to create flights",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+
+    if (!UserId) {
+      throw new Error("UserId is required");
+    }
     if (!validatedData.success) {
       throw validatedData.error;
     }
 
-    const creatingFlight = await CreateFlight(data);
+    const creatingFlight = await CreateFlight(data, UserId);
 
     return NextResponse.json(
       {

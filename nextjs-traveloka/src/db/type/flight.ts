@@ -33,6 +33,7 @@ export interface Flight {
   cabinClasses: FlightClassType[];
   stops?: FlightStop[];
   createdAt: Date;
+  createdBy: string;
   updatedAt: Date;
   deletedAt?: Date;
 }

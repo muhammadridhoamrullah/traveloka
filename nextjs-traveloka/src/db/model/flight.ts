@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import { GetDb } from "../config";
 import { Flight } from "../type/flight";
 
@@ -17,7 +18,7 @@ type InputSearchFlight = {
 
 const COLLECTION_NAME = "flights";
 
-export async function CreateFlight(input: InputCreateFlight) {
+export async function CreateFlight(input: InputCreateFlight, UserId: string) {
   const db = await GetDb();
 
   // Check flight number uniqueness
@@ -44,6 +45,7 @@ export async function CreateFlight(input: InputCreateFlight) {
   // Create flight
   const flight = {
     ...input,
+    createdBy: new ObjectId(UserId),
     duration: duration2,
     cabinClasses: input.cabinClasses.map((el) => ({
       ...el,
@@ -116,18 +118,41 @@ export async function GetAllFlights(input: InputSearchFlight) {
     },
   };
 
-  // console.log("query", query);
+  const agg = [
+    {
+      $match: query,
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "createdBy",
+        foreignField: "_id",
+        as: "UserCreated",
+      },
+    },
+    {
+      $unwind: {
+        path: "$UserCreated",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        "UserCreated.password": 0,
+      },
+    },
+    {
+      $sort: {
+        "departure.time": 1,
+      },
+    },
+  ];
 
   // Find flights in the database
   const findFlights = await db
     .collection(COLLECTION_NAME)
-    .find(query)
-    .sort({
-      "departure.time": 1,
-    })
+    .aggregate(agg)
     .toArray();
-
-  console.log("findFlights", findFlights);
 
   return findFlights;
 }
@@ -135,12 +160,36 @@ export async function GetAllFlights(input: InputSearchFlight) {
 export async function GetAllFlightsUnfiltered() {
   const db = await GetDb();
 
+  const agg = [
+    {
+      $lookup: {
+        from: "users",
+        localField: "createdBy",
+        foreignField: "_id",
+        as: "UserCreated",
+      },
+    },
+    {
+      $unwind: {
+        path: "$UserCreated",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        "UserCreated.password": 0,
+      },
+    },
+    {
+      $sort: {
+        "departure.time": 1,
+      },
+    },
+  ];
+
   const findAllFlights = await db
     .collection(COLLECTION_NAME)
-    .find()
-    .sort({
-      "departure.time": 1,
-    })
+    .aggregate(agg)
     .toArray();
 
   return findAllFlights;
