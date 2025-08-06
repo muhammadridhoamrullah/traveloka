@@ -1,0 +1,30 @@
+[
+  {
+    "firstName": "Kim",
+    "lastName": "Minji",
+    "username": "kimminji",
+    "email": "kimminji@gmail.com",
+    "password": "1234567890",
+    "role": "Admin",
+    "phoneNumber": "081234567890",
+    "dateOfBirth": "1990-01-01",
+    "address": "Jl. Myeongdong No. 1",
+    "deletedAt": null,
+    "profilePicture": null,
+    "isEmailVerified": true
+  },
+  {
+    "firstName": "Kang",
+    "lastName": "Harin",
+    "username": "kanghaerin",
+    "email": "kangharin@gmail.com",
+    "password": "1234567890",
+    "role": "User",
+    "phoneNumber": "089876543210",
+    "dateOfBirth": "1995-05-15",
+    "address": "Jl. Seoul No. 2",
+    "deletedAt": null,
+    "profilePicture": null,
+    "isEmailVerified": false
+  }
+]

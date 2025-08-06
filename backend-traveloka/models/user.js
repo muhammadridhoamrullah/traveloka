@@ -1,5 +1,6 @@
 "use strict";
 const { Model } = require("sequelize");
+const { hashPassword } = require("../helpers/bcrypt");
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -179,5 +180,28 @@ module.exports = (sequelize, DataTypes) => {
       },
     }
   );
+  User.beforeCreate((user) => {
+    user.password = hashPassword(user.password);
+  });
+
+  // Hook untuk menghapus data flight terkait saat user dihapus
+  User.beforeDestroy(async (user, options) => {
+    const { Flight } = sequelize.models;
+
+    // Hapus semua flight yang terkait dengan user ini
+    await Flight.update(
+      {
+        deletedAt: new Date(),
+      },
+      {
+        where: {
+          UserId: user.id,
+        },
+        transaction: options.transaction,
+        individualHooks: true,
+        hooks: true,
+      }
+    );
+  });
   return User;
 };

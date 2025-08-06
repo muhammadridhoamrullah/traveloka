@@ -1,0 +1,75 @@
+[
+  {
+    "flightNumber": "QG815",
+    "airline": "Citilink",
+    "aircraft": "Airbus A320neo",
+    "departure": {
+      "airport": "PKU",
+      "city": "Pekanbaru",
+      "time": "2025-10-21T11:00:00Z"
+    },
+    "arrival": {
+      "airport": "CGK",
+      "city": "Jakarta",
+      "time": "2025-10-21T13:00:00Z"
+    },
+    "duration": 120,
+    "cabinClasses": [
+      {
+        "class": "Economy",
+        "price": 850000,
+        "seatsAvailable": 100
+      },
+      {
+        "class": "Business",
+        "price": 1750000,
+        "seatsAvailable": 12
+      }
+    ],
+    "stops": [],
+    "deletedAt": null,
+    "UserId": 1,
+    "createdAt": "2025-08-06T08:00:00.000Z",
+    "updatedAt": "2025-08-06T08:00:00.000Z"
+  },
+  {
+    "flightNumber": "GA204",
+    "airline": "Garuda Indonesia",
+    "aircraft": "Boeing 737-800",
+    "departure": {
+      "airport": "CGK",
+      "city": "Jakarta",
+      "time": "2025-11-10T07:30:00Z"
+    },
+    "arrival": {
+      "airport": "DPS",
+      "city": "Denpasar",
+      "time": "2025-11-10T10:30:00Z"
+    },
+    "duration": 180,
+    "cabinClasses": [
+      {
+        "class": "Economy",
+        "price": 1200000,
+        "seatsAvailable": 80
+      },
+      {
+        "class": "Business",
+        "price": 2500000,
+        "seatsAvailable": 10
+      }
+    ],
+    "stops": [
+      {
+        "airport": "SUB",
+        "city": "Surabaya",
+        "time": "2025-11-10T09:00:00Z"
+      }
+    ],
+    "deletedAt": null,
+    "UserId": 2,
+    "createdAt": "2025-08-06T08:00:00.000Z",
+    "updatedAt": "2025-08-06T08:00:00.000Z"
+  }
+]
+

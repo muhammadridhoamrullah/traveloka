@@ -1,0 +1,323 @@
+[
+  {
+    "flightNumber": "GA815",
+    "airline": "Garuda Indonesia",
+    "aircraft": "Boeing 777-300ER",
+    "departure": {
+      "airport": "CGK",
+      "airportName": "Soekarno-Hatta International Airport",
+      "city": "Jakarta",
+      "country": "Indonesia",
+      "terminal": "3",
+      "gate": "B12",
+      "time": "2025-08-15T08:30:00Z",
+      "timezone": "Asia/Jakarta"
+    },
+    "arrival": {
+      "airport": "SIN",
+      "airportName": "Singapore Changi Airport",
+      "city": "Singapore",
+      "country": "Singapore",
+      "terminal": "2",
+      "gate": "A15",
+      "time": "2025-08-15T11:00:00Z",
+      "timezone": "Asia/Singapore"
+    },
+    "duration": 150,
+    "cabinClasses": [
+      {
+        "class": "Economy",
+        "price": 2500000,
+        "seatsAvailable": 180,
+        "facilities": ["Meal", "Entertainment", "WiFi"],
+        "baggage": {
+          "carry": "7kg",
+          "checked": "20kg"
+        }
+      },
+      {
+        "class": "Premium Economy",
+        "price": 4200000,
+        "seatsAvailable": 28,
+        "facilities": [
+          "Premium Meal",
+          "Extra Legroom",
+          "Entertainment",
+          "WiFi"
+        ],
+        "baggage": {
+          "carry": "7kg",
+          "checked": "30kg"
+        }
+      },
+      {
+        "class": "Business",
+        "price": 8500000,
+        "seatsAvailable": 24,
+        "facilities": [
+          "Gourmet Meal",
+          "Flat Bed",
+          "Lounge Access",
+          "Entertainment",
+          "WiFi"
+        ],
+        "baggage": {
+          "carry": "7kg",
+          "checked": "40kg"
+        }
+      },
+      {
+        "class": "First Class",
+        "price": 15000000,
+        "seatsAvailable": 8,
+        "facilities": [
+          "Chef Meal",
+          "Private Suite",
+          "Lounge Access",
+          "Entertainment",
+          "WiFi",
+          "Chauffeur"
+        ],
+        "baggage": {
+          "carry": "7kg",
+          "checked": "50kg"
+        }
+      }
+    ],
+    "stops": [],
+    "deletedAt": null,
+    "UserId": 1
+  },
+  {
+    "flightNumber": "JT610",
+    "airline": "Lion Air",
+    "aircraft": "Boeing 737 MAX 8",
+    "departure": {
+      "airport": "CGK",
+      "airportName": "Soekarno-Hatta International Airport",
+      "city": "Jakarta",
+      "country": "Indonesia",
+      "terminal": "1A",
+      "gate": "C8",
+      "time": "2025-08-20T14:15:00Z",
+      "timezone": "Asia/Jakarta"
+    },
+    "arrival": {
+      "airport": "DPS",
+      "airportName": "Ngurah Rai International Airport",
+      "city": "Denpasar",
+      "country": "Indonesia",
+      "terminal": "Domestic",
+      "gate": "5",
+      "time": "2025-08-20T17:30:00Z",
+      "timezone": "Asia/Makassar"
+    },
+    "duration": 135,
+    "cabinClasses": [
+      {
+        "class": "Economy",
+        "price": 1200000,
+        "seatsAvailable": 162,
+        "facilities": ["Snack", "Entertainment"],
+        "baggage": {
+          "carry": "7kg",
+          "checked": "20kg"
+        }
+      },
+      {
+        "class": "Premium Economy",
+        "price": 1800000,
+        "seatsAvailable": 12,
+        "facilities": ["Meal", "Extra Legroom", "Entertainment"],
+        "baggage": {
+          "carry": "7kg",
+          "checked": "25kg"
+        }
+      }
+    ],
+    "stops": [
+      {
+        "airport": "YIA",
+        "airportName": "Yogyakarta International Airport",
+        "city": "Yogyakarta",
+        "country": "Indonesia",
+        "arrivalTime": "2025-08-20T15:45:00Z",
+        "departureTime": "2025-08-20T16:30:00Z",
+        "duration": 45,
+        "terminal": "1"
+      }
+    ],
+    "deletedAt": null,
+    "UserId": 2
+  },
+  {
+    "flightNumber": "QZ8501",
+    "airline": "AirAsia",
+    "aircraft": "Airbus A320-200",
+    "departure": {
+      "airport": "SUB",
+      "airportName": "Juanda International Airport",
+      "city": "Surabaya",
+      "country": "Indonesia",
+      "terminal": "2",
+      "gate": "A3",
+      "time": "2025-09-01T06:00:00Z",
+      "timezone": "Asia/Jakarta"
+    },
+    "arrival": {
+      "airport": "KUL",
+      "airportName": "Kuala Lumpur International Airport",
+      "city": "Kuala Lumpur",
+      "country": "Malaysia",
+      "terminal": "2",
+      "gate": "J12",
+      "time": "2025-09-01T09:15:00Z",
+      "timezone": "Asia/Kuala_Lumpur"
+    },
+    "duration": 135,
+    "cabinClasses": [
+      {
+        "class": "Economy",
+        "price": 1800000,
+        "seatsAvailable": 150,
+        "facilities": ["Snack Purchase", "Entertainment"],
+        "baggage": {
+          "carry": "7kg",
+          "checked": "20kg"
+        }
+      },
+      {
+        "class": "Premium Flatbed",
+        "price": 4500000,
+        "seatsAvailable": 12,
+        "facilities": ["Meal", "Flat Bed", "Entertainment", "WiFi"],
+        "baggage": {
+          "carry": "7kg",
+          "checked": "35kg"
+        }
+      }
+    ],
+    "stops": [
+      {
+        "airport": "BTJ",
+        "airportName": "Sultan Iskandar Muda Airport",
+        "city": "Banda Aceh",
+        "country": "Indonesia",
+        "arrivalTime": "2025-09-01T07:30:00Z",
+        "departureTime": "2025-09-01T08:15:00Z",
+        "duration": 45,
+        "terminal": "1"
+      }
+    ],
+    "deletedAt": null,
+    "UserId": 1
+  },
+  {
+    "flightNumber": "SJ182",
+    "airline": "Sriwijaya Air",
+    "aircraft": "Boeing 737-500",
+    "departure": {
+      "airport": "CGK",
+      "airportName": "Soekarno-Hatta International Airport",
+      "city": "Jakarta",
+      "country": "Indonesia",
+      "terminal": "1B",
+      "gate": "D5",
+      "time": "2025-09-15T19:40:00Z",
+      "timezone": "Asia/Jakarta"
+    },
+    "arrival": {
+      "airport": "PNK",
+      "airportName": "Supadio Airport",
+      "city": "Pontianak",
+      "country": "Indonesia",
+      "terminal": "Domestic",
+      "gate": "2",
+      "time": "2025-09-15T21:25:00Z",
+      "timezone": "Asia/Jakarta"
+    },
+    "duration": 105,
+    "cabinClasses": [
+      {
+        "class": "Economy",
+        "price": 980000,
+        "seatsAvailable": 112,
+        "facilities": ["Snack", "Drink"],
+        "baggage": {
+          "carry": "7kg",
+          "checked": "20kg"
+        }
+      }
+    ],
+    "stops": [],
+    "deletedAt": null,
+    "UserId": 3
+  },
+  {
+    "flightNumber": "ID7703",
+    "airline": "Batik Air",
+    "aircraft": "Airbus A320neo",
+    "departure": {
+      "airport": "MLG",
+      "airportName": "Abdul Rachman Saleh Airport",
+      "city": "Malang",
+      "country": "Indonesia",
+      "terminal": "1",
+      "gate": "A1",
+      "time": "2025-10-05T10:20:00Z",
+      "timezone": "Asia/Jakarta"
+    },
+    "arrival": {
+      "airport": "CGK",
+      "airportName": "Soekarno-Hatta International Airport",
+      "city": "Jakarta",
+      "country": "Indonesia",
+      "terminal": "2",
+      "gate": "E10",
+      "time": "2025-10-05T12:45:00Z",
+      "timezone": "Asia/Jakarta"
+    },
+    "duration": 145,
+    "cabinClasses": [
+      {
+        "class": "Economy",
+        "price": 750000,
+        "seatsAvailable": 156,
+        "facilities": ["Meal", "Entertainment"],
+        "baggage": {
+          "carry": "7kg",
+          "checked": "20kg"
+        }
+      },
+      {
+        "class": "Business",
+        "price": 2100000,
+        "seatsAvailable": 12,
+        "facilities": [
+          "Premium Meal",
+          "Extra Space",
+          "Lounge Access",
+          "Entertainment"
+        ],
+        "baggage": {
+          "carry": "7kg",
+          "checked": "30kg"
+        }
+      }
+    ],
+    "stops": [
+      {
+        "airport": "JOG",
+        "airportName": "Yogyakarta International Airport",
+        "city": "Yogyakarta",
+        "country": "Indonesia",
+        "arrivalTime": "2025-10-05T11:15:00Z",
+        "departureTime": "2025-10-05T11:50:00Z",
+        "duration": 35,
+        "terminal": "1"
+      }
+    ],
+    "deletedAt": null,
+    "UserId": 2
+  }
+]

@@ -66,9 +66,6 @@ module.exports = (sequelize, DataTypes) => {
           notNull: {
             msg: "Departure information is required",
           },
-          notEmpty: {
-            msg: "Departure information is required",
-          },
         },
       },
       arrival: {
@@ -78,9 +75,6 @@ module.exports = (sequelize, DataTypes) => {
           notNull: {
             msg: "Arrival information is required",
           },
-          notEmpty: {
-            msg: "Arrival information is required",
-          },
         },
       },
       duration: {
@@ -88,9 +82,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notNull: {
-            msg: "Duration is required",
-          },
-          notEmpty: {
             msg: "Duration is required",
           },
           isInt: {
@@ -109,9 +100,6 @@ module.exports = (sequelize, DataTypes) => {
           notNull: {
             msg: "Cabin classes are required",
           },
-          notEmpty: {
-            msg: "Cabin classes are required",
-          },
         },
       },
       stops: {
@@ -120,9 +108,6 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: [],
         validate: {
           notNull: {
-            msg: "Stops information is required",
-          },
-          notEmpty: {
             msg: "Stops information is required",
           },
         },
