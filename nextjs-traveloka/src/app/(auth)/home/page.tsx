@@ -3,6 +3,16 @@
 import { generateMetaData } from "@/db/utils/metadata";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { FaHotel } from "react-icons/fa";
+import { FaPlaneUp } from "react-icons/fa6";
+import { MdCarRental } from "react-icons/md";
+import { FaShuttleVan } from "react-icons/fa";
+import { FaMapMarkedAlt } from "react-icons/fa";
+import MenuHotel from "@/app/components/formMenuHomePage/menuHotel";
+import MenuFlight from "@/app/components/formMenuHomePage/MenuFlight";
+import MenuCarRental from "@/app/components/formMenuHomePage/MenuCarRental";
+import MenuAirportTransfer from "@/app/components/formMenuHomePage/MenuAirportTransfer";
+import MenuThingsToDo from "@/app/components/formMenuHomePage/MenuThingsToDo";
 
 export default function Homepage() {
   const airlineCompanies = [
@@ -27,14 +37,12 @@ export default function Homepage() {
 
   // hitung jumlah grup yang bisa ditampilkan
   const totalGroups = Math.ceil(airlineCompanies.length / GROUP_SIZE);
-  console.log("Total Groups:", totalGroups);
 
   // dapatkan logo dari grup yang sedang aktif
   const currentGroup = airlineCompanies.slice(
     currentIndex * GROUP_SIZE,
     currentIndex * GROUP_SIZE + GROUP_SIZE
   );
-  console.log("Current Group:", currentGroup);
 
   // set interval untuk mengubah tiap 2 detik
   useEffect(() => {
@@ -44,6 +52,10 @@ export default function Homepage() {
 
     return () => clearInterval(interval);
   }, [totalGroups]);
+
+  // Untuk menu
+  const [activeMenu, setActiveMenu] = useState("flights");
+  console.log("Active Menu:", activeMenu);
 
   // Generate metadata
 
@@ -62,13 +74,83 @@ export default function Homepage() {
     ogImage: "/traveloka_logo.png",
   });
 
+  // style list menu
+  function styleListMenuForm(menu: string) {
+    return `flex gap-2 justify-center items-center py-2 px-4 rounded-full border border-transparent  hover:border-white  cursor-pointer ${
+      activeMenu === menu ? "bg-white  text-[#0194F3]" : "hover:text-white"
+    }`;
+  }
+
+  // render form menu berdasarkan activeMenu
+  function renderFormMenu() {
+    switch (activeMenu) {
+      case "hotels":
+        return <MenuHotel />;
+      case "car-rental":
+        return <MenuCarRental />;
+      case "airport-transfer":
+        return <MenuAirportTransfer />;
+      case "things-to-do":
+        return <MenuThingsToDo />;
+      default:
+        return <MenuFlight />;
+    }
+  }
+
   return (
     <div className="w-full min-h-screen">
-      <div className="pt-36 pb-5 w-full min-h-screen bg-[url('/bg_home.jpg')] bg-cover bg-center text-white flex flex-col justify-between items-center">
+      <div className="pt-36 px-20 pb-5 w-full min-h-screen bg-[url('/bg_home.jpg')] bg-cover bg-center text-white flex flex-col justify-between items-center">
+        {/* Awal Opening Letter */}
         <div className="font-bold text-3xl">
           Plan, Book & Travel: Flights, Hotels & Activities Worldwide
         </div>
-        <div>FORM PEMESANAN</div>
+        {/* Akhir Opening Letter */}
+
+        {/* Awal Form Menu */}
+        <div className="text-slate-300 font-semibold h-fit w-full flex justify-start items-center gap-2 border-b border-b-white pb-4">
+          <div
+            className={styleListMenuForm("hotels")}
+            onClick={() => setActiveMenu("hotels")}
+          >
+            <FaHotel className="text-2xl" />
+            <div>Hotels</div>
+          </div>
+          <div
+            className={styleListMenuForm("flights")}
+            onClick={() => setActiveMenu("flights")}
+          >
+            <FaPlaneUp className="text-2xl" />
+            <div>Flights</div>
+          </div>
+          <div
+            className={styleListMenuForm("car-rental")}
+            onClick={() => setActiveMenu("car-rental")}
+          >
+            <MdCarRental className="text-2xl" />
+            <div>Car Rental</div>
+          </div>
+          <div
+            className={styleListMenuForm("airport-transfer")}
+            onClick={() => setActiveMenu("airport-transfer")}
+          >
+            <FaShuttleVan className="text-2xl" />
+            <div>Airport Transfer</div>
+          </div>
+          <div
+            className={styleListMenuForm("things-to-do")}
+            onClick={() => setActiveMenu("things-to-do")}
+          >
+            <FaMapMarkedAlt className="text-2xl" />
+            <div>Things To Do</div>
+          </div>
+        </div>
+        {/* Akhir Form Menu */}
+
+        {/* Awal Form Pemesanan */}
+        <div className="bg-red-900 w-full fit">{renderFormMenu()}</div>
+        {/* Akhir Form Pemesanan */}
+
+        {/* Awal Trusted By */}
         <div className="flex justify-center items-center flex-col gap-2 ">
           <div className="text-sm">Trusted By</div>
           <div className="flex justify-center items-center gap-6 flex-wrap transition-opacity duration-1000 p-2 border border-slate-700   rounded-md">
@@ -84,6 +166,7 @@ export default function Homepage() {
             ))}
           </div>
         </div>
+        {/* Akhir Trusted By */}
       </div>
       <div>Section 2</div>
       <div>Section 3</div>
