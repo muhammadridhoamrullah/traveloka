@@ -164,7 +164,7 @@ export async function GetAllFlightsUnfiltered() {
     {
       $lookup: {
         from: "users",
-        localField: "createdBy",
+        localField: "UserId",
         foreignField: "_id",
         as: "UserCreated",
       },

@@ -4,11 +4,22 @@ export interface FlightClassType {
   price: number;
   seatsAvailable: number;
   totalSeats: number;
+  facilities?: string[];
+  baggageAllowance?: {
+    checked: number;
+    cabin: number;
+  };
 }
 
 export interface FlightStop {
-  airport: string;
+  airportCode: string;
+  airportName: string;
   city: string;
+  country?: string;
+  terminal?: string;
+  gate?: string;
+  arrivalTime: Date;
+  departureTime: Date;
   layoverTime: number;
 }
 
@@ -17,15 +28,24 @@ export interface Flight {
   flightNumber: string;
   airline: string;
   aircraft: string;
+  totalSeats: number;
   departure: {
-    airport: string;
+    airportCode: string;
+    airportName: string;
     city: string;
     time: Date;
+    country?: string;
+    terminal?: string;
+    gate?: string;
     timezone?: string;
   };
   arrival: {
-    airport: string;
+    airportCode: string;
+    airportName: string;
     city: string;
+    country?: string;
+    terminal?: string;
+    gate?: string;
     time: Date;
     timezone?: string;
   };
@@ -33,7 +53,7 @@ export interface Flight {
   cabinClasses: FlightClassType[];
   stops?: FlightStop[];
   createdAt: Date;
-  createdBy: string;
+  UserId: string;
   updatedAt: Date;
   deletedAt?: Date;
 }
