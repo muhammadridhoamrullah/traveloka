@@ -8,11 +8,11 @@ import { FaPlaneUp } from "react-icons/fa6";
 import { MdCarRental } from "react-icons/md";
 import { FaShuttleVan } from "react-icons/fa";
 import { FaMapMarkedAlt } from "react-icons/fa";
-import MenuHotel from "@/app/components/formMenuHomePage/menuHotel";
 import MenuFlight from "@/app/components/formMenuHomePage/MenuFlight";
 import MenuCarRental from "@/app/components/formMenuHomePage/MenuCarRental";
 import MenuAirportTransfer from "@/app/components/formMenuHomePage/MenuAirportTransfer";
 import MenuThingsToDo from "@/app/components/formMenuHomePage/MenuThingsToDo";
+import MenuHotel from "@/app/components/formMenuHomePage/MenuHotel";
 
 export default function Homepage() {
   const airlineCompanies = [
@@ -147,7 +147,7 @@ export default function Homepage() {
         {/* Akhir Form Menu */}
 
         {/* Awal Form Pemesanan */}
-        <div className="bg-red-900 w-full fit">{renderFormMenu()}</div>
+        <div className="w-full h-full ">{renderFormMenu()}</div>
         {/* Akhir Form Pemesanan */}
 
         {/* Awal Trusted By */}

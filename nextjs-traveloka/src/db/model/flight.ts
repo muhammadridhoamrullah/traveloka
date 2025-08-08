@@ -8,7 +8,6 @@ type InputCreateFlight = Omit<
 >;
 
 type InputSearchFlight = {
-  airline?: string;
   departureAirport: string;
   arrivalAirport: string;
   departureTime: Date;
@@ -109,7 +108,6 @@ export async function GetAllFlights(input: InputSearchFlight) {
       $lt: endOfDay, // within the same day
     },
     "arrival.airport": input.arrivalAirport,
-    ...(input.airline && { airline: input.airline }),
     cabinClasses: {
       $elemMatch: {
         class: input.cabinClass,
