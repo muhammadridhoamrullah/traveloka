@@ -102,12 +102,12 @@ export async function GetAllFlights(input: InputSearchFlight) {
 
   // Build query
   const query: any = {
-    "departure.airport": input.departureAirport,
+    "departure.airportCode": input.departureAirport,
     "departure.time": {
       $gt: startOfDay,
       $lt: endOfDay, // within the same day
     },
-    "arrival.airport": input.arrivalAirport,
+    "arrival.airportCode": input.arrivalAirport,
     cabinClasses: {
       $elemMatch: {
         class: input.cabinClass,
