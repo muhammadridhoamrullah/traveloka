@@ -48,6 +48,7 @@ export async function GET(request: NextRequest) {
     };
 
     const result = await GetAllFlights(searchParamsFlight);
+    console.log("result API search flight", result);
 
     return NextResponse.json(
       {

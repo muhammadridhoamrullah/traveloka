@@ -57,3 +57,4 @@ export interface Flight {
   updatedAt: Date;
   deletedAt?: Date;
 }
+

@@ -1,6 +1,7 @@
 import { ObjectId } from "mongodb";
 import { GetDb } from "../config";
 import { Flight } from "../type/flight";
+import { getUTCDayRange } from "../utils/helperFunctions";
 
 type InputCreateFlight = Omit<
   Flight,
@@ -77,23 +78,21 @@ export async function CreateFlight(input: InputCreateFlight, UserId: string) {
 
 export async function GetAllFlights(input: InputSearchFlight) {
   const db = await GetDb();
-  console.log("input", input.passengerCount);
 
   // Awal hari
   const inputDate = new Date(input.departureTime);
   const startOfDay = new Date(inputDate);
   startOfDay.setHours(0, 0, 0, 0);
-  console.log("startOfDay MODEL", startOfDay);
 
   // Akhir hari
   const endOfDay = new Date(inputDate);
   endOfDay.setHours(23, 59, 59, 999);
 
-  console.log("endOfDay MODEL", endOfDay);
-
   const currentDate = new Date();
   const today = new Date(currentDate);
   today.setHours(0, 0, 0, 0);
+
+  const day = getUTCDayRange(input.departureTime);
 
   // Cek tanggal keberangkatan tidak boleh di masa lalu
   if (startOfDay < today) {
@@ -104,8 +103,8 @@ export async function GetAllFlights(input: InputSearchFlight) {
   const query: any = {
     "departure.airportCode": input.departureAirport,
     "departure.time": {
-      $gt: startOfDay,
-      $lt: endOfDay, // within the same day
+      $gt: day.startOfDay,
+      $lt: day.endOfDay,
     },
     "arrival.airportCode": input.arrivalAirport,
     cabinClasses: {
@@ -151,6 +150,7 @@ export async function GetAllFlights(input: InputSearchFlight) {
     .collection(COLLECTION_NAME)
     .aggregate(agg)
     .toArray();
+  console.log("Flights found:", findFlights);
 
   return findFlights;
 }
