@@ -118,10 +118,17 @@ async function getLowestPriceAndShortestFlight(dataFlight: {
 export default async function SearchFlightsPage({ searchParams }: Props) {
   const params = await searchParams;
 
+  const query = {
+    departureAirport: params.departureAirport,
+    arrivalAirport: params.arrivalAirport,
+    departureTime: new Date(params.departureTime),
+    cabinClass: params.cabinClass,
+    passengerCount: params.passengerCount,
+  };
+
   const data = (await fetchResultSearchFlight(params)) as {
     flights: Flight[];
   };
-  console.log("data API search flight", data);
 
   const flightData = (await getLowestPriceAndShortestFlight(
     data
@@ -194,9 +201,9 @@ export default async function SearchFlightsPage({ searchParams }: Props) {
         {/* Awal All Flights */}
         <div className="text-white font-bold text-2xl">All Flight</div>
         {data.flights.length > 0 ? (
-          <div className="bg-amber-500 flex flex-col gap-3 w-full h-full">
+          <div className=" flex flex-col gap-3 w-full h-full">
             {data.flights.map((el, index) => (
-              <CardResultSearchFlight key={index} data={el} />
+              <CardResultSearchFlight key={index} data={el} query={query} />
             ))}
           </div>
         ) : (

@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 
 export default function MenuFlight() {
   const navigate = useRouter();
+  const [loading, setLoading] = useState(false);
   // Initital state untuk form menu flight
   const [formDataFlight, setFormDataFlight] = useState({
     departureAirport: "CGK",
@@ -37,6 +38,7 @@ export default function MenuFlight() {
     e.preventDefault();
 
     try {
+      setLoading(true);
       if (
         !formDataFlight.departureAirport ||
         !formDataFlight.arrivalAirport ||
@@ -83,6 +85,8 @@ export default function MenuFlight() {
           text: "An unexpected error occurred.",
         });
       }
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -331,7 +335,11 @@ export default function MenuFlight() {
             type="submit"
             className="bg-green-600 p-[13px] rounded-2xl border-2 border-[#0194F3] cursor-pointer hover:bg-green-800 transition-colors duration-300"
           >
-            <GoSearch className="text-white text-xl" />
+            {loading ? (
+              <div className="animate-spin h-6 w-6 border-4 border-t-transparent border-white rounded-full"></div>
+            ) : (
+              <GoSearch className="text-white text-xl" />
+            )}
           </button>
         </div>
         {/* AKhir Departure Date & Button Search */}

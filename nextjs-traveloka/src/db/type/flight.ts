@@ -5,7 +5,7 @@ export interface FlightClassType {
   seatsAvailable: number;
   totalSeats: number;
   facilities?: string[];
-  baggageAllowance?: {
+  baggage?: {
     checked: number;
     cabin: number;
   };
@@ -57,4 +57,3 @@ export interface Flight {
   updatedAt: Date;
   deletedAt?: Date;
 }
-

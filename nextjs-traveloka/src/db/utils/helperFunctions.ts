@@ -45,3 +45,13 @@ export function formatRupiah(amount: number) {
     minimumFractionDigits: 0,
   }).format(amount);
 }
+
+export function formatDuration(duration: number) {
+  const hours = Math.floor(duration / 60);
+  const minutes = duration % 60;
+
+  if (hours > 0 && minutes > 0) return `${hours}h ${minutes}m`;
+  if (hours > 0) return `${hours}h`;
+
+  return `${minutes}m`;
+}
