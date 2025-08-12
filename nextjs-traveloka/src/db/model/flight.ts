@@ -122,7 +122,7 @@ export async function GetAllFlights(input: InputSearchFlight) {
     {
       $lookup: {
         from: "users",
-        localField: "createdBy",
+        localField: "UserId",
         foreignField: "_id",
         as: "UserCreated",
       },
@@ -150,7 +150,7 @@ export async function GetAllFlights(input: InputSearchFlight) {
     .collection(COLLECTION_NAME)
     .aggregate(agg)
     .toArray();
-  console.log("Flights found:", findFlights);
+
 
   return findFlights;
 }

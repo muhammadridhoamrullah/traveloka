@@ -37,3 +37,11 @@ export function getUTCDayRange(dateObj: Date) {
 
   return { startOfDay, endOfDay };
 }
+
+export function formatRupiah(amount: number) {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+    minimumFractionDigits: 0,
+  }).format(amount);
+}
