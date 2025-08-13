@@ -39,11 +39,7 @@ function getAirlineLogo(airlineName: string): string {
   return airlineLogo[airlineName] || "/traveloka_logo.png";
 }
 
-export default async function CardResultSearchFlight({
-  data,
-  key,
-  query,
-}: Props) {
+export default function CardResultSearchFlight({ data, key, query }: Props) {
   let airlineLogo = getAirlineLogo(data.airline);
 
   function getBaggage(cabinClass: string) {
@@ -104,9 +100,7 @@ export default async function CardResultSearchFlight({
   let howManyStops = data.stops ? data.stops.length : 0;
 
   const dataForPayment = {
-    orderId: `Traveloka-Flight - ${data.flightNumber} - ${Date.now()} - ${Math.floor(
-      1000 + Math.random() * 9000
-    )}`,
+    orderId: `Traveloka - Flight - ${Math.floor(1000 + Math.random() * 9000)}`,
     grossAmount: price(query.cabinClass),
   };
 

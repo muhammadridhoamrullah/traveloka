@@ -36,17 +36,6 @@ export async function generateMetadata({
     icons: {
       icon: "/traveloka_logo.png",
     },
-    openGraph: {
-      title: `Flight Search: ${params.departureAirport} to ${params.arrivalAirport}`,
-      description: `Find flights from ${params.departureAirport} to ${params.arrivalAirport} on ${params.departureTime}`,
-      url: `/flight/search?departureAirport=${params.departureAirport}&arrivalAirport=${params.arrivalAirport}&departureTime=${params.departureTime}`,
-      images: ["/traveloka_logo.png"],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `Flight Search: ${params.departureAirport} to ${params.arrivalAirport}`,
-      description: `Find flights from ${params.departureAirport} to ${params.arrivalAirport} on ${params.departureTime}`,
-    },
   };
 }
 

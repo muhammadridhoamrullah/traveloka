@@ -20,11 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={` antialiased ${poppins.className}`}>
-        {children}
         <Script
-          src="https://app.stg.midtrans.com/snap/snap.js"
+          src="https://app.sandbox.midtrans.com/snap/snap.js"
           data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
+          strategy="lazyOnload"
         />
+        {children}
       </body>
     </html>
   );

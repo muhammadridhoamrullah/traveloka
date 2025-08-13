@@ -10,6 +10,7 @@ let snap = new midtransClient.Snap({
 export async function POST(request: NextRequest) {
   try {
     const { orderId, grossAmount } = await request.json();
+    console.log(orderId, grossAmount, "ini gros");
 
     const headerList = headers();
     // // const UserId = (await headerList).get("UserId");

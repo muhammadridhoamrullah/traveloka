@@ -1,6 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
 declare global {
   interface Window {
     snap: {
@@ -26,6 +28,7 @@ interface Props {
 
 export default function PaymentButton({ data }: Props) {
   console.log("Payment Data:", data);
+  const navigate = useRouter();
 
   const [isSnapReady, setIsSnapReady] = useState(false);
 
@@ -71,24 +74,25 @@ export default function PaymentButton({ data }: Props) {
           errorData.message || "Failed to generate payment token"
         );
       }
-      const { token } = await response.json();
-      console.log("Payment Token:", token);
-
+      const result = await response.json();
+      console.log("result:", result);
       //   Pakai window.snap untuk memulai pembayaran
-      window.snap.pay(token, {
-        onSuccess: (result: any) => {
+
+      window.snap.pay(result.token, {
+        onSuccess: (result) => {
+          console.log("✅ Success:", result);
           alert("Payment Successful!");
-          console.log("Payment Result:", result);
         },
-        onPending: (result: any) => {
+        onPending: (result) => {
+          console.log("⏳ Pending:", result);
           alert("Payment Pending!");
-          console.log("Payment Pending Result:", result);
         },
-        onError: (result: any) => {
-          alert("Payment Error!");
-          console.error("Payment Error Result:", result);
+        onError: (result) => {
+          console.log("❌ Error:", result);
+          alert("Payment Error: " + JSON.stringify(result));
         },
         onClose: () => {
+          console.log("❌ Closed");
           alert("Payment window closed.");
         },
       });
