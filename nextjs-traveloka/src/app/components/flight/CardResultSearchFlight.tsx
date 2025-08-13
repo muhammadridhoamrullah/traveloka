@@ -5,6 +5,7 @@ import { LuLuggage } from "react-icons/lu";
 import Image from "next/image";
 import { formatDuration, formatRupiah } from "@/db/utils/helperFunctions";
 import Link from "next/link";
+import PaymentButton from "./PaymentButton";
 
 interface Props {
   data: Flight;
@@ -43,8 +44,6 @@ export default async function CardResultSearchFlight({
   key,
   query,
 }: Props) {
-  console.log("data", data);
-
   let airlineLogo = getAirlineLogo(data.airline);
 
   function getBaggage(cabinClass: string) {
@@ -103,6 +102,13 @@ export default async function CardResultSearchFlight({
 
   let transit = data.stops && data.stops.length > 0 ? "Transit" : "Direct";
   let howManyStops = data.stops ? data.stops.length : 0;
+
+  const dataForPayment = {
+    orderId: `Traveloka-Flight - ${data.flightNumber} - ${Date.now()} - ${Math.floor(
+      1000 + Math.random() * 9000
+    )}`,
+    grossAmount: price(query.cabinClass),
+  };
 
   return (
     <div className="bg-black/70 text-white rounded-md flex flex-col gap-5 justify-between items-start py-3 px-4 w-full h-fit">
@@ -177,12 +183,7 @@ export default async function CardResultSearchFlight({
           <div>Refund</div>
           <div>Reschedule</div>
         </div>
-        <Link
-          href={"/booking"}
-          className="bg-[#0194F3] rounded-md px-4 py-2 text-sm font-semibold hover:bg-blue-700"
-        >
-          Choose
-        </Link>
+        <PaymentButton data={dataForPayment} />
       </div>
       {/* Akhir Flight Menu */}
     </div>

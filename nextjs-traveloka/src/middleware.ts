@@ -27,6 +27,9 @@ export async function middleware(request: NextRequest) {
       username: string;
       email: string;
       role: string;
+      phone: string;
+      firstName: string;
+      lastName: string;
     }>(token, secret);
 
     // Setelah verifikasi dan suntik data di dalam token berhasil, lanjutkan request
@@ -35,7 +38,10 @@ export async function middleware(request: NextRequest) {
 
     reqHeaders.set("UserId", decoded.payload._id);
     reqHeaders.set("username", decoded.payload.username);
+    reqHeaders.set("firstName", decoded.payload.firstName);
+    reqHeaders.set("lastName", decoded.payload.lastName);
     reqHeaders.set("email", decoded.payload.email);
+    reqHeaders.set("phone", decoded.payload.phone);
     reqHeaders.set("role", decoded.payload.role);
 
     // Kembalikan request dengan headers yang sudah disuntik
@@ -72,8 +78,10 @@ export const config = {
   matcher: [
     // untuk page
     "/home/:path*",
+    "/flight/:path*",
 
     // untuk API route
     "/api/flights/:path*",
+    "/api/payment/:path*",
   ],
 };

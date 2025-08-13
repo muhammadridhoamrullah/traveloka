@@ -177,6 +177,9 @@ export async function loginUser(input: InputLoginUser) {
     username: user.username,
     email: user.email,
     role: user.role,
+    phone: user.phoneNumber,
+    firstName: user.firstName,
+    lastName: user.lastName,
   });
 
   await sendNotificationLogin(user.email);
