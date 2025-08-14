@@ -3,7 +3,11 @@ import { Flight } from "@/db/type/flight";
 import { LuLuggage } from "react-icons/lu";
 
 import Image from "next/image";
-import { formatDuration, formatRupiah } from "@/db/utils/helperFunctions";
+import {
+  formatDuration,
+  formatRupiah,
+  getAirlineLogoFromUtils,
+} from "@/db/utils/helperFunctions";
 import Link from "next/link";
 import PaymentButton from "./PaymentButton";
 
@@ -19,28 +23,8 @@ interface Props {
   };
 }
 
-let airlineLogo: { [key: string]: string } = {
-  "Garuda Indonesia":
-    "/airplaneCompany/garudaIndonesia/garuda-indonesia-logo.png",
-  "Lion Air": "/airplaneCompany/lionAir/lion-air-logo.png",
-  AirAsia: "/airplaneCompany/airAsia/airasia-logo.png",
-  Citilink: "/airplaneCompany/citilink/citilink-logo.png",
-  "Sriwijaya Air": "/airplaneCompany/sriwijayaAir/sriwijaya-air-logo.png",
-  "Batik Air": "/airplaneCompany/batikAir/batik-air-logo.png",
-  "NAM Air": "/airplaneCompany/namAir/nam-air-logo.png",
-  "Pelita Air": "/airplaneCompany/pelitaAir/pelita-air-logo.png",
-  "Super Air Jet": "/airplaneCompany/superAirJet/super-air-jet-logo.png",
-  "Trans Nusa": "/airplaneCompany/transNusa/transnusa-logo.png",
-  "Trigana Air": "/airplaneCompany/triganaAir/trigana-air-service-logo.png",
-  "Wings Air": "/airplaneCompany/wingsAir/wings-air-logo.png",
-};
-
-function getAirlineLogo(airlineName: string): string {
-  return airlineLogo[airlineName] || "/traveloka_logo.png";
-}
-
 export default function CardResultSearchFlight({ data, key, query }: Props) {
-  let airlineLogo = getAirlineLogo(data.airline);
+  let airlineLogo = getAirlineLogoFromUtils(data.airline);
 
   function getBaggage(cabinClass: string) {
     let maxBaggage = Infinity;
@@ -103,6 +87,10 @@ export default function CardResultSearchFlight({ data, key, query }: Props) {
     orderId: `Traveloka - Flight - ${Math.floor(1000 + Math.random() * 9000)}`,
     grossAmount: price(query.cabinClass),
   };
+
+  const flightData = encodeURIComponent(JSON.stringify(data));
+  const fligjtDataDecoded = decodeURIComponent(flightData);
+  console.log("Flight Data Decoded:", fligjtDataDecoded);
 
   return (
     <div className="bg-black/70 text-white rounded-md flex flex-col gap-5 justify-between items-start py-3 px-4 w-full h-fit">
@@ -177,7 +165,13 @@ export default function CardResultSearchFlight({ data, key, query }: Props) {
           <div>Refund</div>
           <div>Reschedule</div>
         </div>
-        <PaymentButton data={dataForPayment} />
+        {/* <PaymentButton data={dataForPayment} /> */}
+        <Link
+          href={`/flight/detail/${data._id}?flightData=${flightData}`}
+          className="bg-blue-950 px-4 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 cursor-pointer"
+        >
+          Choose
+        </Link>
       </div>
       {/* Akhir Flight Menu */}
     </div>

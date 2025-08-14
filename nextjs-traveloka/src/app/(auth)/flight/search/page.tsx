@@ -1,7 +1,6 @@
 import CardResultSearchFlight from "@/app/components/flight/CardResultSearchFlight";
 import { Flight } from "@/db/type/flight";
 import { formatDate, formatRupiah } from "@/db/utils/helperFunctions";
-import { generateMetaData } from "@/db/utils/metadata";
 import { get } from "http";
 import { Metadata } from "next";
 import { cookies } from "next/headers";
@@ -122,7 +121,7 @@ export default async function SearchFlightsPage({ searchParams }: Props) {
   const flightData = (await getLowestPriceAndShortestFlight(
     data
   )) as unknown as FlightStats;
-
+  // bg-[#F7F9FA]
   return (
     <div className="bg-blue-950 w-full min-h-screen pt-36 px-20 pb-5 text-black flex justify-between items-start gap-2">
       {/* Awal Filter */}

@@ -55,3 +55,23 @@ export function formatDuration(duration: number) {
 
   return `${minutes}m`;
 }
+
+let airlineLogo: { [key: string]: string } = {
+  "Garuda Indonesia":
+    "/airplaneCompany/garudaIndonesia/garuda-indonesia-logo.png",
+  "Lion Air": "/airplaneCompany/lionAir/lion-air-logo.png",
+  AirAsia: "/airplaneCompany/airAsia/airasia-logo.png",
+  Citilink: "/airplaneCompany/citilink/citilink-logo.png",
+  "Sriwijaya Air": "/airplaneCompany/sriwijayaAir/sriwijaya-air-logo.png",
+  "Batik Air": "/airplaneCompany/batikAir/batik-air-logo.png",
+  "NAM Air": "/airplaneCompany/namAir/nam-air-logo.png",
+  "Pelita Air": "/airplaneCompany/pelitaAir/pelita-air-logo.png",
+  "Super Air Jet": "/airplaneCompany/superAirJet/super-air-jet-logo.png",
+  "Trans Nusa": "/airplaneCompany/transNusa/transnusa-logo.png",
+  "Trigana Air": "/airplaneCompany/triganaAir/trigana-air-service-logo.png",
+  "Wings Air": "/airplaneCompany/wingsAir/wings-air-logo.png",
+};
+
+export function getAirlineLogoFromUtils(airlineName: string): string {
+  return airlineLogo[airlineName] || "/traveloka_logo.png";
+}
