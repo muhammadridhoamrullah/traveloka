@@ -92,6 +92,11 @@ export default function CardResultSearchFlight({ data, key, query }: Props) {
   const fligjtDataDecoded = decodeURIComponent(flightData);
   console.log("Flight Data Decoded:", fligjtDataDecoded);
 
+  function handleChooseFlight() {
+    sessionStorage.setItem("flightData", JSON.stringify(data));
+    sessionStorage.setItem("queryData", JSON.stringify(query));
+  }
+
   return (
     <div className="bg-black/70 text-white rounded-md flex flex-col gap-5 justify-between items-start py-3 px-4 w-full h-fit">
       {/* Awal Logo, Jadwal, & Harga */}
@@ -167,7 +172,8 @@ export default function CardResultSearchFlight({ data, key, query }: Props) {
         </div>
         {/* <PaymentButton data={dataForPayment} /> */}
         <Link
-          href={`/flight/detail/${data._id}?flightData=${flightData}`}
+          href={`/flight/detail/${data._id}`}
+          onClick={handleChooseFlight}
           className="bg-blue-950 px-4 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 cursor-pointer"
         >
           Choose

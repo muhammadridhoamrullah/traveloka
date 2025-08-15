@@ -75,3 +75,20 @@ let airlineLogo: { [key: string]: string } = {
 export function getAirlineLogoFromUtils(airlineName: string): string {
   return airlineLogo[airlineName] || "/traveloka_logo.png";
 }
+
+export function getTimeAndDate(time: Date) {
+  const date = new Date(time);
+  // Ambil jam dan menit dari waktu
+  const hours = date.getUTCHours().toString().padStart(2, "0");
+  const minutes = date.getUTCHours().toString().padStart(2, "0");
+
+  // Ambil tanggal, bulan, dan tahun
+  const day = date.getUTCDate().toString().padStart(2, "0");
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, "0"); // Bulan dimulai dari 0
+  const year = date.getUTCFullYear();
+
+  return {
+    time: `${hours}:${minutes}`,
+    date: `${day} - ${month} - ${year}`,
+  };
+}
