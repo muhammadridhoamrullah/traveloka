@@ -1,3 +1,5 @@
+import React, { ReactElement } from "react";
+
 export function formatDate(dateString: string) {
   const date = new Date(dateString);
   const options: Intl.DateTimeFormatOptions = {
@@ -74,6 +76,30 @@ let airlineLogo: { [key: string]: string } = {
 
 export function getAirlineLogoFromUtils(airlineName: string): string {
   return airlineLogo[airlineName] || "/traveloka_logo.png";
+}
+
+let facilitiesLogo: { [key: string]: string } = {
+  Meal: "ImSpoonKnife",
+  Entertainment: "BiMoviePlay",
+  WiFi: "IoWifiSharp",
+  "Premium Meal": "GiHotMeal",
+  "Extra Legroom": "MdAirlineSeatReclineExtra",
+  "Gourmet Meal": "MdSetMeal",
+  "Flat Bed": "TbBedFlat",
+  "Lounge Access": "GrLounge",
+  "Chef Meal": "PiChefHatBold",
+  "Private Suite": "MdOutlineAirlineSeatIndividualSuite",
+  Chauffeur: "FaCar",
+  Snack: "GiChipsBag",
+  "Snack Purchase": "IoFastFoodOutline",
+  Drink: "RiDrinks2Line",
+  "In-flight Entertainment": "RiMovieAiLine",
+  "Extra Space": "FaBed",
+  default: "IoMdHelpCircleOutline",
+};
+
+export function getFacilityIconName(facilityName: string): string {
+  return facilitiesLogo[facilityName] || facilitiesLogo["default"];
 }
 
 export function getTimeAndDate(time: Date) {

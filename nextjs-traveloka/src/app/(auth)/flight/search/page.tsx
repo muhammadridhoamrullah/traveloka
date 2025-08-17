@@ -117,6 +117,7 @@ export default async function SearchFlightsPage({ searchParams }: Props) {
   const data = (await fetchResultSearchFlight(params)) as {
     flights: Flight[];
   };
+  console.log("Data fetched:", data);
 
   const flightData = (await getLowestPriceAndShortestFlight(
     data

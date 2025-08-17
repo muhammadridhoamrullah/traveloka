@@ -2,19 +2,38 @@
 
 import ButtonBack from "@/app/components/flight/detail/ButtonBack";
 import { Flight } from "@/db/type/flight";
-import {
-  formatDuration,
-  getAirlineLogoFromUtils,
-  getTimeAndDate,
-} from "@/db/utils/helperFunctions";
+
 import { Metadata } from "next";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import Loading from "./loading";
 import { generateMetaData } from "@/db/utils/metadata";
 import { useParams } from "next/navigation";
 import { LuPlane } from "react-icons/lu";
+import {
+  formatDuration,
+  getAirlineLogoFromUtils,
+  getFacilityIconName,
+  getTimeAndDate,
+} from "@/db/utils/helperFunctions";
+import { ImSpoonKnife } from "react-icons/im";
+import { BiMoviePlay } from "react-icons/bi";
+import { IoWifiSharp } from "react-icons/io5";
+import { GiHotMeal } from "react-icons/gi";
+import { MdAirlineSeatReclineExtra } from "react-icons/md";
+import { MdSetMeal } from "react-icons/md";
+import { TbBedFlat } from "react-icons/tb";
+import { GrLounge } from "react-icons/gr";
+import { PiChefHatBold } from "react-icons/pi";
+import { MdOutlineAirlineSeatIndividualSuite } from "react-icons/md";
+import { FaCar } from "react-icons/fa";
+import { GiChipsBag } from "react-icons/gi";
+import { IoFastFoodOutline } from "react-icons/io5";
+import { RiDrinks2Line } from "react-icons/ri";
+import { RiMovieAiLine } from "react-icons/ri";
+import { FaBed } from "react-icons/fa";
+import { IoMdHelpCircleOutline } from "react-icons/io";
 
 // export async function generateMetadata({
 //   params,
@@ -43,6 +62,16 @@ import { LuPlane } from "react-icons/lu";
 export default function DetailFlight() {
   const params = useParams();
   const [flightData, setFlightData] = useState<Flight>({} as Flight);
+  const [query, setQuery] = useState({
+    departureAirport: "",
+    arrivalAirport: "",
+    departureTime: new Date(),
+    cabinClass: "",
+    passengerCount: 0,
+  });
+  console.log("Flight Data:", flightData);
+  console.log("Query Data:", query);
+
   const [loading, setLoading] = useState(true);
 
   // Generate metdata dynamically
@@ -74,12 +103,23 @@ export default function DetailFlight() {
   async function getFlightDataFromSession() {
     setLoading(true);
     const flightDataFromSession = sessionStorage.getItem("flightData");
+    const flightQueryFromSession = sessionStorage.getItem("queryData");
     if (flightDataFromSession) {
       const parsedFlightData = JSON.parse(flightDataFromSession);
       setFlightData(parsedFlightData);
     } else {
       console.error("No flight data found in session storage.");
     }
+
+    if (flightQueryFromSession) {
+      const parsedQueryData = JSON.parse(flightQueryFromSession);
+      setQuery(parsedQueryData);
+    } else {
+      console.error("No query data found in session storage.");
+    }
+
+    // Set query based on flightData
+
     setLoading(false);
   }
 
@@ -106,6 +146,87 @@ export default function DetailFlight() {
 
   const directOrTransit = flightData?.stops?.length ? "Transit" : "Direct";
   const howManyStops = flightData?.stops ? flightData?.stops.length : 0;
+
+  // function price(cabinClass: string) {
+  //   let price = 0;
+  //   data.cabinClasses.forEach((cabin) => {
+  //     if (cabin.class === cabinClass) {
+  //       price = cabin.price;
+  //     }
+  //   });
+  //   return price;
+  // }
+
+  function getFacilities(cabinClass: string) {
+    let facilities: string[] = [];
+    flightData.cabinClasses.forEach((cabin) => {
+      if (cabin.class === cabinClass && cabin.facilities) {
+        facilities = cabin.facilities;
+      }
+    });
+    return facilities.length > 0 ? facilities : [];
+  }
+
+  const listFacilities = getFacilities(query.cabinClass);
+
+  console.log("What Facilities:", listFacilities);
+
+  function getIconFacility(facilityCode: string) {
+    switch (facilityCode) {
+      case "Meal":
+        return <ImSpoonKnife />;
+      case "Entertainment":
+        return <BiMoviePlay />;
+      case "WiFi":
+        return <IoWifiSharp />;
+      case "Premium Meal":
+        return <GiHotMeal />;
+      case "Extra Legroom":
+        return <MdAirlineSeatReclineExtra />;
+      case "Gourmet Meal":
+        return <MdSetMeal />;
+      case "Flat Bed":
+        return <TbBedFlat />;
+      case "Lounge Access":
+        return <GrLounge />;
+      case "Chef Meal":
+        return <PiChefHatBold />;
+      case "Private Suite":
+        return <MdOutlineAirlineSeatIndividualSuite />;
+      case "Chauffeur":
+        return <FaCar />;
+      case "Snack":
+        return <GiChipsBag />;
+      case "Snack Purchase":
+        return <IoFastFoodOutline />;
+      case "Drink":
+        return <RiDrinks2Line />;
+      case "In-flight Entertainment":
+        return <RiMovieAiLine />;
+      case "Extra Space":
+        return <FaBed />;
+      default:
+        return <IoMdHelpCircleOutline />;
+    }
+  }
+
+  //  Meal: "ImSpoonKnife",
+  // Entertainment: "BiMoviePlay",
+  // WiFi: "IoWifiSharp",
+  // "Premium Meal": "GiHotMeal",
+  // "Extra Legroom": "MdAirlineSeatReclineExtra",
+  // "Gourmet Meal": "MdSetMeal",
+  // "Flat Bed": "TbBedFlat",
+  // "Lounge Access": "GrLounge",
+  // "Chef Meal": "PiChefHatBold",
+  // "Private Suite": "MdOutlineAirlineSeatIndividualSuite",
+  // Chauffeur: "FaCar",
+  // Snack: "GiChipsBag",
+  // "Snack Purchase": "IoFastFoodOutline",
+  // Drink: "RiDrinks2Line",
+  // "In-flight Entertainment": "RiMovieAiLine",
+  // "Extra Space": "FaBed",
+  // default: "IoMdHelpCircleOutline",
 
   return (
     <div className="w-full min-h-screen pt-36 pb-5 px-20 bg-blue-950 flex flex-col gap-4 text-white">
@@ -215,7 +336,23 @@ export default function DetailFlight() {
           {/* Akhir Card Detail Flight */}
 
           {/* Awal Inflight Facilities */}
-          <div className="bg-red-800">Inflight Facilities</div>
+          <div className="bg-black/70 w-full h-fit p-5 rounded-xl shadow-lg flex flex-col gap-2 ">
+            <div className="text-lg font-semibold">In-Flight Facilities</div>
+            {listFacilities.length > 0 ? (
+              <div className="flex  flex-wrap  gap-2 ">
+                {listFacilities.map((facility, index) => (
+                  <div key={index} className="flex items-center   py-1 ">
+                    <div className="w-5 h-5 text-[#0194F3] flex items-center ">
+                      {getIconFacility(facility)}
+                    </div>
+                    <div className="text-sm flex items-center">{facility}</div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-slate-400">No Facility</div>
+            )}
+          </div>
           {/* Akhir Inflight Facilites */}
 
           {/* Awal Baggage & Policies */}
@@ -287,4 +424,92 @@ export default function DetailFlight() {
 //     createdAt: '2025-07-29T08:12:38.133Z',
 //     updatedAt: '2025-07-29T08:12:38.133Z'
 //   }
+// }
+
+// {
+//     "_id": "689449ff68fa399516b20692",
+//     "flightNumber": "QZ8501",
+//     "airline": "AirAsia",
+//     "aircraft": "Airbus A320-200",
+//     "totalSeats": 162,
+//     "departure": {
+//         "airportCode": "SUB",
+//         "airportName": "Juanda International Airport",
+//         "city": "Surabaya",
+//         "country": "Indonesia",
+//         "terminal": "2",
+//         "gate": "A3",
+//         "time": "2025-09-01T06:00:00.000Z",
+//         "timezone": "Asia/Jakarta"
+//     },
+//     "arrival": {
+//         "airportCode": "KUL",
+//         "airportName": "Kuala Lumpur International Airport",
+//         "city": "Kuala Lumpur",
+//         "country": "Malaysia",
+//         "terminal": "2",
+//         "gate": "J12",
+//         "time": "2025-09-01T09:15:00.000Z",
+//         "timezone": "Asia/Kuala_Lumpur"
+//     },
+//     "duration": 135,
+//     "cabinClasses": [
+//         {
+//             "class": "Economy",
+//             "price": 1800000,
+//             "seatsAvailable": 150,
+//             "facilities": [
+//                 "Snack Purchase",
+//                 "Entertainment"
+//             ],
+//             "baggage": {
+//                 "carry": "7kg",
+//                 "checked": "20kg"
+//             }
+//         },
+//         {
+//             "class": "Premium Economy",
+//             "price": 4500000,
+//             "seatsAvailable": 12,
+//             "facilities": [
+//                 "Meal",
+//                 "Flat Bed",
+//                 "Entertainment",
+//                 "WiFi"
+//             ],
+//             "baggage": {
+//                 "carry": "7kg",
+//                 "checked": "35kg"
+//             }
+//         }
+//     ],
+//     "stops": [
+//         {
+//             "airportCode": "BTJ",
+//             "airportName": "Sultan Iskandar Muda Airport",
+//             "city": "Banda Aceh",
+//             "country": "Indonesia",
+//             "arrivalTime": "2025-09-01T07:30:00.000Z",
+//             "departureTime": "2025-09-01T08:15:00.000Z",
+//             "duration": 45,
+//             "terminal": "1"
+//         }
+//     ],
+//     "deletedAt": null,
+//     "UserId": "6878ad465f1297aa559b872f",
+//     "UserCreated": {
+//         "_id": "6878ad465f1297aa559b872f",
+//         "firstName": "Kim",
+//         "lastName": "Minji",
+//         "username": "kimminji",
+//         "email": "kimminji@gmail.com",
+//         "phoneNumber": "081234567890",
+//         "dateOfBirth": "1999-05-12",
+//         "address": "Jl. Melati No. 10, Korea Selatan",
+//         "role": "Admin",
+//         "isEmailVerified": true,
+//         "createdAt": "2025-07-17T07:59:02.841Z",
+//         "updatedAt": "2025-07-17T07:59:24.122Z",
+//         "lastLoginAt": "2025-08-17T06:23:12.071Z"
+//     }
 // }

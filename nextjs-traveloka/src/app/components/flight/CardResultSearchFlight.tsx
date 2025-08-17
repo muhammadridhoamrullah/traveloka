@@ -3,13 +3,14 @@ import { Flight } from "@/db/type/flight";
 import { LuLuggage } from "react-icons/lu";
 
 import Image from "next/image";
+
+import Link from "next/link";
+import PaymentButton from "./PaymentButton";
 import {
   formatDuration,
   formatRupiah,
   getAirlineLogoFromUtils,
 } from "@/db/utils/helperFunctions";
-import Link from "next/link";
-import PaymentButton from "./PaymentButton";
 
 interface Props {
   data: Flight;
