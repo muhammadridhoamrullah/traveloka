@@ -13,6 +13,7 @@ import { useParams } from "next/navigation";
 import { LuPlane } from "react-icons/lu";
 import {
   formatDuration,
+  formatRupiah,
   getAirlineLogoFromUtils,
   getFacilityIconName,
   getTimeAndDate,
@@ -34,30 +35,9 @@ import { RiDrinks2Line } from "react-icons/ri";
 import { RiMovieAiLine } from "react-icons/ri";
 import { FaBed } from "react-icons/fa";
 import { IoMdHelpCircleOutline } from "react-icons/io";
-
-// export async function generateMetadata({
-//   params,
-//   searchParams,
-// }: Props): Promise<Metadata> {
-//   const { flightData } = await searchParams;
-//   const flightInfo = flightData
-//     ? JSON.parse(decodeURIComponent(flightData))
-//     : null;
-
-//   return {
-//     title: `Flight Detail - ${flightInfo.flightNumber} - ${flightInfo.departure.airportCode} to ${flightInfo.arrival.airportCode} - ${flightInfo.airline}`,
-//     description: `Detail flight for ${flightInfo.flightNumber} from ${
-//       flightInfo.departure.airportName
-//     } to ${flightInfo.arrival.airportName}. Departure at ${new Date(
-//       flightInfo.departure.time
-//     ).toLocaleTimeString()} and arrival at ${new Date(
-//       flightInfo.arrival.time
-//     ).toLocaleTimeString()}.`,
-//     icons: {
-//       icon: "/traveloka_logo.png",
-//     },
-//   };
-// }
+import { LuLuggage } from "react-icons/lu";
+import { LuShieldCheck } from "react-icons/lu";
+import PaymentButton from "@/app/components/flight/PaymentButton";
 
 export default function DetailFlight() {
   const params = useParams();
@@ -70,7 +50,6 @@ export default function DetailFlight() {
     passengerCount: 0,
   });
   console.log("Flight Data:", flightData);
-  console.log("Query Data:", query);
 
   const [loading, setLoading] = useState(true);
 
@@ -147,16 +126,6 @@ export default function DetailFlight() {
   const directOrTransit = flightData?.stops?.length ? "Transit" : "Direct";
   const howManyStops = flightData?.stops ? flightData?.stops.length : 0;
 
-  // function price(cabinClass: string) {
-  //   let price = 0;
-  //   data.cabinClasses.forEach((cabin) => {
-  //     if (cabin.class === cabinClass) {
-  //       price = cabin.price;
-  //     }
-  //   });
-  //   return price;
-  // }
-
   function getFacilities(cabinClass: string) {
     let facilities: string[] = [];
     flightData.cabinClasses.forEach((cabin) => {
@@ -168,8 +137,6 @@ export default function DetailFlight() {
   }
 
   const listFacilities = getFacilities(query.cabinClass);
-
-  console.log("What Facilities:", listFacilities);
 
   function getIconFacility(facilityCode: string) {
     switch (facilityCode) {
@@ -210,23 +177,46 @@ export default function DetailFlight() {
     }
   }
 
-  //  Meal: "ImSpoonKnife",
-  // Entertainment: "BiMoviePlay",
-  // WiFi: "IoWifiSharp",
-  // "Premium Meal": "GiHotMeal",
-  // "Extra Legroom": "MdAirlineSeatReclineExtra",
-  // "Gourmet Meal": "MdSetMeal",
-  // "Flat Bed": "TbBedFlat",
-  // "Lounge Access": "GrLounge",
-  // "Chef Meal": "PiChefHatBold",
-  // "Private Suite": "MdOutlineAirlineSeatIndividualSuite",
-  // Chauffeur: "FaCar",
-  // Snack: "GiChipsBag",
-  // "Snack Purchase": "IoFastFoodOutline",
-  // Drink: "RiDrinks2Line",
-  // "In-flight Entertainment": "RiMovieAiLine",
-  // "Extra Space": "FaBed",
-  // default: "IoMdHelpCircleOutline",
+  function getBaggage(cabinClass: string) {
+    let cabinBaggage = Infinity;
+    let checkedBaggage = Infinity;
+
+    flightData.cabinClasses.forEach((cabin) => {
+      if (cabin.class === cabinClass) {
+        cabinBaggage = cabin.baggage?.cabin || 0;
+        checkedBaggage = cabin.baggage?.checked || 0;
+      }
+    });
+
+    return {
+      cabinBaggage: cabinBaggage,
+      checkedBaggage: checkedBaggage,
+    };
+  }
+
+  const listBaggage = getBaggage(query.cabinClass);
+
+  function payMyTicket(cabinClass: string) {
+    let price = 0;
+
+    flightData.cabinClasses.forEach((cabin) => {
+      if (cabin.class === cabinClass) {
+        price = cabin.price;
+      }
+    });
+
+    return price;
+  }
+
+  const ticketPrice = payMyTicket(query.cabinClass);
+  const totalPrice = payMyTicket(query.cabinClass) * query.passengerCount;
+
+  const dataForPayment = {
+    orderId: `Traveloka - Flight - ${flightData?.flightNumber} - ${Math.floor(
+      1000 + Math.random() * 9000
+    )}`,
+    grossAmount: totalPrice,
+  };
 
   return (
     <div className="w-full min-h-screen pt-36 pb-5 px-20 bg-blue-950 flex flex-col gap-4 text-white">
@@ -245,7 +235,7 @@ export default function DetailFlight() {
 
       {/* Awal Flex Samping */}
 
-      <div className=" flex justify-between items-center gap-4v w-full h-full gap-4">
+      <div className="flex justify-between items-start w-full h-full gap-4">
         {/* Awal Kiri Card Detail */}
 
         <div className="w-2/3 h-fit flex flex-col gap-2 items-start">
@@ -336,7 +326,7 @@ export default function DetailFlight() {
           {/* Akhir Card Detail Flight */}
 
           {/* Awal Inflight Facilities */}
-          <div className="bg-black/70 w-full h-fit p-5 rounded-xl shadow-lg flex flex-col gap-2 ">
+          <div className="bg-black/70 w-full h-fit p-5 rounded-xl shadow-lg flex flex-col gap-5 ">
             <div className="text-lg font-semibold">In-Flight Facilities</div>
             {listFacilities.length > 0 ? (
               <div className="flex  flex-wrap  gap-2 ">
@@ -356,13 +346,89 @@ export default function DetailFlight() {
           {/* Akhir Inflight Facilites */}
 
           {/* Awal Baggage & Policies */}
-          <div className="bg-orange-700">Baggage & Policies</div>
+          <div className="bg-black/70 w-full h-fit p-5 rounded-xl shadow-lg flex flex-col gap-5">
+            <div className="text-lg font-semibold">Baggage & Policies</div>
+            <div className="flex flex-col gap-4 ">
+              {/* Awal Baggage Allowance */}
+              <div className="flex flex-col gap-2 ">
+                <div className=" flex items-center justify-start gap-2">
+                  <LuLuggage className="text-2xl" />
+                  <div>Baggage Allowance</div>
+                </div>
+                <div className=" flex justify-start items-center gap-5 text-sm">
+                  <div className="flex flex-col gap-1 ">
+                    <div>Cabin Baggage</div>
+                    <div className="text-slate-500">
+                      {listBaggage.cabinBaggage}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-1 ">
+                    <div>Checked Baggage</div>
+                    <div className="text-slate-500">
+                      {listBaggage.checkedBaggage}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-1 ">
+                    <div>Excess Baggage</div>
+                    <div className="text-slate-500">Rp, 50.000/kg</div>
+                  </div>
+                </div>
+              </div>
+              {/* Akhir Baggage Allowance */}
+              <div className="border-[0.1px] border-slate-800"></div>
+              {/* Awal Booking Policies */}
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-start items-center gap-2">
+                  <LuShieldCheck className="text-2xl" />
+                  <div>Booking Policies</div>
+                </div>
+                <div className="text-sm flex flex-col gap-2">
+                  <div className="flex flex-col gap-1">
+                    <div>Cancellation</div>
+                    <div className="text-slate-500">
+                      Free cancellation up to 24 hours before departure
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <div>Changes</div>
+                    <div className="text-slate-500">
+                      Changes allowed with fee starting from Rp 150,000
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* Akhir Booking Policies */}
+            </div>
+          </div>
           {/* Akhir Baggage & Policies */}
         </div>
         {/* Akhir Kiri Card Detail */}
 
         {/* Awal Kanan Pay Ticket */}
-        <div className="bg-blue-500 w-1/3 h-full">Pay Ticket</div>
+        <div className="bg-black/70 w-1/3 h-full rounded-xl p-5 flex flex-col gap-2 items-start justify-between shadow-lg ">
+          <div className="text-lg font-semibold ">Pay Your Ticket</div>
+          <div className="bg-blue-950 w-full h-fit p-2 rounded-lg flex flex-col gap-2">
+            <div className="flex justify-between items-start ">
+              <div className="flex flex-col ">
+                <div className="text-lg font-semibold">{query.cabinClass}</div>
+                <div className="text-slate-400 text-sm">
+                  {listFacilities.join(", ")}
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <div className="font-bold text-2xl flex items-center">
+                  {formatRupiah(totalPrice)}
+                </div>
+                <div className="text-sm text-slate-400 flex justify-end">
+                  {formatRupiah(ticketPrice)}/pax
+                </div>
+              </div>
+            </div>
+            {/* Awal Component Pay Button */}
+            <PaymentButton data={dataForPayment} />
+            {/* Akhir Component Pay Button */}
+          </div>
+        </div>
         {/* Akhir Kanan Pay Ticket */}
       </div>
 

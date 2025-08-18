@@ -39,16 +39,6 @@ export default function CardResultSearchFlight({ data, key, query }: Props) {
     return maxBaggage;
   }
 
-  function getFacilities(cabinClass: string) {
-    let facilities: string[] = [];
-    data.cabinClasses.forEach((cabin) => {
-      if (cabin.class === cabinClass && cabin.facilities) {
-        facilities = [...facilities, ...cabin.facilities];
-      }
-    });
-    return facilities.length > 0 ? facilities.join(", ") : "No facilities";
-  }
-
   function price(cabinClass: string) {
     let price = 0;
     data.cabinClasses.forEach((cabin) => {
@@ -84,10 +74,7 @@ export default function CardResultSearchFlight({ data, key, query }: Props) {
   let transit = data.stops && data.stops.length > 0 ? "Transit" : "Direct";
   let howManyStops = data.stops ? data.stops.length : 0;
 
-  const dataForPayment = {
-    orderId: `Traveloka - Flight - ${Math.floor(1000 + Math.random() * 9000)}`,
-    grossAmount: price(query.cabinClass),
-  };
+  
 
   const flightData = encodeURIComponent(JSON.stringify(data));
   const fligjtDataDecoded = decodeURIComponent(flightData);

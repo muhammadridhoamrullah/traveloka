@@ -109,7 +109,7 @@ export default function PaymentButton({ data }: Props) {
       <button
         onClick={handlePayment}
         disabled={!isSnapReady}
-        className="bg-blue-950 rounded-md px-4 py-2 text-sm font-semibold hover:bg-blue-700 cursor-pointer"
+        className="bg-[#0194F3] rounded-md px-4 py-2 text-sm font-semibold hover:bg-blue-700 cursor-pointer"
       >
         {isSnapReady ? "Pay" : "Loading Payment Gateway ..."}
       </button>
