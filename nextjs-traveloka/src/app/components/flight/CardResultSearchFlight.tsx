@@ -5,7 +5,7 @@ import { LuLuggage } from "react-icons/lu";
 import Image from "next/image";
 
 import Link from "next/link";
-import PaymentButton from "./PaymentButton";
+import PaymentButton from "../PaymentButton";
 import {
   formatDuration,
   formatRupiah,
@@ -73,8 +73,6 @@ export default function CardResultSearchFlight({ data, key, query }: Props) {
 
   let transit = data.stops && data.stops.length > 0 ? "Transit" : "Direct";
   let howManyStops = data.stops ? data.stops.length : 0;
-
-  
 
   const flightData = encodeURIComponent(JSON.stringify(data));
   const fligjtDataDecoded = decodeURIComponent(flightData);

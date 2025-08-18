@@ -37,7 +37,7 @@ import { FaBed } from "react-icons/fa";
 import { IoMdHelpCircleOutline } from "react-icons/io";
 import { LuLuggage } from "react-icons/lu";
 import { LuShieldCheck } from "react-icons/lu";
-import PaymentButton from "@/app/components/flight/PaymentButton";
+import PaymentButton from "@/app/components/PaymentButton";
 
 export default function DetailFlight() {
   const params = useParams();
@@ -210,9 +210,10 @@ export default function DetailFlight() {
 
   const ticketPrice = payMyTicket(query.cabinClass);
   const totalPrice = payMyTicket(query.cabinClass) * query.passengerCount;
+  const datePayTicket = new Date().toISOString().slice(0, 10).replace(/-/g, "");
 
   const dataForPayment = {
-    orderId: `Traveloka - Flight - ${flightData?.flightNumber} - ${Math.floor(
+    orderId: `TVLKFLT${flightData?.flightNumber}${datePayTicket}${Math.floor(
       1000 + Math.random() * 9000
     )}`,
     grossAmount: totalPrice,

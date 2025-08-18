@@ -1,4 +1,6 @@
+import { createPayment } from "@/db/model/payment";
 import midtransClient from "midtrans-client";
+import { ObjectId } from "mongodb";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -10,30 +12,42 @@ let snap = new midtransClient.Snap({
 export async function POST(request: NextRequest) {
   try {
     const { orderId, grossAmount } = await request.json();
-    console.log(orderId, grossAmount, "ini gros");
 
     const headerList = headers();
-    // // const UserId = (await headerList).get("UserId");
+    const UserId = (await headerList).get("UserId");
     const first_name = (await headerList).get("firstName");
     const last_name = (await headerList).get("lastName");
     const email = (await headerList).get("email");
     const phone = (await headerList).get("phone");
-    console.log("Header first_name:", first_name);
-    console.log("Header last_name:", last_name);
-    console.log("Header email:", email);
-    console.log("Header phone:", phone);
-
-    if (!orderId || !grossAmount) {
+    if (!UserId) {
       return NextResponse.json(
         {
-          message:
-            "Missing required fields: orderId, grossAmount, customerDetails",
+          message: "UserId is required",
         },
         {
           status: 400,
         }
       );
     }
+
+    if (!orderId || !grossAmount) {
+      return NextResponse.json(
+        {
+          message: "Missing required fields: orderId, grossAmount",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    const inputPayment = {
+      orderId,
+      UserId,
+      grossAmount,
+    };
+
+    const creatingPayment = await createPayment(inputPayment);
 
     let parameter = {
       transaction_details: {
@@ -52,7 +66,6 @@ export async function POST(request: NextRequest) {
     };
 
     const transaction = await snap.createTransaction(parameter);
-    console.log("Transaction created:", transaction);
 
     return NextResponse.json(
       {

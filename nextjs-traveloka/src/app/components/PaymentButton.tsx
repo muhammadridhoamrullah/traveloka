@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 declare global {
   interface Window {
@@ -27,7 +28,6 @@ interface Props {
 }
 
 export default function PaymentButton({ data }: Props) {
-  console.log("Payment Data:", data);
   const navigate = useRouter();
 
   const [isSnapReady, setIsSnapReady] = useState(false);
@@ -75,19 +75,40 @@ export default function PaymentButton({ data }: Props) {
         );
       }
       const result = await response.json();
-      console.log("result:", result);
-      //   Pakai window.snap untuk memulai pembayaran
 
       window.snap.pay(result.token, {
-        onSuccess: (result) => {
-          console.log("✅ Success:", result);
-          alert("Payment Successful!");
+        onSuccess: async (result) => {
+          await fetch(`${api_url}/api/payment/updateStatus`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              orderId: result.order_id,
+              grossAmount: result.gross_amount,
+              transactionStatus: result.transaction_status,
+              paymentType: result.payment_type,
+              transactionTime: result.transaction_time,
+              fraudStatus: result.fraud_status,
+              transactionId: result.transaction_id,
+            }),
+          });
+
+          Swal.fire({
+            title: "Payment Successful",
+            text: `Order ID: ${result.order_id}`,
+            icon: "success",
+            timer: 3000,
+            showConfirmButton: false,
+          }).then(() => {
+            navigate.push(`/profile/payment/${result.order_id}`);
+          });
         },
-        onPending: (result) => {
-          console.log("⏳ Pending:", result);
+        onPending: async (result) => {
+          console.log("⏳ Pending yuhu:", result);
           alert("Payment Pending!");
         },
-        onError: (result) => {
+        onError: async (result) => {
           console.log("❌ Error:", result);
           alert("Payment Error: " + JSON.stringify(result));
         },
