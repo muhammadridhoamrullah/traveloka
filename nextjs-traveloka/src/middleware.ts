@@ -79,6 +79,7 @@ export const config = {
     // untuk page
     "/home/:path*",
     "/flight/:path*",
+    "/profile/:path*",
 
     // untuk API route
     "/api/flights/:path*",
