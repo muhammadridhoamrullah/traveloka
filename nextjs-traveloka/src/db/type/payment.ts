@@ -1,3 +1,10 @@
+interface ServiceDetails {
+  flightId: string;
+  flightNumber: string;
+  passengerCount: number;
+  cabinClass: string;
+}
+
 export interface PaymentLengkap {
   _id: string;
   orderId: string;
@@ -32,6 +39,8 @@ export interface Payment {
   transactionTime: Date;
   fraudStatus: string;
   transactionId: string;
+  serviceType: string;
+  serviceDetails: ServiceDetails;
 }
 
 // CC

@@ -24,6 +24,13 @@ interface Props {
   data: {
     orderId: string;
     grossAmount: number;
+    serviceType: string;
+    serviceDetails: {
+      flightId: string;
+      flightNumber: string;
+      passengerCount: number;
+      cabinClass: string;
+    };
   };
 }
 
@@ -64,6 +71,8 @@ export default function PaymentButton({ data }: Props) {
           body: JSON.stringify({
             orderId: data.orderId,
             grossAmount: data.grossAmount,
+            serviceType: data.serviceType,
+            serviceDetails: data.serviceDetails,
           }),
         }
       );
@@ -91,6 +100,7 @@ export default function PaymentButton({ data }: Props) {
               transactionTime: result.transaction_time,
               fraudStatus: result.fraud_status,
               transactionId: result.transaction_id,
+              dataBody: data,
             }),
           });
 

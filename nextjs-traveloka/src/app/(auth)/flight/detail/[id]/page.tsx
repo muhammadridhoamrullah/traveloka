@@ -217,6 +217,13 @@ export default function DetailFlight() {
       1000 + Math.random() * 9000
     )}`,
     grossAmount: totalPrice,
+    serviceType: "flight",
+    serviceDetails: {
+      flightId: flightData?._id,
+      flightNumber: flightData?.flightNumber,
+      passengerCount: query.passengerCount,
+      cabinClass: query.cabinClass,
+    },
   };
 
   return (

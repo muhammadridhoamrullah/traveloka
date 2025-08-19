@@ -13,6 +13,7 @@ export async function POST(request: NextRequest) {
       transactionTime,
       fraudStatus,
       transactionId,
+      dataBody,
     } = await request.json();
 
     if (
@@ -22,12 +23,13 @@ export async function POST(request: NextRequest) {
       !paymentType ||
       !transactionTime ||
       !transactionId ||
-      !fraudStatus
+      !fraudStatus ||
+      !dataBody
     ) {
       return NextResponse.json(
         {
           message:
-            "Missing required fields: orderId, transactionStatus, grossAmount, paymentType, transactionTime, fraudStatus, transactionId",
+            "Missing required fields: orderId, transactionStatus, grossAmount, paymentType, transactionTime, fraudStatus, transactionId, dataBody",
         },
         {
           status: 400,
@@ -58,6 +60,8 @@ export async function POST(request: NextRequest) {
       transactionTime,
       fraudStatus,
       transactionId,
+      serviceType: dataBody.serviceType,
+      serviceDetails: dataBody.serviceDetails,
     };
 
     const creatingPayment = await updatePaymentStatus(payment);
