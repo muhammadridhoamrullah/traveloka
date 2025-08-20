@@ -12,7 +12,7 @@ import { MdMailOutline } from "react-icons/md";
 import { FaRegCalendarPlus } from "react-icons/fa6";
 import { RiCustomerService2Line } from "react-icons/ri";
 
-export default function MyPaymentById() {
+export default function SuccessPayment() {
   const params = useParams();
 
   const paymentId = params.id;
