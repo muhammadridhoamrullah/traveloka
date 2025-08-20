@@ -333,6 +333,36 @@ export default function DetailFlight() {
           </div>
           {/* Akhir Card Detail Flight */}
 
+          {/* Awal Contact Details */}
+          <div className="bg-black/70 w-full h-fit p-5 rounded-xl shadow-lg flex flex-col justify-center items-start gap-5">
+            {/* Awal Judul Contact Details */}
+            <div className="text-lg font-semibold">Contact Details</div>
+            {/* Akhir Judul Contact Details */}
+            {/* Awal Data Contact Details */}
+            <div>
+              <div>Nama</div>
+              <div>Email</div>
+              <div>Nama</div>
+              <div>Nama</div>
+            </div>
+            {/* Akhir Data Contact Details */}
+          </div>
+          {/* Akhir Contact Details */}
+
+          {/* Awal Passengers Details */}
+          <div className="bg-black/70 w-full h-fit p-5 rounded-xl shadow-lg flex flex-col justify-center items-start gap-5">
+            {/* Awal Passengers Details */}
+            <div className="text-lg font-semibold">Passengers Details</div>
+            {/* Akhir Passengers Details */}
+            <div>
+              <div>Nama</div>
+              <div>Email</div>
+              <div>Nama</div>
+              <div>Nama</div>
+            </div>
+          </div>
+          {/* Akhir Passengers Details */}
+
           {/* Awal Inflight Facilities */}
           <div className="bg-black/70 w-full h-fit p-5 rounded-xl shadow-lg flex flex-col gap-5 ">
             <div className="text-lg font-semibold">In-Flight Facilities</div>
@@ -444,6 +474,34 @@ export default function DetailFlight() {
     </div>
   );
 }
+
+//  const bookingData = {
+//     bookingId: "TRV-2024-001234",
+//     paymentId: "PAY-789456123",
+//     totalAmount: "Rp 2.850.000",
+//     paymentMethod: "Credit Card",
+//     flight: {
+//       airline: "Garuda Indonesia",
+//       flightNumber: "GA 152",
+//       route: "Jakarta (CGK) → Bali (DPS)",
+//       departure: {
+//         time: "08:30",
+//         date: "15 Mar 2024",
+//         airport: "Soekarno-Hatta International Airport",
+//       },
+//       arrival: {
+//         time: "11:45",
+//         date: "15 Mar 2024",
+//         airport: "Ngurah Rai International Airport",
+//       },
+//       duration: "2h 15m",
+//       class: "Economy",
+//     },
+//     passengers: [
+//       { name: "John Doe", type: "Adult" },
+//       { name: "Jane Doe", type: "Adult" },
+//     ],
+//   }
 
 // Flight Info di detail: {
 //   _id: '689ae7fa816e5cc195291ed9',
