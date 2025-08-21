@@ -11,8 +11,14 @@ let snap = new midtransClient.Snap({
 
 export async function POST(request: NextRequest) {
   try {
-    const { orderId, grossAmount, serviceType, serviceDetails } =
-      await request.json();
+    const {
+      orderId,
+      grossAmount,
+      serviceType,
+      serviceDetails,
+      contactDetails,
+      passengerDetails,
+    } = await request.json();
 
     const headerList = headers();
     const UserId = (await headerList).get("UserId");
@@ -48,6 +54,8 @@ export async function POST(request: NextRequest) {
       grossAmount,
       serviceType,
       serviceDetails,
+      contactDetails,
+      passengerDetails,
     };
 
     const creatingPayment = await createPayment(inputPayment);

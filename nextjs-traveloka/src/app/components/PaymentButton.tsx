@@ -20,6 +20,17 @@ declare global {
   }
 }
 
+// grossAmount: totalPrice,
+//     serviceType: "flight",
+//     serviceDetails: {
+//       flightId: flightData?._id,
+//       flightNumber: flightData?.flightNumber,
+//       passengerCount: query.passengerCount,
+//       cabinClass: query.cabinClass,
+//     },
+//     contactDetails: contactDetails,
+//     passengerDetails: passengerDetails,
+
 interface Props {
   data: {
     orderId: string;
@@ -31,6 +42,19 @@ interface Props {
       passengerCount: number;
       cabinClass: string;
     };
+    contactDetails: {
+      contactDetailFirstName: string;
+      contactDetailLastName: string;
+      contactDetailMobileNumber: string;
+      contactDetailEmail: string;
+    };
+    passengerDetails: {
+      passengerDetailTitle: string;
+      passengerDetailFirstName: string;
+      passengerDetailLastName: string;
+      passengerDetailDateOfBirth: string;
+      passengerDetailNationality: string;
+    }[];
   };
 }
 
@@ -73,6 +97,8 @@ export default function PaymentButton({ data }: Props) {
             grossAmount: data.grossAmount,
             serviceType: data.serviceType,
             serviceDetails: data.serviceDetails,
+            contactDetails: data.contactDetails,
+            passengerDetails: data.passengerDetails,
           }),
         }
       );
@@ -113,7 +139,7 @@ export default function PaymentButton({ data }: Props) {
             timer: 3000,
             showConfirmButton: false,
           }).then(() => {
-            navigate.push(`/profile/payment/${result.order_id}`);
+            navigate.push(`/profile/payment/success/${result.order_id}`);
           });
         },
         onPending: async (result) => {

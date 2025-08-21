@@ -5,6 +5,21 @@ interface ServiceDetails {
   cabinClass: string;
 }
 
+interface ContactDetails {
+  contactDetailFirstName: string;
+  contactDetailLastName: string;
+  contactDetailMobileNumber: string;
+  contactDetailEmail: string;
+}
+
+interface PassengerDetails {
+  passengerDetailTitle: string;
+  passengerDetailFirstName: string;
+  passengerDetailLastName: string;
+  passengerDetailDateOfBirth: Date;
+  passengerDetailNationality: string;
+}
+
 export interface PaymentLengkap {
   _id: string;
   orderId: string;
@@ -41,6 +56,8 @@ export interface Payment {
   transactionId: string;
   serviceType: string;
   serviceDetails: ServiceDetails;
+  contactDetails: ContactDetails;
+  passengerDetails: PassengerDetails[];
 }
 
 // CC

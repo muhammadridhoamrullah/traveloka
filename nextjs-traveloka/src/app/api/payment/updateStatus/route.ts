@@ -62,6 +62,16 @@ export async function POST(request: NextRequest) {
       transactionId,
       serviceType: dataBody.serviceType,
       serviceDetails: dataBody.serviceDetails,
+      contactDetails: dataBody.contactDetails,
+      passengerDetails: dataBody.passengerDetails.map((passenger: any) => ({
+        passengerDetailTitle: passenger.passengerDetailTitle,
+        passengerDetailFirstName: passenger.passengerDetailFirstName,
+        passengerDetailLastName: passenger.passengerDetailLastName,
+        passengerDetailDateOfBirth: new Date(
+          passenger.passengerDetailDateOfBirth
+        ),
+        passengerDetailNationality: passenger.passengerDetailNationality,
+      })),
     };
 
     const creatingPayment = await updatePaymentStatus(payment);

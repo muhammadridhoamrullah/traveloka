@@ -38,6 +38,7 @@ import { IoMdHelpCircleOutline } from "react-icons/io";
 import { LuLuggage } from "react-icons/lu";
 import { LuShieldCheck } from "react-icons/lu";
 import PaymentButton from "@/app/components/PaymentButton";
+import CardPassengerDetail from "@/app/components/flight/detail/CardPassengerDetail";
 
 export default function DetailFlight() {
   const params = useParams();
@@ -51,13 +52,36 @@ export default function DetailFlight() {
   });
   console.log("Flight Data:", flightData);
 
-  // state untuk passenger details
+  // state untuk contact details
   const [contactDetails, setContactDetails] = useState({
     contactDetailFirstName: "",
     contactDetailLastName: "",
     contactDetailMobileNumber: "",
     contactDetailEmail: "",
   });
+
+  // change handler untuk contact details
+  function changeHandlerContactDetails(
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) {
+    const { name, value } = e.target;
+
+    setContactDetails({
+      ...contactDetails,
+      [name]: value,
+    });
+  }
+
+  // state untuk passenger details
+  const [passengerDetails, setPassengersDetails] = useState(
+    Array.from({ length: query.passengerCount }, () => ({
+      passengerDetailTitle: "Mr.",
+      passengerDetailFirstName: "",
+      passengerDetailLastName: "",
+      passengerDetailDateOfBirth: "",
+      passengerDetailNationality: "Indonesia",
+    }))
+  );
 
   const [loading, setLoading] = useState(true);
 
@@ -113,6 +137,18 @@ export default function DetailFlight() {
   useEffect(() => {
     getFlightDataFromSession();
   }, [params.id]);
+
+  useEffect(() => {
+    setPassengersDetails(
+      Array.from({ length: query.passengerCount }, () => ({
+        passengerDetailTitle: "Mr.",
+        passengerDetailFirstName: "",
+        passengerDetailLastName: "",
+        passengerDetailDateOfBirth: "",
+        passengerDetailNationality: "Indonesia",
+      }))
+    );
+  }, [query.passengerCount]);
 
   // if (loading) {
   //   return (
@@ -232,7 +268,29 @@ export default function DetailFlight() {
       passengerCount: query.passengerCount,
       cabinClass: query.cabinClass,
     },
+    contactDetails: contactDetails,
+    passengerDetails: passengerDetails,
   };
+  console.log("Data for payment:", dataForPayment);
+
+  const passengerCount = query.passengerCount;
+
+  const passengerArray = Array.from(
+    { length: passengerCount },
+    (_, index) => index + 1
+  );
+
+  function isFormValid() {
+    const contactComplete = Object.values(contactDetails).every(
+      (value) => value.trim() !== ""
+    );
+
+    const passengersComplete = passengerDetails.every((passenger) =>
+      Object.values(passenger).every((value) => value.trim() !== "")
+    );
+
+    return contactComplete && passengersComplete;
+  }
 
   return (
     <div className="w-full min-h-screen pt-36 pb-5 px-20 bg-blue-950 flex flex-col gap-4 text-white">
@@ -360,6 +418,8 @@ export default function DetailFlight() {
                     name="contactDetailFirstName"
                     id="contactDetailFirstName"
                     className="w-full bg-transparent rounded-md p-2 text-sm border border-slate-500 focus:outline-none focus:border-blue-500"
+                    onChange={changeHandlerContactDetails}
+                    value={contactDetails.contactDetailFirstName}
                   />
                   <div className="text-xs text-slate-400">
                     (without title and punctuation)
@@ -376,6 +436,8 @@ export default function DetailFlight() {
                     name="contactDetailLastName"
                     id="contactDetailLastName"
                     className="w-full bg-transparent rounded-md p-2 text-sm border border-slate-500 focus:outline-none focus:border-blue-500"
+                    onChange={changeHandlerContactDetails}
+                    value={contactDetails.contactDetailLastName}
                   />
                   <div className="text-xs text-slate-400">
                     (without title and punctuation)
@@ -401,6 +463,8 @@ export default function DetailFlight() {
                         ""
                       );
                     }}
+                    onChange={changeHandlerContactDetails}
+                    value={contactDetails.contactDetailMobileNumber}
                   />
                   <div className="text-xs text-slate-400">
                     e.g. 085363508680
@@ -415,6 +479,8 @@ export default function DetailFlight() {
                     name="contactDetailEmail"
                     id="contactDetailEmail"
                     className="w-full bg-transparent rounded-md p-2 text-sm border border-slate-500 focus:outline-none focus:border-blue-500"
+                    onChange={changeHandlerContactDetails}
+                    value={contactDetails.contactDetailEmail}
                   />
                   <div className="text-xs text-slate-400">
                     e.g. ridhoamrullah99@gmail.com
@@ -432,14 +498,26 @@ export default function DetailFlight() {
           <div className="bg-black/70 w-full h-fit p-5 rounded-xl shadow-lg flex flex-col justify-center items-start gap-5">
             {/* Awal Passengers Details */}
             <div className="text-lg font-semibold">Passengers Details</div>
+            <div>
+              Please pay attention to the following: Enter your name exactly as
+              in your ID card. Incorrect spelling and wrong ordered names may
+              result in denied boarding or name change fees.
+            </div>
             {/* Akhir Passengers Details */}
             {/* Awal Mapping Data Passengers Detail */}
-            <div className="">
-              <div>Nama</div>
-              <div>Email</div>
-              <div>Nama</div>
-              <div>Nama</div>
-            </div>
+            {passengerArray.map((passenger, index) => (
+              <CardPassengerDetail
+                key={index}
+                data={passenger}
+                passengerData={passengerDetails[index]}
+                onUpdatePassenger={(updatedData) => {
+                  const newPasseneger = [...passengerDetails];
+                  newPasseneger[index] = updatedData;
+                  setPassengersDetails(newPasseneger);
+                }}
+              />
+            ))}
+
             {/* Awal Mapping Data Passengers Detail */}
           </div>
           {/* Akhir Passengers Details */}

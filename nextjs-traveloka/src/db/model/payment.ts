@@ -5,7 +5,13 @@ import { fr, tr } from "zod/locales";
 
 type InputPayment = Pick<
   Payment,
-  "orderId" | "UserId" | "grossAmount" | "serviceType" | "serviceDetails"
+  | "orderId"
+  | "UserId"
+  | "grossAmount"
+  | "serviceType"
+  | "serviceDetails"
+  | "contactDetails"
+  | "passengerDetails"
 >;
 
 type InputUpdatePayment = Omit<
@@ -33,6 +39,15 @@ export async function createPayment(input: InputPayment) {
       passengerCount: Number(input.serviceDetails.passengerCount),
       cabinClass: input.serviceDetails.cabinClass,
     },
+    passengerDetails: input.passengerDetails.map((passenger) => ({
+      passengerDetailTitle: passenger.passengerDetailTitle,
+      passengerDetailFirstName: passenger.passengerDetailFirstName,
+      passengerDetailLastName: passenger.passengerDetailLastName,
+      passengerDetailDateOfBirth: new Date(
+        passenger.passengerDetailDateOfBirth
+      ),
+      passengerDetailNationality: passenger.passengerDetailNationality,
+    })),
     UserId: new ObjectId(input.UserId),
     grossAmount: Number(input.grossAmount),
     transactionStatus: "pending",
@@ -68,6 +83,7 @@ export async function updatePaymentStatus(input: InputUpdatePayment) {
     fraudStatus: input.fraudStatus,
     transactionId: input.transactionId,
     transactionTime: new Date(input.transactionTime),
+    
     updatedAt: new Date(),
   };
 
