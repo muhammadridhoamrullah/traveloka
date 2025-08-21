@@ -87,6 +87,8 @@ export default function PaymentButton({ data }: Props) {
 
       window.snap.pay(result.token, {
         onSuccess: async (result) => {
+          console.log("✅ Payment Success:", result);
+
           await fetch(`${api_url}/api/payment/updateStatus`, {
             method: "POST",
             headers: {

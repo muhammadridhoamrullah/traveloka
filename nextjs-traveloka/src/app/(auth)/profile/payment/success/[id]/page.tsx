@@ -11,11 +11,62 @@ import { FiDownload } from "react-icons/fi";
 import { MdMailOutline } from "react-icons/md";
 import { FaRegCalendarPlus } from "react-icons/fa6";
 import { RiCustomerService2Line } from "react-icons/ri";
+import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 export default function SuccessPayment() {
   const params = useParams();
-
+  const apiUrl = process.env.NEXT_PUBLIC_CLIENT_URL;
   const paymentId = params.id;
+  const [dataPayment, setDataPayment] = useState(null);
+  console.log("Data Payment:", dataPayment);
+
+  // fetch data payment by ID
+  async function fetchPaymentByOrderId() {
+    try {
+      const response = await fetch(`${apiUrl}/api/payment/${paymentId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to fetch payment data");
+      }
+
+      setDataPayment(result.findPaymentById);
+    } catch (error) {
+      if (error instanceof Error) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: error.message,
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "An unexpected error occurred",
+        });
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (paymentId) {
+      fetchPaymentByOrderId();
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Payment ID is required",
+      });
+    }
+  }, [paymentId]);
+
   return (
     <div className="bg-blue-950 w-full min-h-screen pt-36 px-20 pb-5 flex flex-col justify-start items-center text-white gap-6">
       {/* Awal Payment Successful */}
@@ -187,3 +238,90 @@ export default function SuccessPayment() {
     </div>
   );
 }
+
+// {
+//     "_id": "68a426fe0e2b085c7b6a5f64",
+//     "orderId": "TVLKFLTJT684202508199595",
+//     "UserId": "6878ad465f1297aa559b872f",
+//     "grossAmount": 3400000,
+//     "serviceType": "flight",
+//     "serviceDetails": {
+//         "flightId": "689ae7fa816e5cc195291ed9",
+//         "flightNumber": "JT684",
+//         "passengerCount": 4,
+//         "cabinClass": "Economy"
+//     },
+//     "transactionStatus": "capture",
+//     "createdAt": "2025-08-19T07:25:50.466Z",
+//     "updatedAt": "2025-08-19T07:26:19.090Z",
+//     "fraudStatus": "accept",
+//     "paymentType": "credit_card",
+//     "transactionId": "072ae76a-d9ed-48d7-9b14-6b2e09534538",
+//     "transactionTime": "2025-08-19T07:26:10.000Z",
+//     "flightData": {
+//         "_id": "689ae7fa816e5cc195291ed9",
+//         "flightNumber": "JT684",
+//         "airline": "Lion Air",
+//         "aircraft": "Boeing 737-900ER",
+//         "totalSeats": 211,
+//         "departure": {
+//             "airportCode": "CGK",
+//             "airportName": "Soekarno-Hatta International Airport",
+//             "city": "Jakarta",
+//             "country": "Indonesia",
+//             "terminal": "1C",
+//             "gate": "C2",
+//             "time": "2025-09-15T13:10:00.000Z",
+//             "timezone": "Asia/Jakarta"
+//         },
+//         "arrival": {
+//             "airportCode": "PNK",
+//             "airportName": "Supadio Airport",
+//             "city": "Pontianak",
+//             "country": "Indonesia",
+//             "terminal": "Domestic",
+//             "gate": "1",
+//             "time": "2025-09-15T14:55:00.000Z",
+//             "timezone": "Asia/Jakarta"
+//         },
+//         "duration": 105,
+//         "cabinClasses": [
+//             {
+//                 "class": "Economy",
+//                 "price": 850000,
+//                 "seatsAvailable": 211,
+//                 "facilities": [
+//                     "Snack",
+//                     "Drink"
+//                 ],
+//                 "baggage": {
+//                     "checked": "20kg",
+//                     "cabin": "7kg"
+//                 }
+//             }
+//         ],
+//         "stops": [],
+//         "deletedAt": null,
+//         "UserId": "68888276782e842cd0e3e915"
+//     }
+// }
+
+// {/* Conditional rendering dengan error handling */}
+// {dataPayment ? (
+//   dataPayment.serviceDetails?.passengerCount > 0 ? (
+//     <div className="w-full flex flex-col gap-3">
+//       {Array.from(
+//         { length: dataPayment.serviceDetails.passengerCount }, 
+//         (_, index) => index + 1
+//       ).map((passengerNumber) => (
+//         <div key={passengerNumber} className="bg-black/70 w-full p-4 rounded-xl">
+//           {/* Passenger content */}
+//         </div>
+//       ))}
+//     </div>
+//   ) : (
+//     <div className="text-slate-400">No passengers found</div>
+//   )
+// ) : (
+//   <div className="text-slate-400">Loading passenger data...</div>
+// )}

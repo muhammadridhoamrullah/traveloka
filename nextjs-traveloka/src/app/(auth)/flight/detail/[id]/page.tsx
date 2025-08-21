@@ -51,6 +51,14 @@ export default function DetailFlight() {
   });
   console.log("Flight Data:", flightData);
 
+  // state untuk passenger details
+  const [contactDetails, setContactDetails] = useState({
+    contactDetailFirstName: "",
+    contactDetailLastName: "",
+    contactDetailMobileNumber: "",
+    contactDetailEmail: "",
+  });
+
   const [loading, setLoading] = useState(true);
 
   // Generate metdata dynamically
@@ -339,11 +347,82 @@ export default function DetailFlight() {
             <div className="text-lg font-semibold">Contact Details</div>
             {/* Akhir Judul Contact Details */}
             {/* Awal Data Contact Details */}
-            <div>
-              <div>Nama</div>
-              <div>Email</div>
-              <div>Nama</div>
-              <div>Nama</div>
+            <div className=" w-full h-fit flex flex-col gap-6 justify-center items-start">
+              {/* Awal First Name dan Last Name */}
+              <div className="flex justify-between items-center w-full h-fit gap-4">
+                {/* Awal First Name */}
+                <div className=" w-full flex flex-col gap-2 justify-center items-start">
+                  <div className="text-sm text-slate-400">
+                    First / Given Name & Middle Name (if any)*
+                  </div>
+                  <input
+                    type="text"
+                    name="contactDetailFirstName"
+                    id="contactDetailFirstName"
+                    className="w-full bg-transparent rounded-md p-2 text-sm border border-slate-500 focus:outline-none focus:border-blue-500"
+                  />
+                  <div className="text-xs text-slate-400">
+                    (without title and punctuation)
+                  </div>
+                </div>
+                {/* Akhir First Name */}
+                {/* Awal Last Name */}
+                <div className=" w-full flex flex-col gap-2 justify-center items-start">
+                  <div className="text-sm text-slate-400">
+                    Family Name / Last Name*
+                  </div>
+                  <input
+                    type="text"
+                    name="contactDetailLastName"
+                    id="contactDetailLastName"
+                    className="w-full bg-transparent rounded-md p-2 text-sm border border-slate-500 focus:outline-none focus:border-blue-500"
+                  />
+                  <div className="text-xs text-slate-400">
+                    (without title and punctuation)
+                  </div>
+                </div>
+                {/* Akhir Last Name */}
+              </div>
+              {/* Akhir First Name dan Last Name */}
+
+              {/* Awal Mobile Number dan Email */}
+              <div className="flex justify-between items-center w-full h-fit gap-4">
+                {/* Awal Mobile Number */}
+                <div className="w-full flex flex-col gap-2 justify-center items-start">
+                  <div className="text-sm text-slate-400">Mobile Number*</div>
+                  <input
+                    type="text"
+                    name="contactDetailMobileNumber"
+                    id="contactDetailMobileNumber"
+                    className="w-full bg-transparent rounded-md p-2 text-sm border border-slate-500 focus:outline-none focus:border-blue-500"
+                    onInput={(el) => {
+                      el.currentTarget.value = el.currentTarget.value.replace(
+                        /[^0-9]/g,
+                        ""
+                      );
+                    }}
+                  />
+                  <div className="text-xs text-slate-400">
+                    e.g. 085363508680
+                  </div>
+                </div>
+                {/* Akhir Mobile Number */}
+                {/* Awal Email */}
+                <div className="w-full flex flex-col gap-2 justify-center items-start">
+                  <div className="text-sm text-slate-400">Email*</div>
+                  <input
+                    type="email"
+                    name="contactDetailEmail"
+                    id="contactDetailEmail"
+                    className="w-full bg-transparent rounded-md p-2 text-sm border border-slate-500 focus:outline-none focus:border-blue-500"
+                  />
+                  <div className="text-xs text-slate-400">
+                    e.g. ridhoamrullah99@gmail.com
+                  </div>
+                </div>
+                {/* Akhir Email */}
+              </div>
+              {/* Akhir Mobile Number dan Email */}
             </div>
             {/* Akhir Data Contact Details */}
           </div>
@@ -354,12 +433,14 @@ export default function DetailFlight() {
             {/* Awal Passengers Details */}
             <div className="text-lg font-semibold">Passengers Details</div>
             {/* Akhir Passengers Details */}
-            <div>
+            {/* Awal Mapping Data Passengers Detail */}
+            <div className="">
               <div>Nama</div>
               <div>Email</div>
               <div>Nama</div>
               <div>Nama</div>
             </div>
+            {/* Awal Mapping Data Passengers Detail */}
           </div>
           {/* Akhir Passengers Details */}
 

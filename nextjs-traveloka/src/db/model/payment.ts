@@ -136,6 +136,49 @@ export async function updatePaymentStatus(input: InputUpdatePayment) {
   };
 }
 
+export async function getPaymentByOrderId(orderId: string) {
+  const db = await GetDb();
+
+  const agg = [
+    {
+      $match: {
+        orderId,
+      },
+    },
+    {
+      $lookup: {
+        from: "flights",
+        localField: "serviceDetails.flightId",
+        foreignField: "_id",
+        as: "flightData",
+      },
+    },
+    {
+      $unwind: {
+        path: "$flightData",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+  ];
+
+  const findPayment = await db
+    .collection(COLLECTION_NAME)
+    .aggregate(agg)
+    .toArray();
+
+  if (findPayment.length === 0) {
+    throw new Error("Payment not found");
+  }
+
+  const resultFindPayment = findPayment[0];
+
+  if (!resultFindPayment.flightData) {
+    throw new Error("Flight data not found for this payment");
+  }
+
+  return resultFindPayment;
+}
+
 // _id
 // 68a34699b03d090162c184bd
 // orderId
