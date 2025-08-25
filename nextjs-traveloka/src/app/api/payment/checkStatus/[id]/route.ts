@@ -1,3 +1,4 @@
+import { updatePaymentStatus } from "@/db/model/payment";
 import { NextRequest, NextResponse } from "next/server";
 
 interface Props {
@@ -27,6 +28,17 @@ export async function GET(request: NextRequest, { params }: Props) {
       throw new Error(
         result.status_message || "Failed to fetch payment status"
       );
+    }
+
+    // Auto update payment status di database
+    try {
+      await updatePaymentStatus({
+        orderId: result.order_id,
+        completeData: result,
+      });
+    } catch (error) {
+      console.error("Failed to update payment status:", error);
+      // Tidak perlu throw error, karena ini hanya proses update
     }
 
     return NextResponse.json(

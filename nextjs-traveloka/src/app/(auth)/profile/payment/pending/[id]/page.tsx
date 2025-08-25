@@ -15,20 +15,25 @@ import { TiWarningOutline } from "react-icons/ti";
 import Image from "next/image";
 import toast, { Toaster } from "react-hot-toast";
 import { FaRegCalendarPlus, FaRegClock } from "react-icons/fa";
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import {
   formatDate,
   formatDuration,
   formatRupiah,
+  getCountDown,
   getHourAndMinute,
   paymentTypeChanger,
 } from "@/db/utils/helperFunctions";
 import { PassengerDetails } from "@/db/type/payment";
 import CardPassengerDetail from "@/app/components/flight/profile/CardPassengerDetail";
+import Loading from "./loading";
+import CardVaPaymentInstruction from "@/app/components/flight/profile/CardVAPaymentInstruction";
+import { CountdownDisplay } from "@/app/components/flight/profile/CountDown";
 
 export default function PendingPayment() {
+  const navigate = useRouter();
   const params = useParams();
   const [dataPayment, setDataPayment] = useState({} as any);
   console.log("Data Payment di pending:", dataPayment);
@@ -36,7 +41,17 @@ export default function PendingPayment() {
   const [loading, setLoading] = useState(true);
   const apiUrl = process.env.NEXT_PUBLIC_CLIENT_URL;
   const paymentId = params.id;
-  let vaNumber = "8001234567890123";
+
+  // const [countDown, setCountDown] = useState({
+  //   hour: "00",
+  //   minute: "00",
+  //   second: "00",
+  // });
+
+  const expiryTime = useMemo(
+    () => dataPayment?.completeData?.expiry_time,
+    [dataPayment?.completeData?.expiry_time]
+  );
 
   async function fetchPaymentByOrderId() {
     try {
@@ -73,14 +88,39 @@ export default function PendingPayment() {
     }
   }
 
+  // useEffect untuk fetch data payment by orderId
   useEffect(() => {
     fetchPaymentByOrderId();
   }, [paymentId]);
 
-  function handleCopy() {
-    navigator.clipboard.writeText(vaNumber);
-    toast.success("Virtual Account Number copied!");
+  // useEffect untuk countdown
+  // useEffect(() => {
+  //   if (!expiryTime) return; // Jika expiryTime undefined, hentikan eksekusi
+  //   const timer = setInterval(() => {
+  //     const result = getCountDown(dataPayment?.completeData?.expiry_time);
+  //     setCountDown(result);
+  //   }, 1000);
+
+  //   return () => clearInterval(timer);
+  // }, [expiryTime]);
+
+  if (loading) {
+    return <Loading />;
   }
+
+  function renderCardPaymentInstruction() {
+    switch (dataPayment?.completeData?.payment_type) {
+      case "bank_transfer":
+        return <CardVaPaymentInstruction data={dataPayment} />;
+      case "qris":
+        return <div>Ini Qris cuy</div>;
+      case "cstore":
+        return <div>Ini Alfamart/Indomaret cuy</div>;
+      case "echannel":
+        return <div>Ini Mandiri Bill Payment cuy</div>;
+    }
+  }
+
   return (
     <div className="bg-blue-950 w-full min-h-screen pt-36 px-20 pb-5 flex flex-col justify-start items-center text-white gap-6">
       <Toaster position="top-center" reverseOrder={false} />
@@ -92,7 +132,9 @@ export default function PendingPayment() {
           width={100}
           alt="Logo Pending"
         />
-        <div className="font-bold text-3xl">Waiting For Payment</div>
+        <div className="font-bold text-3xl">
+          Waiting For Payment {dataPayment?.completeData?.transaction_status}
+        </div>
         <div className="text-sm text-slate-400">
           Your booking has been created. Please complete the payment before the
           deadline.
@@ -111,28 +153,31 @@ export default function PendingPayment() {
         {/* Awal Sisa Waktu */}
         <div className="w-full h-fit flex flex-col gap-2 justify-center items-start">
           {/* Awal Timer Sisa Waktu */}
-          <div className="flex justify-start items-center gap-3">
-            {/* Awal Hour */}
-            <div className="flex flex-col  justify-center items-center rounded-lg border border-gray-500 p-2">
-              <div className="text-3xl font-bold">01</div>
+          {/* <div className="flex justify-start items-center gap-3"> */}
+          {/* Awal Hour */}
+          {/* <div className="flex flex-col  justify-center items-center rounded-lg border border-gray-500 p-2">
+              <div className="text-3xl font-bold">{countDown.hour}</div>
               <div className="text-sm">Hour</div>
-            </div>
-            {/* Akhir Hour */}
-            <div>:</div>
-            {/* Awal Minutes */}
-            <div className="flex flex-col justify-center items-center rounded-lg border border-gray-500 p-2">
-              <div className="text-3xl font-bold">10</div>
+            </div> */}
+          {/* Akhir Hour */}
+          {/* <div>:</div> */}
+          {/* Awal Minutes */}
+          {/* <div className="flex flex-col justify-center items-center rounded-lg border border-gray-500 p-2">
+              <div className="text-3xl font-bold">{countDown.minute}</div>
               <div className="text-sm">Minutes</div>
-            </div>
-            {/* Akhir Minutes */}
-            <div>:</div>
-            {/* Awal Seconds */}
-            <div className="flex flex-col justify-center items-center rounded-lg border border-gray-500 p-2">
-              <div className="text-3xl font-bold">56</div>
+            </div> */}
+          {/* Akhir Minutes */}
+          {/* <div>:</div> */}
+          {/* Awal Seconds */}
+          {/* <div className="flex flex-col justify-center items-center rounded-lg border border-gray-500 p-2">
+              <div className="text-3xl font-bold">{countDown.second}</div>
               <div className="text-sm">Seconds</div>
-            </div>
-            {/* Akhir Seconds */}
-          </div>
+            </div> */}
+          {/* Akhir Seconds */}
+          {/* </div> */}
+          <CountdownDisplay
+            expiryTime={dataPayment?.completeData?.expiry_time}
+          />
           {/* Akhir Timer Sisa Waktu */}
           {/* Awal Your Booking */}
           <div className="text-sm">
@@ -158,89 +203,10 @@ export default function PendingPayment() {
             </div>
             {/* Akhir Judul Payment Instructions */}
 
-            {/* Awal Bank */}
-            <div className="bg-gray-200 w-full p-4 h-fit text-blue-700 rounded-xl flex flex-col gap-2 justify-center items-start">
-              {/* Awal Nama Bank */}
-              <div className="flex justify-start items-center gap-2 ">
-                <CiBank className="text-3xl" />
-                <div className="flex flex-col gap-1 justify-center items-start text-sm">
-                  <div className="font-bold">BANK BCA</div>
-                  <div className="text-xs">Virtual Account</div>
-                </div>
-              </div>
-              {/* Akhir Nama Bank */}
+            {/* Awal Component Payment Type */}
 
-              {/* Awal Nomor Virtual Account */}
-              <div className="bg-white w-full h-fit p-2 rounded-md flex justify-between items-end">
-                {/* Awal Nomor */}
-                <div className="  h-full flex flex-col gap-2 justify-center items-start">
-                  <div className="text-sm text-blue-500">
-                    Virtual Account Number
-                  </div>
-                  <div className="text-xl font-semibold text-black">
-                    8001234567890123
-                  </div>
-                </div>
-                {/* Akhir Nomor */}
-                {/* Awal Salin */}
-                <div
-                  onClick={handleCopy}
-                  className="  flex justify-end items-center gap-1 text-black border border-slate-800 p-1 rounded-md cursor-pointer hover:bg-gray-200 font-semibold"
-                >
-                  <MdContentCopy className="text-sm" />
-                  <div className="text-xs">Copy</div>
-                </div>
-                {/* Akhir Salin */}
-              </div>
-              {/* Akhir Nomor Virtual Account */}
-            </div>
-
-            {/* Akhir Bank */}
-            {/* Awal How To Pay */}
-            <div className="flex flex-col gap-2 justify-center items-start">
-              <div className="font-semibold">How to Pay</div>
-              <div className="flex justify-start items-center gap-4 text-sm">
-                <div className="bg-slate-500 w-6 h-6 rounded-full flex justify-center items-center">
-                  1
-                </div>
-                <div className="text-slate-300">
-                  Open BCA mobile banking app or internet banking.
-                </div>
-              </div>
-              <div className="flex justify-start items-center gap-4 text-sm">
-                <div className="bg-slate-500 w-6 h-6 rounded-full flex justify-center items-center">
-                  2
-                </div>
-                <div className="text-slate-300">
-                  Select Transfer or Payment menu.
-                </div>
-              </div>
-              <div className="flex justify-start items-center gap-4 text-sm">
-                <div className="bg-slate-500 w-6 h-6 rounded-full flex justify-center items-center">
-                  3
-                </div>
-                <div className="text-slate-300">
-                  Enter Virtual Account number: 8001234567890123
-                </div>
-              </div>
-              <div className="flex justify-start items-center gap-4 text-sm">
-                <div className="bg-slate-500 w-6 h-6 rounded-full flex justify-center items-center">
-                  4
-                </div>
-                <div className="text-slate-300">
-                  Enter payment amount: Rp 2,850,000
-                </div>
-              </div>
-              <div className="flex justify-start items-center gap-4 text-sm">
-                <div className="bg-slate-500 w-6 h-6 rounded-full flex justify-center items-center">
-                  5
-                </div>
-                <div className="text-slate-300">
-                  Confirm and complete the payment.
-                </div>
-              </div>
-            </div>
-            {/* Akhir How To Pay */}
+            {renderCardPaymentInstruction()}
+            {/* Akhir Component Payment Type */}
           </div>
           {/* Akhir Payment instructions */}
 
@@ -346,13 +312,24 @@ export default function PendingPayment() {
               </div>
               <div className="flex flex-col justify-center items-start gap-1">
                 <div className="text-slate-400">Transaction ID</div>
-                <div className="text-lg">{dataPayment?.transactionId}</div>
+                <div className="text-lg">
+                  {dataPayment?.completeData?.transaction_id}
+                </div>
               </div>
               <div className="border-[0.5px] border-slate-800 w-full"></div>
               <div className="flex flex-col justify-center items-start gap-1">
                 <div className="text-slate-400">Payment Method</div>
-                <div className="text-lg">
-                  {paymentTypeChanger(dataPayment?.paymentType)}
+                <div className="text-lg flex justify-start items-center gap-2 ">
+                  <div>
+                    {paymentTypeChanger(
+                      dataPayment?.completeData?.payment_type
+                    )}{" "}
+                  </div>
+                  {dataPayment?.completeData?.va_numbers && (
+                    <div className="uppercase">
+                      {`- VA ${dataPayment?.completeData?.va_numbers[0]?.bank}`}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="flex flex-col justify-center items-start gap-1">
@@ -416,6 +393,114 @@ export default function PendingPayment() {
   );
 }
 
+// BCA PENDING SANGAT TERBARU 25 AGUSTUS 2025 - 20:02
+// {
+//     "_id": "68ac5d526aa39217aa130987",
+//     "orderId": "TVLKFLTGA147202508256118",
+//     "UserId": "6878ad465f1297aa559b872f",
+//     "grossAmount": 2500000,
+//     "serviceType": "flight",
+//     "serviceDetails": {
+//         "flightId": "689ae790816e5cc195291ed7",
+//         "flightNumber": "GA147",
+//         "passengerCount": 2,
+//         "cabinClass": "Economy"
+//     },
+//     "contactDetails": {
+//         "contactDetailFirstName": "Muhammad Ridho",
+//         "contactDetailLastName": "Amrullah",
+//         "contactDetailMobileNumber": "085363534657",
+//         "contactDetailEmail": "ridhoamrullah99@gmail.com"
+//     },
+//     "passengerDetails": [
+//         {
+//             "passengerDetailTitle": "Mr.",
+//             "passengerDetailFirstName": "Muhammad Ridho",
+//             "passengerDetailLastName": "Amrullah",
+//             "passengerDetailDateOfBirth": "1999-10-10T00:00:00.000Z",
+//             "passengerDetailNationality": "Indonesia"
+//         },
+//         {
+//             "passengerDetailTitle": "Mrs.",
+//             "passengerDetailFirstName": "Olivia",
+//             "passengerDetailLastName": "Rodrigo",
+//             "passengerDetailDateOfBirth": "1999-10-11T00:00:00.000Z",
+//             "passengerDetailNationality": "United States"
+//         }
+//     ],
+//     "createdAt": "2025-08-25T12:55:46.827Z",
+//     "updatedAt": "2025-08-25T12:56:08.596Z",
+//     "completeData": {
+//         "status_code": "201",
+//         "transaction_id": "cd3611b0-1ac9-41d3-a564-530d7662f950",
+//         "gross_amount": "2500000.00",
+//         "currency": "IDR",
+//         "order_id": "TVLKFLTGA147202508256118",
+//         "payment_type": "bank_transfer",
+//         "signature_key": "d6d65779a5ddd8414161d3d3f09660cc6e1d84d5e95702762288406a4434b168d7b6455895e76c834fa4848b011378242d0875f219441e92eba4cdcc16a7981e",
+//         "transaction_status": "pending",
+//         "fraud_status": "accept",
+//         "status_message": "Success, transaction is found",
+//         "merchant_id": "G378340427",
+//         "va_numbers": [
+//             {
+//                 "bank": "bca",
+//                 "va_number": "40427803028184533761012"
+//             }
+//         ],
+//         "payment_amounts": [],
+//         "transaction_time": "2025-08-25 19:55:59",
+//         "expiry_time": "2025-08-26 19:55:59"
+//     },
+//     "flightData": {
+//         "_id": "689ae790816e5cc195291ed7",
+//         "flightNumber": "GA147",
+//         "airline": "Garuda Indonesia",
+//         "aircraft": "Boeing 737-800",
+//         "totalSeats": 162,
+//         "departure": {
+//             "airportCode": "PKU",
+//             "airportName": "Sultan Syarif Kasim II International Airport",
+//             "city": "Pekanbaru",
+//             "country": "Indonesia",
+//             "terminal": "A",
+//             "gate": "3",
+//             "time": "2025-09-15T08:30:00.000Z",
+//             "timezone": "Asia/Jakarta"
+//         },
+//         "arrival": {
+//             "airportCode": "CGK",
+//             "airportName": "Soekarno-Hatta International Airport",
+//             "city": "Jakarta",
+//             "country": "Indonesia",
+//             "terminal": "3",
+//             "gate": "E4",
+//             "time": "2025-09-15T10:05:00.000Z",
+//             "timezone": "Asia/Jakarta"
+//         },
+//         "duration": 95,
+//         "cabinClasses": [
+//             {
+//                 "class": "Economy",
+//                 "price": 1250000,
+//                 "seatsAvailable": 162,
+//                 "facilities": [
+//                     "Snack",
+//                     "Drink",
+//                     "In-flight Entertainment"
+//                 ],
+//                 "baggage": {
+//                     "checked": "20kg",
+//                     "cabin": "7kg"
+//                 }
+//             }
+//         ],
+//         "stops": [],
+//         "deletedAt": null,
+//         "UserId": "68888276782e842cd0e3e915"
+//     }
+// }
+
 // BCA Pending
 // {
 //     "status_code": "201",
@@ -437,7 +522,6 @@ export default function PendingPayment() {
 //     "pdf_url": "https://app.sandbox.midtrans.com/snap/v1/transactions/983a7270-9d4b-4968-b982-2185ba6306c6/pdf",
 //     "finish_redirect_url": "http://example.com?order_id=TVLKFLTSJ182202508244552&status_code=201&transaction_status=pending"
 // }
-
 
 // Shopee Pending
 // {
@@ -482,7 +566,6 @@ export default function PendingPayment() {
 //     "pdf_url": "https://app.sandbox.midtrans.com/snap/v1/transactions/7c4ff9aa-aa9c-4899-b280-f1b197778bc6/pdf",
 //     "finish_redirect_url": "http://example.com?order_id=TVLKFLTSJ182202508252707&status_code=201&transaction_status=pending"
 // }
-
 
 // {
 //     "_id": "68a9734adeb1c6c13afa8742",
@@ -561,8 +644,6 @@ export default function PendingPayment() {
 //         "UserId": "68888276782e842cd0e3e915"
 //     }
 // }
-
-
 
 // BCA VIRTUAL PENDING TERBARU
 // {
@@ -664,3 +745,71 @@ export default function PendingPayment() {
 //         "UserId": "68888276782e842cd0e3e915"
 //     }
 // }
+// Awal Payment Remaining
+// {dataPayment?.completeData?.expiry_time && (
+//         <Countdown
+//           date={new Date(dataPayment.completeData.expiry_time)}
+//           renderer={countdownRenderer}
+//           onComplete={() => {
+//             // Handle ketika countdown selesai
+//             console.log("Payment expired!");
+//             // Bisa redirect ke halaman expired atau show modal
+//             Swal.fire({
+//               icon: "warning",
+//               title: "Payment Expired",
+//               text: "Your payment time has expired. Please create a new booking.",
+//             });
+//           }}
+//           precision={1000}
+//           autoStart={true}
+//           controlled={false}
+//         />
+//       )}
+// Tambahkan function untuk custom rendering
+// const countdownRenderer = ({
+//   hours,
+//   minutes,
+//   seconds,
+//   completed,
+// }: {
+//   hours: number;
+//   minutes: number;
+//   seconds: number;
+//   completed: boolean;
+// }) => {
+//   if (completed) {
+//     // Countdown selesai - handle expiry
+//     return <div className="text-red-500 font-bold">Payment Expired!</div>;
+//   } else {
+//     // Render countdown dengan style yang sama seperti existing
+//     return (
+//       <div className="flex justify-start items-center gap-3">
+//         {/* Hour */}
+//         <div className="flex flex-col justify-center items-center rounded-lg border border-gray-500 p-2">
+//           <div className="text-3xl font-bold">
+//             {String(hours).padStart(2, "0")}
+//           </div>
+//           <div className="text-sm">Hour</div>
+//         </div>
+//         <div>:</div>
+
+//         {/* Minutes */}
+//         <div className="flex flex-col justify-center items-center rounded-lg border border-gray-500 p-2">
+//           <div className="text-3xl font-bold">
+//             {String(minutes).padStart(2, "0")}
+//           </div>
+//           <div className="text-sm">Minutes</div>
+//         </div>
+//         <div>:</div>
+
+//         {/* Seconds */}
+//         <div className="flex flex-col justify-center items-center rounded-lg border border-gray-500 p-2">
+//           <div className="text-3xl font-bold">
+//             {String(seconds).padStart(2, "0")}
+//           </div>
+//           <div className="text-sm">Seconds</div>
+//         </div>
+//       </div>
+//     );
+//   }
+// };

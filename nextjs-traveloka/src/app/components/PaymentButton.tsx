@@ -138,32 +138,8 @@ export default function PaymentButton({ data }: Props) {
         onPending: async (result) => {
           console.log("⏳ Payment Pending:", result);
 
-          // check status
-          const checkStatusPayment = await fetch(
-            `${api_url}/api/payment/checkStatus/${result.order_id}`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-
-          const statusResult = await checkStatusPayment.json();
-          console.log("🔍 Checked Status:", statusResult);
-
-          // update status
-
-          await fetch(`${api_url}/api/payment/updateStatus`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              orderId: result.order_id,
-              completeData: statusResult.data,
-            }),
-          });
+          // Cukup 1 API call
+          await fetch(`${api_url}/api/payment/checkStatus/${result.order_id}`);
 
           Swal.fire({
             title: "Payment Pending",

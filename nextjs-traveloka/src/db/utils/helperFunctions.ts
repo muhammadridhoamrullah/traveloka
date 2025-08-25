@@ -155,7 +155,10 @@ export function paymentTypeChanger(paymentType: string) {
   return paymentType;
 }
 
-// function startCountdown(expiryTime, callback) {
+// export function startCountdown(
+//   expiryTime: string,
+//   callback: (timeString: string) => void
+// ) {
 //   const target = new Date(expiryTime).getTime();
 
 //   const interval = setInterval(() => {
@@ -169,18 +172,46 @@ export function paymentTypeChanger(paymentType: string) {
 //     }
 
 //     // Hitung jam, menit, detik
-//     const hours = Math.floor((distance / (1000 * 60 * 60)));
+//     const hours = Math.floor(distance / (1000 * 60 * 60));
 //     const minutes = Math.floor((distance / (1000 * 60)) % 60);
 //     const seconds = Math.floor((distance / 1000) % 60);
 
 //     // Format biar 2 digit
-//     const format = (num) => String(num).padStart(2, "0");
+//     const format = (num: number) => String(num).padStart(2, "0");
 
 //     callback(`${format(hours)}:${format(minutes)}:${format(seconds)}`);
 //   }, 1000);
 // }
 
-// // contoh penggunaan
+// contoh penggunaan
 // startCountdown("2025-08-26 15:22:41", (timeString) => {
 //   console.log(timeString); // otomatis update tiap detik
 // });
+
+export function getCountDown(expiryTime: string): {
+  hour: string;
+  minute: string;
+  second: string;
+} {
+  const target = new Date(expiryTime).getTime();
+  const now = new Date().getTime();
+  const distance = target - now;
+
+  if (distance <= 0) {
+    return { hour: "00", minute: "00", second: "00" }; // waktu habis
+  }
+
+  // Hitung jam, menit, detik
+  const hours = Math.floor(distance / (1000 * 60 * 60));
+  const minutes = Math.floor((distance / (1000 * 60)) % 60);
+  const seconds = Math.floor((distance / 1000) % 60);
+
+  // Format biar 2 digit
+  const format = (num: number) => String(num).padStart(2, "0");
+
+  return {
+    hour: format(hours),
+    minute: format(minutes),
+    second: format(seconds),
+  };
+}
