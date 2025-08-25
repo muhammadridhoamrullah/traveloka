@@ -118,3 +118,69 @@ export function getTimeAndDate(time: Date) {
     date: `${day} - ${month} - ${year}`,
   };
 }
+
+export function getHourAndMinute(data: string) {
+  const date = new Date(data);
+  const hours = date.getUTCHours().toString().padStart(2, "0");
+  const minutes = date.getUTCMinutes().toString().padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
+
+export function getPassengerCategory(dateString: Date) {
+  const birthDate = new Date(dateString);
+  const today = new Date();
+
+  let age = today.getUTCFullYear() - birthDate.getUTCFullYear();
+  const monthDifference = today.getUTCMonth() - birthDate.getUTCMonth();
+
+  if (
+    monthDifference < 0 ||
+    (monthDifference === 0 && today.getUTCDate() < birthDate.getUTCDate())
+  ) {
+    age--;
+  }
+
+  if (age >= 12) return "Adult";
+  if (age >= 2) return "Child";
+  return "Infant";
+}
+
+export function paymentTypeChanger(paymentType: string) {
+  if (paymentType === "credit_card") return "Credit Card";
+  if (paymentType === "gopay") return "GoPay";
+  if (paymentType === "shopeepay") return "ShopeePay";
+  if (paymentType === "bank_transfer") return "Bank Transfer";
+  if (paymentType === "qris") return "QRIS";
+  if (paymentType === "cstore") return "Convenience Store (Alfamart/Indomaret)";
+  return paymentType;
+}
+
+// function startCountdown(expiryTime, callback) {
+//   const target = new Date(expiryTime).getTime();
+
+//   const interval = setInterval(() => {
+//     const now = new Date().getTime();
+//     const distance = target - now;
+
+//     if (distance <= 0) {
+//       clearInterval(interval);
+//       callback("00:00:00"); // waktu habis
+//       return;
+//     }
+
+//     // Hitung jam, menit, detik
+//     const hours = Math.floor((distance / (1000 * 60 * 60)));
+//     const minutes = Math.floor((distance / (1000 * 60)) % 60);
+//     const seconds = Math.floor((distance / 1000) % 60);
+
+//     // Format biar 2 digit
+//     const format = (num) => String(num).padStart(2, "0");
+
+//     callback(`${format(hours)}:${format(minutes)}:${format(seconds)}`);
+//   }, 1000);
+// }
+
+// // contoh penggunaan
+// startCountdown("2025-08-26 15:22:41", (timeString) => {
+//   console.log(timeString); // otomatis update tiap detik
+// });

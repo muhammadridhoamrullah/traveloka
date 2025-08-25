@@ -13,17 +13,29 @@ import { FaRegCalendarPlus } from "react-icons/fa6";
 import { RiCustomerService2Line } from "react-icons/ri";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import Loading from "./loading";
+import {
+  formatDate,
+  formatDuration,
+  formatRupiah,
+  getHourAndMinute,
+  paymentTypeChanger,
+} from "@/db/utils/helperFunctions";
+import { PassengerDetails } from "@/db/type/payment";
+import CardPassengerDetail from "@/app/components/flight/profile/CardPassengerDetail";
 
 export default function SuccessPayment() {
   const params = useParams();
   const apiUrl = process.env.NEXT_PUBLIC_CLIENT_URL;
   const paymentId = params.id;
-  const [dataPayment, setDataPayment] = useState(null);
+  const [dataPayment, setDataPayment] = useState({} as any);
+  const [loading, setLoading] = useState(true);
   console.log("Data Payment:", dataPayment);
 
   // fetch data payment by ID
   async function fetchPaymentByOrderId() {
     try {
+      setLoading(true);
       const response = await fetch(`${apiUrl}/api/payment/${paymentId}`, {
         method: "GET",
         headers: {
@@ -52,6 +64,8 @@ export default function SuccessPayment() {
           text: "An unexpected error occurred",
         });
       }
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -67,6 +81,11 @@ export default function SuccessPayment() {
     }
   }, [paymentId]);
 
+  if (loading) {
+    return <Loading />;
+  }
+
+  
   return (
     <div className="bg-blue-950 w-full min-h-screen pt-36 px-20 pb-5 flex flex-col justify-start items-center text-white gap-6">
       {/* Awal Payment Successful */}
@@ -99,13 +118,16 @@ export default function SuccessPayment() {
             {/* Awal Airline and Cabin */}
             <div className="flex justify-between items-center w-full">
               <div className="flex flex-col  justify-center items-start">
-                <div className="font-semibold text-xl">Garuda Indonesia</div>
+                <div className="font-semibold text-xl">
+                  {dataPayment?.flightData?.airline}
+                </div>
                 <div className="text-sm text-slate-400">
-                  GA 512 - Boeing 737-900 ER
+                  {dataPayment?.serviceDetails?.flightNumber} -{" "}
+                  {dataPayment?.flightData?.aircraft}
                 </div>
               </div>
               <div className="py-1 px-2 border border-white rounded-md text-sm">
-                Economy
+                {dataPayment?.serviceDetails?.cabinClass}
               </div>
             </div>
             {/* Akhir Airline and Cabin */}
@@ -116,22 +138,26 @@ export default function SuccessPayment() {
             <div className=" w-full flex justify-between items-start gap-2">
               <div className=" w-full flex flex-col gap-2 justify-center items-start">
                 <div className="text-sm text-slate-400">Departure</div>
-                <div className="font-semibold text-xl">Jam</div>
+                <div className="font-semibold text-2xl">
+                  {getHourAndMinute(dataPayment?.flightData?.departure?.time)}
+                </div>
                 <div className="text-sm text-slate-400">
-                  Tanggal, Bulan, Tahun
+                  {formatDate(dataPayment?.flightData?.departure?.time)}
                 </div>
                 <div className="text-xs text-slate-400">
-                  Soekarno-Hatta International Airport
+                  {dataPayment?.flightData?.departure?.airportName}
                 </div>
               </div>
               <div className=" w-full flex flex-col gap-2 justify-center items-start">
                 <div className="text-sm text-slate-400">Arrival</div>
-                <div className="font-semibold text-xl">Jam</div>
+                <div className="font-semibold text-2xl">
+                  {getHourAndMinute(dataPayment?.flightData?.arrival?.time)}
+                </div>
                 <div className="text-sm text-slate-400">
-                  Tanggal, Bulan, Tahun
+                  {formatDate(dataPayment?.flightData?.arrival?.time)}
                 </div>
                 <div className="text-xs text-slate-400">
-                  Ngurah Rai International Airport
+                  {dataPayment?.flightData?.arrival?.airportName}
                 </div>
               </div>
             </div>
@@ -139,14 +165,30 @@ export default function SuccessPayment() {
             {/* Awal Durasi */}
             <div className="flex justify-center items-center gap-2 w-full p-1 mt-3">
               <FaRegClock className="text-xl " />
-              <div className=" text-sm">Durasi</div>
+              <div className=" text-sm">
+                {formatDuration(dataPayment?.flightData?.duration)}
+              </div>
             </div>
             {/* Akhir Durasi */}
           </div>
           {/* Akhir Flight Detail */}
 
           {/* Awal Passenger Detail */}
-          <div className="w-full bg-red-950">Passenger Detail</div>
+          <div className="bg-black/70 w-full h-fit p-4 rounded-xl flex flex-col gap-2 items-start justify-center">
+            {/* Awal Judul Passenger Detail */}
+            <div className="flex items-center gap-2 mb-5">
+              <GoPeople className="text-2xl" />
+              <div className="text-xl font-semibold">Passenger(s) Detail</div>
+            </div>
+            {/* Awal Mapping Card Passenger Detail */}
+            {dataPayment?.passengerDetails?.map(
+              (el: PassengerDetails, i: number) => (
+                <CardPassengerDetail key={i} i={i} data={el} />
+              )
+            )}
+            {/* Akhir Mapping Card Passenger Detail */}
+            {/* Akhir Judul Passenger Detail */}
+          </div>
           {/* Akhir Passenger Detail */}
 
           {/* Awal Important Information */}
@@ -182,20 +224,24 @@ export default function SuccessPayment() {
             <div className="flex w-full flex-col gap-2 items-start justify-center text-sm">
               <div className="flex flex-col justify-center items-start gap-1">
                 <div className="text-slate-400">Booking ID</div>
-                <div className="text-lg">TVLKFLT20250810293293</div>
+                <div className="text-lg">{dataPayment?.orderId}</div>
               </div>
               <div className="flex flex-col justify-center items-start gap-1">
                 <div className="text-slate-400">Transaction ID</div>
-                <div className="text-lg">TVLKFLT20250810293293</div>
+                <div className="text-lg">{dataPayment?.transactionId}</div>
               </div>
               <div className="border-[0.5px] border-slate-800 w-full"></div>
               <div className="flex flex-col justify-center items-start gap-1">
                 <div className="text-slate-400">Payment Method</div>
-                <div className="text-lg">QRIS</div>
+                <div className="text-lg">
+                  {paymentTypeChanger(dataPayment?.paymentType)}
+                </div>
               </div>
               <div className="flex flex-col justify-center items-start gap-1">
                 <div className="text-slate-400">Total Payment</div>
-                <div className="text-green-400 text-lg">Rp. 25.000.000</div>
+                <div className="text-green-400 text-lg">
+                  {formatRupiah(dataPayment?.grossAmount)}
+                </div>
               </div>
             </div>
           </div>
@@ -240,38 +286,60 @@ export default function SuccessPayment() {
 }
 
 // {
-//     "_id": "68a426fe0e2b085c7b6a5f64",
-//     "orderId": "TVLKFLTJT684202508199595",
+//     "_id": "68a9675481835fbc5d7df665",
+//     "orderId": "TVLKFLTSJ182202508232645",
 //     "UserId": "6878ad465f1297aa559b872f",
-//     "grossAmount": 3400000,
+//     "grossAmount": 1960000,
 //     "serviceType": "flight",
 //     "serviceDetails": {
-//         "flightId": "689ae7fa816e5cc195291ed9",
-//         "flightNumber": "JT684",
-//         "passengerCount": 4,
+//         "flightId": "689449ff68fa399516b20693",
+//         "flightNumber": "SJ182",
+//         "passengerCount": 2,
 //         "cabinClass": "Economy"
 //     },
+//     "contactDetails": {
+//         "contactDetailFirstName": "Muhammad Ridho",
+//         "contactDetailLastName": "Amrullah",
+//         "contactDetailMobileNumber": "085363508580",
+//         "contactDetailEmail": "ridhoamrullah99@gmail.com"
+//     },
+//     "passengerDetails": [
+//         {
+//             "passengerDetailTitle": "Mr.",
+//             "passengerDetailFirstName": "Muhammad Ridho",
+//             "passengerDetailLastName": "Amrullah",
+//             "passengerDetailDateOfBirth": "1999-10-10T00:00:00.000Z",
+//             "passengerDetailNationality": "Indonesia"
+//         },
+//         {
+//             "passengerDetailTitle": "Mrs.",
+//             "passengerDetailFirstName": "Olivia",
+//             "passengerDetailLastName": "Rodrigo",
+//             "passengerDetailDateOfBirth": "2000-02-01T00:00:00.000Z",
+//             "passengerDetailNationality": "United Kingdom"
+//         }
+//     ],
 //     "transactionStatus": "capture",
-//     "createdAt": "2025-08-19T07:25:50.466Z",
-//     "updatedAt": "2025-08-19T07:26:19.090Z",
+//     "createdAt": "2025-08-23T07:01:40.638Z",
+//     "updatedAt": "2025-08-23T07:02:24.724Z",
 //     "fraudStatus": "accept",
 //     "paymentType": "credit_card",
-//     "transactionId": "072ae76a-d9ed-48d7-9b14-6b2e09534538",
-//     "transactionTime": "2025-08-19T07:26:10.000Z",
+//     "transactionId": "6bb3cba8-0ea9-44f9-b65e-2a2279b4ba0d",
+//     "transactionTime": "2025-08-23T07:02:10.000Z",
 //     "flightData": {
-//         "_id": "689ae7fa816e5cc195291ed9",
-//         "flightNumber": "JT684",
-//         "airline": "Lion Air",
-//         "aircraft": "Boeing 737-900ER",
-//         "totalSeats": 211,
+//         "_id": "689449ff68fa399516b20693",
+//         "flightNumber": "SJ182",
+//         "airline": "Sriwijaya Air",
+//         "aircraft": "Boeing 737-500",
+//         "totalSeats": 109,
 //         "departure": {
 //             "airportCode": "CGK",
 //             "airportName": "Soekarno-Hatta International Airport",
 //             "city": "Jakarta",
 //             "country": "Indonesia",
-//             "terminal": "1C",
-//             "gate": "C2",
-//             "time": "2025-09-15T13:10:00.000Z",
+//             "terminal": "1B",
+//             "gate": "D5",
+//             "time": "2025-09-15T19:40:00.000Z",
 //             "timezone": "Asia/Jakarta"
 //         },
 //         "arrival": {
@@ -280,16 +348,16 @@ export default function SuccessPayment() {
 //             "city": "Pontianak",
 //             "country": "Indonesia",
 //             "terminal": "Domestic",
-//             "gate": "1",
-//             "time": "2025-09-15T14:55:00.000Z",
+//             "gate": "2",
+//             "time": "2025-09-15T21:25:00.000Z",
 //             "timezone": "Asia/Jakarta"
 //         },
 //         "duration": 105,
 //         "cabinClasses": [
 //             {
 //                 "class": "Economy",
-//                 "price": 850000,
-//                 "seatsAvailable": 211,
+//                 "price": 980000,
+//                 "seatsAvailable": 109,
 //                 "facilities": [
 //                     "Snack",
 //                     "Drink"
@@ -305,23 +373,3 @@ export default function SuccessPayment() {
 //         "UserId": "68888276782e842cd0e3e915"
 //     }
 // }
-
-// {/* Conditional rendering dengan error handling */}
-// {dataPayment ? (
-//   dataPayment.serviceDetails?.passengerCount > 0 ? (
-//     <div className="w-full flex flex-col gap-3">
-//       {Array.from(
-//         { length: dataPayment.serviceDetails.passengerCount }, 
-//         (_, index) => index + 1
-//       ).map((passengerNumber) => (
-//         <div key={passengerNumber} className="bg-black/70 w-full p-4 rounded-xl">
-//           {/* Passenger content */}
-//         </div>
-//       ))}
-//     </div>
-//   ) : (
-//     <div className="text-slate-400">No passengers found</div>
-//   )
-// ) : (
-//   <div className="text-slate-400">Loading passenger data...</div>
-// )}

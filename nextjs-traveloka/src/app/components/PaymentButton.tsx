@@ -20,17 +20,6 @@ declare global {
   }
 }
 
-// grossAmount: totalPrice,
-//     serviceType: "flight",
-//     serviceDetails: {
-//       flightId: flightData?._id,
-//       flightNumber: flightData?.flightNumber,
-//       passengerCount: query.passengerCount,
-//       cabinClass: query.cabinClass,
-//     },
-//     contactDetails: contactDetails,
-//     passengerDetails: passengerDetails,
-
 interface Props {
   data: {
     orderId: string;
@@ -128,6 +117,10 @@ export default function PaymentButton({ data }: Props) {
               transactionTime: result.transaction_time,
               fraudStatus: result.fraud_status,
               transactionId: result.transaction_id,
+              va_number: result.va_numbers
+                ? result.va_numbers[0].va_number
+                : null,
+              pdf_url: result.pdf_url ? result.pdf_url : null,
               dataBody: data,
             }),
           });
@@ -143,8 +136,44 @@ export default function PaymentButton({ data }: Props) {
           });
         },
         onPending: async (result) => {
-          console.log("⏳ Pending yuhu:", result);
-          alert("Payment Pending!");
+          console.log("⏳ Payment Pending:", result);
+
+          // check status
+          const checkStatusPayment = await fetch(
+            `${api_url}/api/payment/checkStatus/${result.order_id}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          const statusResult = await checkStatusPayment.json();
+          console.log("🔍 Checked Status:", statusResult);
+
+          // update status
+
+          await fetch(`${api_url}/api/payment/updateStatus`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              orderId: result.order_id,
+              completeData: statusResult.data,
+            }),
+          });
+
+          Swal.fire({
+            title: "Payment Pending",
+            text: `Order ID: ${result.order_id}. Please complete your payment.`,
+            icon: "info",
+            timer: 5000,
+            showConfirmButton: false,
+          }).then(() => {
+            navigate.push(`/profile/payment/pending/${result.order_id}`);
+          });
         },
         onError: async (result) => {
           console.log("❌ Error:", result);
@@ -175,3 +204,82 @@ export default function PaymentButton({ data }: Props) {
     </>
   );
 }
+
+// BCA Pending
+// {
+//     "status_code": "201",
+//     "status_message": "Your Transaction is being processed",
+//     "transaction_id": "18d91748-3304-42d5-89a1-fa55e84d3d5f",
+//     "order_id": "TVLKFLTSJ182202508244552",
+//     "gross_amount": "980000",
+//     "payment_type": "bank_transfer",
+//     "transaction_time": "2025-08-24 14:38:26",
+//     "transaction_status": "pending",
+//     "fraud_status": "accept",
+//     "va_numbers": [
+//         {
+//             "bank": "bca",
+//             "va_number": "40427977366662090911410"
+//         }
+//     ],
+//     "bca_va_number": "40427977366662090911410",
+//     "pdf_url": "https://app.sandbox.midtrans.com/snap/v1/transactions/983a7270-9d4b-4968-b982-2185ba6306c6/pdf",
+//     "finish_redirect_url": "http://example.com?order_id=TVLKFLTSJ182202508244552&status_code=201&transaction_status=pending"
+// }
+
+// Shopee Pending
+// {
+//     "status_code": "201",
+//     "status_message": "Your Transaction is being processed",
+//     "transaction_id": "2206a276-de6a-4bad-9f6d-826ce4f7e8c0",
+//     "order_id": "TVLKFLTJT684202508259085",
+//     "gross_amount": "850000",
+//     "payment_type": "qris",
+//     "transaction_time": "2025-08-25 12:55:03",
+//     "transaction_status": "pending",
+//     "fraud_status": "accept",
+//     "finish_redirect_url": "http://example.com?order_id=TVLKFLTJT684202508259085&status_code=201&transaction_status=pending"
+// }
+
+// GoPay Pending
+// {
+//     "status_code": "201",
+//     "status_message": "Transaksi sedang diproses",
+//     "transaction_id": "e8112bc9-58a0-4755-a96c-7860503b9cd4",
+//     "order_id": "TVLKFLTSJ182202508236376",
+//     "gross_amount": "980000",
+//     "payment_type": "qris",
+//     "transaction_time": "2025-08-23 14:52:47",
+//     "transaction_status": "pending",
+//     "fraud_status": "accept",
+//     "finish_redirect_url": "http://example.com?order_id=TVLKFLTSJ182202508236376&status_code=201&transaction_status=pending"
+// }
+
+// Indomaret Pending
+// {
+//     "status_code": "201",
+//     "status_message": "Your Transaction is being processed",
+//     "transaction_id": "e61d1fd8-19ed-4109-a7dc-be9eba8d5463",
+//     "order_id": "TVLKFLTSJ182202508252707",
+//     "gross_amount": "980000",
+//     "payment_type": "cstore",
+//     "transaction_time": "2025-08-25 12:57:20",
+//     "transaction_status": "pending",
+//     "fraud_status": "accept",
+//     "payment_code": "081234567890",
+//     "pdf_url": "https://app.sandbox.midtrans.com/snap/v1/transactions/7c4ff9aa-aa9c-4899-b280-f1b197778bc6/pdf",
+//     "finish_redirect_url": "http://example.com?order_id=TVLKFLTSJ182202508252707&status_code=201&transaction_status=pending"
+// }
+
+// {
+//     "status_code": "201",
+//     "status_message": "Your Transaction is being processed",
+//     "transaction_id": "7582fb7a-3282-42b4-8c63-d18d670000cd",
+//     "order_id": "TVLKFLTJT684202508256555",
+//     "gross_amount": "850000",
+//     "payment_type": "qris",
+//     "transaction_time": "2025-08-25 13:21:40",
+//     "transaction_status": "pending",
+//     "fraud_status": "accept",
+//     "finish_redirect_url": "http://example.com?order_id=TVLKFLTJT684202508256555&status_code=201&transaction_status=pending"
+// }

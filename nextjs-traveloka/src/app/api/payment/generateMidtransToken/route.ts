@@ -74,6 +74,26 @@ export async function POST(request: NextRequest) {
         email,
         phone,
       },
+      gopay: {
+        enable_callback: true,
+        callback_url: `http://localhost:3000/profile/payment/pending/${orderId}`,
+      },
+      shopeepay: {
+        enable_callback: true,
+        callback_url: `http://localhost:3000/profile/payment/pending/${orderId}`,
+      },
+      enable_payments: [
+        "credit_card",
+        "gopay",
+        "shopeepay",
+        "qris",
+        "bank_transfer",
+        "bca_va",
+        "bni_va",
+        "bri_va",
+        "permata_va",
+        "other_va",
+      ],
     };
 
     const transaction = await snap.createTransaction(parameter);

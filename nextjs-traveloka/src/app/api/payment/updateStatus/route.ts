@@ -5,31 +5,12 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const {
-      orderId,
-      transactionStatus,
-      grossAmount,
-      paymentType,
-      transactionTime,
-      fraudStatus,
-      transactionId,
-      dataBody,
-    } = await request.json();
+    const { orderId, completeData } = await request.json();
 
-    if (
-      !orderId ||
-      !transactionStatus ||
-      !grossAmount ||
-      !paymentType ||
-      !transactionTime ||
-      !transactionId ||
-      !fraudStatus ||
-      !dataBody
-    ) {
+    if (!orderId || !completeData) {
       return NextResponse.json(
         {
-          message:
-            "Missing required fields: orderId, transactionStatus, grossAmount, paymentType, transactionTime, fraudStatus, transactionId, dataBody",
+          message: "Missing required fields: orderId, completeData",
         },
         {
           status: 400,
@@ -38,40 +19,10 @@ export async function POST(request: NextRequest) {
     }
 
     const headerList = headers();
-    const UserId = (await headerList).get("UserId");
-
-    if (!UserId) {
-      return NextResponse.json(
-        {
-          message: "UserId is required",
-        },
-        {
-          status: 400,
-        }
-      );
-    }
 
     const payment = {
       orderId,
-      UserId,
-      transactionStatus,
-      grossAmount,
-      paymentType,
-      transactionTime,
-      fraudStatus,
-      transactionId,
-      serviceType: dataBody.serviceType,
-      serviceDetails: dataBody.serviceDetails,
-      contactDetails: dataBody.contactDetails,
-      passengerDetails: dataBody.passengerDetails.map((passenger: any) => ({
-        passengerDetailTitle: passenger.passengerDetailTitle,
-        passengerDetailFirstName: passenger.passengerDetailFirstName,
-        passengerDetailLastName: passenger.passengerDetailLastName,
-        passengerDetailDateOfBirth: new Date(
-          passenger.passengerDetailDateOfBirth
-        ),
-        passengerDetailNationality: passenger.passengerDetailNationality,
-      })),
+      completeData,
     };
 
     const creatingPayment = await updatePaymentStatus(payment);

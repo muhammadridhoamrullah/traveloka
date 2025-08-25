@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { GetDb } from "../config";
-import { Payment } from "../type/payment";
+import { Payment, PaymentTerbaru } from "../type/payment";
 import { fr, tr } from "zod/locales";
 
 type InputPayment = Pick<
@@ -17,6 +17,11 @@ type InputPayment = Pick<
 type InputUpdatePayment = Omit<
   Payment,
   "_id" | "createdAt" | "updatedAt" | "deletedAt" | "UserId"
+>;
+
+type InputUpdatePaymentTerbaru = Pick<
+  PaymentTerbaru,
+  "orderId" | "completeData"
 >;
 const COLLECTION_NAME = "payments";
 
@@ -50,7 +55,6 @@ export async function createPayment(input: InputPayment) {
     })),
     UserId: new ObjectId(input.UserId),
     grossAmount: Number(input.grossAmount),
-    transactionStatus: "pending",
     createdAt: new Date(),
     updatedAt: new Date(),
   };
@@ -65,7 +69,7 @@ export async function createPayment(input: InputPayment) {
   };
 }
 
-export async function updatePaymentStatus(input: InputUpdatePayment) {
+export async function updatePaymentStatus(input: InputUpdatePaymentTerbaru) {
   const db = await GetDb();
   console.log("Updating payment status with input:", input);
 
@@ -78,14 +82,10 @@ export async function updatePaymentStatus(input: InputUpdatePayment) {
   }
 
   const updateData = {
-    transactionStatus: input.transactionStatus,
-    paymentType: input.paymentType,
-    fraudStatus: input.fraudStatus,
-    transactionId: input.transactionId,
-    transactionTime: new Date(input.transactionTime),
-    
+    completeData: input.completeData,
     updatedAt: new Date(),
   };
+  console.log("Update data to be applied:", updateData);
 
   const updating = await db.collection(COLLECTION_NAME).updateOne(
     {
@@ -100,52 +100,15 @@ export async function updatePaymentStatus(input: InputUpdatePayment) {
     throw new Error("Failed to update payment status");
   }
 
-  // update seat in flight
-  if (
-    input.serviceType === "flight" &&
-    (input.transactionStatus === "settlement" ||
-      input.transactionStatus === "capture")
-  ) {
-    const flightCollection = db.collection("flights");
+  // Check kembali payment setelah update
+  const updatedPayment = await db.collection(COLLECTION_NAME).findOne({
+    orderId: input.orderId,
+  });
 
-    const flightCheck = await flightCollection.findOne({
-      _id: new ObjectId(input.serviceDetails.flightId),
-      cabinClasses: {
-        $elemMatch: {
-          class: input.serviceDetails.cabinClass,
-          seatsAvailable: { $gte: Number(input.serviceDetails.passengerCount) },
-        },
-      },
-    });
+  console.log("Updated payment:", updatedPayment);
 
-    if (!flightCheck) {
-      throw new Error(
-        `Insufficient seats available in flight ${input.serviceDetails.flightId}`
-      );
-    }
+  // Nnati update jika settlement atau capture dan serviceType flight, update seat di flight
 
-    const updateFlight = await flightCollection.updateOne(
-      {
-        _id: new ObjectId(input.serviceDetails.flightId),
-        "cabinClasses.class": input.serviceDetails.cabinClass,
-      },
-      {
-        $inc: {
-          "cabinClasses.$.seatsAvailable": -Number(
-            input.serviceDetails.passengerCount
-          ),
-          totalSeats: -Number(input.serviceDetails.passengerCount),
-        },
-      }
-    );
-
-    if (updateFlight.modifiedCount === 0) {
-      throw new Error("Failed to update flight seats");
-    }
-    console.log(
-      `Flight ${input.serviceDetails.flightId} updated successfully, seats reduced by ${input.serviceDetails.passengerCount}`
-    );
-  }
   return {
     message: "Payment status updated successfully",
     paymentId: findPayment._id.toString(),
@@ -209,3 +172,51 @@ export async function getPaymentByOrderId(orderId: string) {
 // 2025-08-18T15:28:25.104+00:00
 // updatedAt
 // 2025-08-18T15:28:25.104+00:00
+
+// from 101 setelah if updating.modifiedCount === 0
+// update seat in flight
+// if (
+//   findPayment.serviceType === "flight" &&
+//   (input.transactionStatus === "settlement" ||
+//     input.transactionStatus === "capture")
+// ) {
+//   const flightCollection = db.collection("flights");
+
+//   const flightCheck = await flightCollection.findOne({
+//     _id: new ObjectId(input.serviceDetails.flightId),
+//     cabinClasses: {
+//       $elemMatch: {
+//         class: input.serviceDetails.cabinClass,
+//         seatsAvailable: { $gte: Number(input.serviceDetails.passengerCount) },
+//       },
+//     },
+//   });
+
+//   if (!flightCheck) {
+//     throw new Error(
+//       `Insufficient seats available in flight ${input.serviceDetails.flightId}`
+//     );
+//   }
+
+//   const updateFlight = await flightCollection.updateOne(
+//     {
+//       _id: new ObjectId(input.serviceDetails.flightId),
+//       "cabinClasses.class": input.serviceDetails.cabinClass,
+//     },
+//     {
+//       $inc: {
+//         "cabinClasses.$.seatsAvailable": -Number(
+//           input.serviceDetails.passengerCount
+//         ),
+//         totalSeats: -Number(input.serviceDetails.passengerCount),
+//       },
+//     }
+//   );
+
+//   if (updateFlight.modifiedCount === 0) {
+//     throw new Error("Failed to update flight seats");
+//   }
+//   console.log(
+//     `Flight ${input.serviceDetails.flightId} updated successfully, seats reduced by ${input.serviceDetails.passengerCount}`
+//   );
+// }

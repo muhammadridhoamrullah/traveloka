@@ -12,7 +12,7 @@ interface ContactDetails {
   contactDetailEmail: string;
 }
 
-interface PassengerDetails {
+export interface PassengerDetails {
   passengerDetailTitle: string;
   passengerDetailFirstName: string;
   passengerDetailLastName: string;
@@ -58,6 +58,21 @@ export interface Payment {
   serviceDetails: ServiceDetails;
   contactDetails: ContactDetails;
   passengerDetails: PassengerDetails[];
+  pdfUrl?: string;
+  vaNumbers?: string;
+  bank?: string;
+}
+
+export interface PaymentTerbaru {
+  _id: string;
+  orderId: string;
+  UserId: string;
+  grossAmount: number;
+  serviceType: string;
+  serviceDetails: ServiceDetails;
+  contactDetails: ContactDetails;
+  passengerDetails: PassengerDetails[];
+  completeData?: any;
 }
 
 // CC
