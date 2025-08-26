@@ -31,6 +31,8 @@ import CardPassengerDetail from "@/app/components/flight/profile/CardPassengerDe
 import Loading from "./loading";
 import CardVaPaymentInstruction from "@/app/components/flight/profile/CardVAPaymentInstruction";
 import { CountdownDisplay } from "@/app/components/flight/profile/CountDown";
+import CoundtDownReact from "@/app/components/flight/profile/CountDownReact";
+import CardQrisPaymentInstruction from "@/app/components/flight/profile/CardQrisPaymentInstruction";
 
 export default function PendingPayment() {
   const navigate = useRouter();
@@ -41,20 +43,13 @@ export default function PendingPayment() {
   const [loading, setLoading] = useState(true);
   const apiUrl = process.env.NEXT_PUBLIC_CLIENT_URL;
   const paymentId = params.id;
-
-  // const [countDown, setCountDown] = useState({
-  //   hour: "00",
-  //   minute: "00",
-  //   second: "00",
-  // });
-
-  const expiryTime = useMemo(
-    () => dataPayment?.completeData?.expiry_time,
-    [dataPayment?.completeData?.expiry_time]
-  );
+  const [hasExpired, setHasExpired] = useState(false);
+  console.log(hasExpired, "expired");
 
   async function fetchPaymentByOrderId() {
     try {
+      console.log("Jalan ketika expired");
+
       setLoading(true);
       const response = await fetch(`${apiUrl}/api/payment/${paymentId}`, {
         method: "GET",
@@ -66,6 +61,32 @@ export default function PendingPayment() {
       const result = await response.json();
       if (!response.ok) {
         throw new Error(result.message || "Failed to fetch payment data");
+      }
+      console.log(result, "hasil fetch payment by orderId");
+
+      const status = result.findPaymentById?.completeData?.transaction_status;
+      if (status === "expire") {
+        Swal.fire({
+          icon: "error",
+          title: "Payment Expired",
+          text: "Your payment has expired. Please make a new booking.",
+          timer: 2000,
+        });
+        navigate.push(`/profile/payment/expired/${paymentId}`);
+        return;
+      } else if (
+        status === "settlement" ||
+        status === "capture" ||
+        status === "success"
+      ) {
+        Swal.fire({
+          icon: "success",
+          title: "Payment Successful",
+          text: "Your payment was successful. Thank you!",
+          timer: 2000,
+        });
+        navigate.push(`/profile/payment/success/${paymentId}`);
+        return;
       }
 
       setDataPayment(result.findPaymentById);
@@ -88,21 +109,54 @@ export default function PendingPayment() {
     }
   }
 
+  async function whenExpire() {
+    try {
+      const response = await fetch(
+        `${apiUrl}/api/payment/checkStatus/${paymentId}`
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to check payment status");
+      }
+
+      // Fetch ulang data payment
+      fetchPaymentByOrderId();
+
+      // Alert
+    } catch (error) {
+      if (error instanceof Error) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: error.message,
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "An unexpected error occurred",
+        });
+      }
+    }
+  }
+
   // useEffect untuk fetch data payment by orderId
   useEffect(() => {
+    console.log("ke trigger");
+
     fetchPaymentByOrderId();
   }, [paymentId]);
 
-  // useEffect untuk countdown
-  // useEffect(() => {
-  //   if (!expiryTime) return; // Jika expiryTime undefined, hentikan eksekusi
-  //   const timer = setInterval(() => {
-  //     const result = getCountDown(dataPayment?.completeData?.expiry_time);
-  //     setCountDown(result);
-  //   }, 1000);
+  function handleExpire() {
+    console.log(hasExpired, "kondisi");
 
-  //   return () => clearInterval(timer);
-  // }, [expiryTime]);
+    if (hasExpired) return;
+    console.log("Jalan ketika has expired");
+    setHasExpired(true);
+    whenExpire();
+  }
 
   if (loading) {
     return <Loading />;
@@ -113,7 +167,7 @@ export default function PendingPayment() {
       case "bank_transfer":
         return <CardVaPaymentInstruction data={dataPayment} />;
       case "qris":
-        return <div>Ini Qris cuy</div>;
+        return <CardQrisPaymentInstruction data={dataPayment} />;
       case "cstore":
         return <div>Ini Alfamart/Indomaret cuy</div>;
       case "echannel":
@@ -143,51 +197,10 @@ export default function PendingPayment() {
       {/* Akhir Payment Pending */}
 
       {/* Awal Remaining Payment Time */}
-      <div className="bg-red-700 w-3/4 flex flex-col gap-3 justify-center items-start p-4 rounded-xl h-fit">
-        {/* Awal Judul Remaining Payment Time */}
-        <div className="w-full h-fit flex items-center justify-start gap-2">
-          <TiWarningOutline className="text-2xl" />
-          <div className="text-xl font-semibold">Remaining Payment Time</div>
-        </div>
-        {/* Akhir Judul Remaining Payment Time */}
-        {/* Awal Sisa Waktu */}
-        <div className="w-full h-fit flex flex-col gap-2 justify-center items-start">
-          {/* Awal Timer Sisa Waktu */}
-          {/* <div className="flex justify-start items-center gap-3"> */}
-          {/* Awal Hour */}
-          {/* <div className="flex flex-col  justify-center items-center rounded-lg border border-gray-500 p-2">
-              <div className="text-3xl font-bold">{countDown.hour}</div>
-              <div className="text-sm">Hour</div>
-            </div> */}
-          {/* Akhir Hour */}
-          {/* <div>:</div> */}
-          {/* Awal Minutes */}
-          {/* <div className="flex flex-col justify-center items-center rounded-lg border border-gray-500 p-2">
-              <div className="text-3xl font-bold">{countDown.minute}</div>
-              <div className="text-sm">Minutes</div>
-            </div> */}
-          {/* Akhir Minutes */}
-          {/* <div>:</div> */}
-          {/* Awal Seconds */}
-          {/* <div className="flex flex-col justify-center items-center rounded-lg border border-gray-500 p-2">
-              <div className="text-3xl font-bold">{countDown.second}</div>
-              <div className="text-sm">Seconds</div>
-            </div> */}
-          {/* Akhir Seconds */}
-          {/* </div> */}
-          <CountdownDisplay
-            expiryTime={dataPayment?.completeData?.expiry_time}
-          />
-          {/* Akhir Timer Sisa Waktu */}
-          {/* Awal Your Booking */}
-          <div className="text-sm">
-            Your booking will be automatically canceled if the payment is not
-            completed before the deadline.
-          </div>
-          {/* Akhir Your Booking */}
-        </div>
-        {/* Akhir Sisa Waktu */}
-      </div>
+      <CoundtDownReact
+        expiryTime={dataPayment?.completeData?.expiry_time}
+        onExpire={handleExpire}
+      />
       {/* Akhir Remaining Payment Time */}
 
       {/* Awal Sisi Kiri dan Kanan */}

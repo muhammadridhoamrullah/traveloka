@@ -158,6 +158,20 @@ export async function getPaymentByOrderId(orderId: string) {
   return resultFindPayment;
 }
 
+// export async function getQrisUrl(transactionId: string) {
+//   const db = await GetDb();
+
+//   const findPayment = await db.collection(COLLECTION_NAME).findOne({
+//     "completeData.transaction_id": transactionId,
+//   });
+
+//   if (!findPayment) {
+//     throw new Error("Payment not found");
+//   }
+
+
+// }
+
 // _id
 // 68a34699b03d090162c184bd
 // orderId
