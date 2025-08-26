@@ -8,8 +8,6 @@ interface Props {
 }
 
 export default function CardVaPaymentInstruction({ data }: Props) {
-  console.log("data di Card Va", data);
-
   const bank = data?.completeData?.va_numbers[0].bank;
   const vaNumber = data?.completeData?.va_numbers[0].va_number;
 

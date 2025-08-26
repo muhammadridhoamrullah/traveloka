@@ -43,9 +43,11 @@ export default function PendingPayment() {
   const apiUrl = process.env.NEXT_PUBLIC_CLIENT_URL;
   const paymentId = params.id;
   const [hasExpired, setHasExpired] = useState(false);
+
   const [isPolling, setIsPolling] = useState(false);
   const [lastPolled, setLastPolled] = useState<Date | null>(null);
 
+  // JALAN KEDUA
   async function fetchPaymentByOrderId() {
     try {
       console.log("Jalan ketika expired");
@@ -143,6 +145,7 @@ export default function PendingPayment() {
   }
 
   // useEffect untuk fetch data payment by orderId
+  // INI JALAN PERTAMA
   useEffect(() => {
     console.log("ke trigger");
 
@@ -173,13 +176,18 @@ export default function PendingPayment() {
         );
 
         const result = await response.json();
+        console.log(result, "pol");
 
         if (!response.ok) {
           throw new Error(result.message || "Failed to check payment status");
         }
+        console.log(result.data.transaction_status, "status poling");
 
-        // Fetch ulang data payment
-        fetchPaymentByOrderId();
+        if (result.data.transaction_status !== "pending") {
+          fetchPaymentByOrderId();
+          setIsPolling(false);
+          clearInterval(pollInterval);
+        }
       } catch (error) {
         console.error("Polling error:", error);
       }

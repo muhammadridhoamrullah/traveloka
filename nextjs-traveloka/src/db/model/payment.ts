@@ -1,7 +1,6 @@
 import { ObjectId } from "mongodb";
 import { GetDb } from "../config";
 import { Payment, PaymentTerbaru } from "../type/payment";
-import { fr, tr } from "zod/locales";
 
 type InputPayment = Pick<
   Payment,
@@ -169,7 +168,6 @@ export async function getPaymentByOrderId(orderId: string) {
 //     throw new Error("Payment not found");
 //   }
 
-
 // }
 
 // _id
@@ -234,3 +232,36 @@ export async function getPaymentByOrderId(orderId: string) {
 //     `Flight ${input.serviceDetails.flightId} updated successfully, seats reduced by ${input.serviceDetails.passengerCount}`
 //   );
 // }
+
+export async function pushTokenToPayment(orderId: string, token: string) {
+  const db = await GetDb();
+
+  const findPayment = await db.collection(COLLECTION_NAME).findOne({
+    orderId: orderId,
+  });
+
+  if (!findPayment) {
+    throw new Error("Payment not found");
+  }
+
+  const updating = await db.collection(COLLECTION_NAME).updateOne(
+    {
+      orderId,
+    },
+    {
+      $set: {
+        token,
+        updatedAt: new Date(),
+      },
+    }
+  );
+
+  if (updating.modifiedCount === 0 || !updating.acknowledged) {
+    throw new Error("Failed to update payment with token");
+  }
+
+  return {
+    message: "Payment token updated successfully",
+    paymentId: findPayment._id.toString(),
+  };
+}

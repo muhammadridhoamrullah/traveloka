@@ -19,6 +19,8 @@ import {
   formatDuration,
   formatRupiah,
   getHourAndMinute,
+  getHourAndMinuteFromDate,
+  getTimeAndDate,
   paymentTypeChanger,
 } from "@/db/utils/helperFunctions";
 import { PassengerDetails } from "@/db/type/payment";
@@ -85,7 +87,6 @@ export default function SuccessPayment() {
     return <Loading />;
   }
 
-  
   return (
     <div className="bg-blue-950 w-full min-h-screen pt-36 px-20 pb-5 flex flex-col justify-start items-center text-white gap-6">
       {/* Awal Payment Successful */}
@@ -228,19 +229,31 @@ export default function SuccessPayment() {
               </div>
               <div className="flex flex-col justify-center items-start gap-1">
                 <div className="text-slate-400">Transaction ID</div>
-                <div className="text-lg">{dataPayment?.transactionId}</div>
+                <div className="text-lg">
+                  {dataPayment?.completeData?.transaction_id}
+                </div>
               </div>
               <div className="border-[0.5px] border-slate-800 w-full"></div>
               <div className="flex flex-col justify-center items-start gap-1">
                 <div className="text-slate-400">Payment Method</div>
                 <div className="text-lg">
-                  {paymentTypeChanger(dataPayment?.paymentType)}
+                  {paymentTypeChanger(dataPayment?.completeData?.payment_type)}
                 </div>
               </div>
               <div className="flex flex-col justify-center items-start gap-1">
                 <div className="text-slate-400">Total Payment</div>
                 <div className="text-green-400 text-lg">
                   {formatRupiah(dataPayment?.grossAmount)}
+                </div>
+              </div>
+
+              <div className="flex flex-col justify-center items-start gap-1">
+                <div className="text-slate-400">Settlement Time</div>
+                <div className="text-green-400 text-lg">
+                  {formatDate(dataPayment?.completeData?.settlement_time)} at{" "}
+                  {getHourAndMinuteFromDate(
+                    dataPayment?.completeData?.settlement_time
+                  )}
                 </div>
               </div>
             </div>

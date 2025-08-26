@@ -1,4 +1,4 @@
-import { createPayment } from "@/db/model/payment";
+import { createPayment, pushTokenToPayment } from "@/db/model/payment";
 import midtransClient from "midtrans-client";
 import { ObjectId } from "mongodb";
 import { headers } from "next/headers";
@@ -97,6 +97,8 @@ export async function POST(request: NextRequest) {
     };
 
     const transaction = await snap.createTransaction(parameter);
+
+    await pushTokenToPayment(orderId, transaction.token);
 
     return NextResponse.json(
       {

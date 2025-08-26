@@ -1,5 +1,6 @@
 "use client";
 
+import { pushTokenToPayment } from "@/db/model/payment";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
@@ -99,6 +100,11 @@ export default function PaymentButton({ data }: Props) {
         );
       }
       const result = await response.json();
+
+      // input token ke db
+      // if (result.token && result.order_id) {
+      //   await pushTokenToPayment(result.token, result.order_id);
+      // }
 
       window.snap.pay(result.token, {
         onSuccess: async (result) => {
