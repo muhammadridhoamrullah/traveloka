@@ -104,26 +104,8 @@ export default function PaymentButton({ data }: Props) {
         onSuccess: async (result) => {
           console.log("✅ Payment Success:", result);
 
-          await fetch(`${api_url}/api/payment/updateStatus`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              orderId: result.order_id,
-              grossAmount: result.gross_amount,
-              transactionStatus: result.transaction_status,
-              paymentType: result.payment_type,
-              transactionTime: result.transaction_time,
-              fraudStatus: result.fraud_status,
-              transactionId: result.transaction_id,
-              va_number: result.va_numbers
-                ? result.va_numbers[0].va_number
-                : null,
-              pdf_url: result.pdf_url ? result.pdf_url : null,
-              dataBody: data,
-            }),
-          });
+          // Cukup 1 API call
+          await fetch(`${api_url}/api/payment/checkStatus/${result.order_id}`);
 
           Swal.fire({
             title: "Payment Successful",

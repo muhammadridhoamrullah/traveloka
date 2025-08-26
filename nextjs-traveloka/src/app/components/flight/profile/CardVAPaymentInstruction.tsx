@@ -34,7 +34,9 @@ export default function CardVaPaymentInstruction({ data }: Props) {
           {/* Awal Nomor */}
           <div className="  h-full flex flex-col gap-2 justify-center items-start">
             <div className="text-sm text-blue-500">Virtual Account Number</div>
-            <div className="text-xl font-semibold text-black">{vaNumber}</div>
+            {data?.completeData?.transaction_status === "pending" ? (
+              <div className="text-xl font-semibold text-black">{vaNumber}</div>
+            ) : null}
           </div>
 
           <div
@@ -68,9 +70,11 @@ export default function CardVaPaymentInstruction({ data }: Props) {
           <div className="bg-slate-500 w-6 h-6 rounded-full flex justify-center items-center">
             3
           </div>
-          <div className="text-slate-300">
-            Enter Virtual Account number: {vaNumber}
-          </div>
+          {data?.completeData?.transaction_status === "pending" ? (
+            <div className="text-slate-300">
+              Enter Virtual Account number: {vaNumber}
+            </div>
+          ) : null}
         </div>
         <div className="flex justify-start items-center gap-4 text-sm">
           <div className="bg-slate-500 w-6 h-6 rounded-full flex justify-center items-center">

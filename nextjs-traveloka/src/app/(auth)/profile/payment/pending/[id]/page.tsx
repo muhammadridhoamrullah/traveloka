@@ -38,13 +38,13 @@ export default function PendingPayment() {
   const navigate = useRouter();
   const params = useParams();
   const [dataPayment, setDataPayment] = useState({} as any);
-  console.log("Data Payment di pending:", dataPayment);
 
   const [loading, setLoading] = useState(true);
   const apiUrl = process.env.NEXT_PUBLIC_CLIENT_URL;
   const paymentId = params.id;
   const [hasExpired, setHasExpired] = useState(false);
-  console.log(hasExpired, "expired");
+  const [isPolling, setIsPolling] = useState(false);
+  const [lastPolled, setLastPolled] = useState<Date | null>(null);
 
   async function fetchPaymentByOrderId() {
     try {
@@ -62,9 +62,9 @@ export default function PendingPayment() {
       if (!response.ok) {
         throw new Error(result.message || "Failed to fetch payment data");
       }
-      console.log(result, "hasil fetch payment by orderId");
 
       const status = result.findPaymentById?.completeData?.transaction_status;
+      console.log(status, "status terbaru");
       if (status === "expire") {
         Swal.fire({
           icon: "error",
@@ -158,6 +158,41 @@ export default function PendingPayment() {
     whenExpire();
   }
 
+  // useEffect yang dijalankan setiap 20 detik
+  useEffect(() => {
+    if (dataPayment?.completeData?.transaction_status !== "pending") return;
+    console.log("JALAN 20 DETIK");
+
+    setIsPolling(true);
+
+    const pollInterval = setInterval(async () => {
+      try {
+        setLastPolled(new Date());
+        const response = await fetch(
+          `${apiUrl}/api/payment/checkStatus/${paymentId}`
+        );
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.message || "Failed to check payment status");
+        }
+
+        // Fetch ulang data payment
+        fetchPaymentByOrderId();
+      } catch (error) {
+        console.error("Polling error:", error);
+      }
+    }, 20000);
+
+    return () => {
+      console.log("Stop polling woi");
+
+      clearInterval(pollInterval);
+      setIsPolling(false);
+    };
+  }, [dataPayment?.completeData?.transaction_status, paymentId]);
+
   if (loading) {
     return <Loading />;
   }
@@ -168,10 +203,10 @@ export default function PendingPayment() {
         return <CardVaPaymentInstruction data={dataPayment} />;
       case "qris":
         return <CardQrisPaymentInstruction data={dataPayment} />;
-      case "cstore":
-        return <div>Ini Alfamart/Indomaret cuy</div>;
-      case "echannel":
-        return <div>Ini Mandiri Bill Payment cuy</div>;
+      // case "cstore":
+      //   return <div>Ini Alfamart/Indomaret cuy</div>;
+      // case "echannel":
+      //   return <div>Ini Mandiri Bill Payment cuy</div>;
     }
   }
 
