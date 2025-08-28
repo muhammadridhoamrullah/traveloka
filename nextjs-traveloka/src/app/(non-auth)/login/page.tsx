@@ -11,9 +11,12 @@ import Swal from "sweetalert2";
 import z from "zod";
 import { AiOutlineLoading } from "react-icons/ai";
 import Cookies from "js-cookie";
+import SkeletonHomePage from "@/app/components/SkeletonHomePage";
 
 export default function Login() {
   const cookies = Cookies.get("access_token");
+  const [isNavigating, setIsNavigating] = useState(false);
+  console.log("useNavigating:", isNavigating);
 
   const navigate = useRouter();
   const url = process.env.NEXT_PUBLIC_CLIENT_URL!;
@@ -22,6 +25,13 @@ export default function Login() {
     identifier: "",
     password: "",
   });
+
+  // Prefecth home page
+  useEffect(() => {
+    console.log("Jalan useEffect prefetch /home");
+
+    navigate.prefetch("/home");
+  }, []);
 
   // State for loading
   const [loading, setLoading] = useState(false);
@@ -58,7 +68,9 @@ export default function Login() {
       }
 
       Cookies.set("access_token", result.access_token);
-      navigate.push("/home");
+
+      setIsNavigating(true);
+      navigate.replace("/home");
     } catch (error) {
       if (error instanceof z.ZodError) {
         const path = error.issues[0].path[0];
@@ -102,6 +114,7 @@ export default function Login() {
   }, []);
 
   // For generate metadata
+
   generateMetaData({
     title: "Login - Traveloka",
     description: "Login page for the Traveloka application",
@@ -115,6 +128,10 @@ export default function Login() {
     ogUrl: "http://localhost:3000/login",
     ogImage: "/traveloka_logo.png",
   });
+
+  if (isNavigating) {
+    return <SkeletonHomePage />;
+  }
   return (
     <div className="flex flex-col gap-5 items-center justify-center min-h-screen bg-[url('/bg_traveloka5.png')] bg-cover bg-center ">
       <div className="flex justify-center items-center gap-2">
@@ -171,10 +188,10 @@ export default function Login() {
           >
             {loading ? (
               <div className="flex justify-center items-center">
-                <AiOutlineLoading className="animate-spin text-lg" />
+                <AiOutlineLoading className="animate-spin text-2xl" />
               </div>
             ) : (
-              <div>LOG IN</div>
+              <div className="text-lg">LOG IN</div>
             )}
           </button>
         </form>

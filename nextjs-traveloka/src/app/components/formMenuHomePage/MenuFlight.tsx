@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { MdPeopleOutline } from "react-icons/md";
 import { LiaPlaneDepartureSolid } from "react-icons/lia";
 import { LiaPlaneArrivalSolid } from "react-icons/lia";
@@ -12,6 +12,8 @@ import { useRouter } from "next/navigation";
 export default function MenuFlight() {
   const navigate = useRouter();
   const [loading, setLoading] = useState(false);
+
+  
   // Initital state untuk form menu flight
   const [formDataFlight, setFormDataFlight] = useState({
     departureAirport: "CGK",
@@ -20,6 +22,68 @@ export default function MenuFlight() {
     cabinClass: "Economy",
     passengerCount: 1,
   });
+
+  // State untuk menampung error form
+  const [formErrors, setFormErrors] = useState({
+    departureTime: "",
+    passengerCount: "",
+    general: "",
+  });
+  console.log("formErrors:", formErrors);
+
+  // State untuk validasi form
+  const [isFormValid, setIsFormValid] = useState(false);
+  console.log("isFormValid:", isFormValid);
+
+  const vaildationForm = useCallback(() => {
+    const errors = {
+      departureTime: "",
+      passengerCount: "",
+      general: "",
+    };
+
+    // check 1 per 1 field di form
+    if (formDataFlight.passengerCount <= 0) {
+      errors.passengerCount = "Passenger count must be a positive number.";
+    }
+    if (formDataFlight.departureAirport === formDataFlight.arrivalAirport) {
+      errors.general = "Departure and arrival airports cannot be the same.";
+    }
+
+    // 1 hari yang lalu tidak bisa
+    const today = new Date();
+    const selectedDate = new Date(formDataFlight.departureTime);
+
+    // ambil tanggal saja
+    const todayDateOnly = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate()
+    );
+
+    const selectedDateOnly = new Date(
+      selectedDate.getFullYear(),
+      selectedDate.getMonth(),
+      selectedDate.getDate()
+    );
+
+    if (selectedDateOnly < todayDateOnly) {
+      errors.departureTime = "Departure date cannot be in the past.";
+    }
+
+    setFormErrors(errors);
+    // Form valid jika semua error kosong
+    const valid = Object.values(errors).every((error) => error === "");
+    setIsFormValid(valid);
+  }, [formDataFlight]);
+
+  // cek validasi form setiap ada perubahan di formDataFlight
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      vaildationForm();
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [formDataFlight, vaildationForm]);
 
   // Change Handlers untuk form menu flight
   function changeHandler(
@@ -37,6 +101,20 @@ export default function MenuFlight() {
   async function submitHandler(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
+    // Cek validasi form sebelum submit
+    if (!isFormValid) {
+      // show first error found
+      const firstError = Object.values(formErrors).find(
+        (error) => error !== ""
+      );
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: firstError || "Please fix the errors in the form.",
+      });
+      return;
+    }
+
     try {
       setLoading(true);
       if (
@@ -47,18 +125,6 @@ export default function MenuFlight() {
         !formDataFlight.cabinClass
       ) {
         throw new Error("Please fill in all fields.");
-      }
-
-      if (formDataFlight.passengerCount <= 0) {
-        throw new Error("Passenger count must be a positive number.");
-      }
-
-      if (formDataFlight.departureAirport === formDataFlight.arrivalAirport) {
-        throw new Error("Departure and arrival airports cannot be the same.");
-      }
-
-      if (new Date(formDataFlight.departureTime) < new Date()) {
-        throw new Error("Departure date cannot be in the past.");
       }
 
       const searchParams = new URLSearchParams({
@@ -333,7 +399,12 @@ export default function MenuFlight() {
           </div>
           <button
             type="submit"
-            className="bg-green-600 p-[13px] rounded-2xl border-2 border-[#0194F3] cursor-pointer hover:bg-green-800 transition-colors duration-300"
+            disabled={!isFormValid || loading}
+            className={`p-[13px] rounded-2xl border-2 border-[#0194F3] cursor-pointer transition-colors duration-300 ${
+              isFormValid && !loading
+                ? "bg-green-600 hover:bg-green-800"
+                : "bg-gray-400 cursor-not-allowed"
+            }`}
           >
             {loading ? (
               <div className="animate-spin h-6 w-6 border-4 border-t-transparent border-white rounded-full"></div>

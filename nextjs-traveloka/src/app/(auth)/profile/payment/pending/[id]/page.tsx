@@ -50,8 +50,6 @@ export default function PendingPayment() {
   // JALAN KEDUA
   async function fetchPaymentByOrderId() {
     try {
-      console.log("Jalan ketika expired");
-
       setLoading(true);
       const response = await fetch(`${apiUrl}/api/payment/${paymentId}`, {
         method: "GET",
@@ -74,6 +72,7 @@ export default function PendingPayment() {
           text: "Your payment has expired. Please make a new booking.",
           timer: 2000,
         });
+        setHasExpired(true);
         navigate.push(`/profile/payment/expired/${paymentId}`);
         return;
       } else if (
