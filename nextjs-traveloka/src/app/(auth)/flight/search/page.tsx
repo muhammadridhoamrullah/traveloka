@@ -74,7 +74,6 @@ async function getLowestPriceAndShortestFlight(dataFlight: {
   flights: Flight[];
 }) {
   if (!dataFlight || dataFlight.flights.length === 0) {
-    console.log("ini jalan error");
     return {
       lowestFlight: null,
       lowestPrice: 0,
@@ -117,12 +116,11 @@ export default async function SearchFlightsPage({ searchParams }: Props) {
   const data = (await fetchResultSearchFlight(params)) as {
     flights: Flight[];
   };
-  console.log("Data fetched:", data);
 
   const flightData = (await getLowestPriceAndShortestFlight(
     data
   )) as unknown as FlightStats;
-  // bg-[#F7F9FA]
+
   return (
     <div className="bg-blue-950 w-full min-h-screen pt-36 px-20 pb-5 text-black flex justify-between items-start gap-2">
       {/* Awal Filter */}
@@ -212,128 +210,3 @@ export default async function SearchFlightsPage({ searchParams }: Props) {
     </div>
   );
 }
-
-// {
-//     "flights": [
-//         {
-//             "_id": "689ae7fa816e5cc195291ed9",
-//             "flightNumber": "JT684",
-//             "airline": "Lion Air",
-//             "aircraft": "Boeing 737-900ER",
-//             "totalSeats": 215,
-//             "departure": {
-//                 "airportCode": "CGK",
-//                 "airportName": "Soekarno-Hatta International Airport",
-//                 "city": "Jakarta",
-//                 "country": "Indonesia",
-//                 "terminal": "1C",
-//                 "gate": "C2",
-//                 "time": "2025-09-15T13:10:00.000Z",
-//                 "timezone": "Asia/Jakarta"
-//             },
-//             "arrival": {
-//                 "airportCode": "PNK",
-//                 "airportName": "Supadio Airport",
-//                 "city": "Pontianak",
-//                 "country": "Indonesia",
-//                 "terminal": "Domestic",
-//                 "gate": "1",
-//                 "time": "2025-09-15T14:55:00.000Z",
-//                 "timezone": "Asia/Jakarta"
-//             },
-//             "duration": 105,
-//             "cabinClasses": [
-//                 {
-//                     "class": "Economy",
-//                     "price": 850000,
-//                     "seatsAvailable": 215,
-//                     "facilities": [
-//                         "Snack",
-//                         "Drink"
-//                     ],
-//                     "baggage": {
-//                         "carry": "7kg",
-//                         "checked": "20kg"
-//                     }
-//                 }
-//             ],
-//             "stops": [],
-//             "deletedAt": null,
-//             "UserId": "68888276782e842cd0e3e915",
-//             "UserCreated": {
-//                 "_id": "68888276782e842cd0e3e915",
-//                 "firstName": "Kang",
-//                 "lastName": "Haerin",
-//                 "username": "kanghaerin",
-//                 "email": "kanghaerin@gmail.com",
-//                 "phoneNumber": "085363508587",
-//                 "dateOfBirth": "2025-06-10T08:12:00.000Z",
-//                 "address": "Jalan Yos Sudarso",
-//                 "role": "Admin",
-//                 "isEmailVerified": true,
-//                 "createdAt": "2025-07-29T08:12:38.133Z",
-//                 "updatedAt": "2025-07-29T08:12:38.133Z"
-//             }
-//         },
-//         {
-//             "_id": "689449ff68fa399516b20693",
-//             "flightNumber": "SJ182",
-//             "airline": "Sriwijaya Air",
-//             "aircraft": "Boeing 737-500",
-//             "totalSeats": 112,
-//             "departure": {
-//                 "airportCode": "CGK",
-//                 "airportName": "Soekarno-Hatta International Airport",
-//                 "city": "Jakarta",
-//                 "country": "Indonesia",
-//                 "terminal": "1B",
-//                 "gate": "D5",
-//                 "time": "2025-09-15T19:40:00.000Z",
-//                 "timezone": "Asia/Jakarta"
-//             },
-//             "arrival": {
-//                 "airportCode": "PNK",
-//                 "airportName": "Supadio Airport",
-//                 "city": "Pontianak",
-//                 "country": "Indonesia",
-//                 "terminal": "Domestic",
-//                 "gate": "2",
-//                 "time": "2025-09-15T21:25:00.000Z",
-//                 "timezone": "Asia/Jakarta"
-//             },
-//             "duration": 105,
-//             "cabinClasses": [
-//                 {
-//                     "class": "Economy",
-//                     "price": 980000,
-//                     "seatsAvailable": 112,
-//                     "facilities": [
-//                         "Snack",
-//                         "Drink"
-//                     ],
-//                     "baggage": {
-//                         "carry": "7kg",
-//                         "checked": "20kg"
-//                     }
-//                 }
-//             ],
-//             "stops": [],
-//             "deletedAt": null,
-//             "UserId": "68888276782e842cd0e3e915",
-//             "UserCreated": {
-//                 "_id": "68888276782e842cd0e3e915",
-//                 "firstName": "Kang",
-//                 "lastName": "Haerin",
-//                 "username": "kanghaerin",
-//                 "email": "kanghaerin@gmail.com",
-//                 "phoneNumber": "085363508587",
-//                 "dateOfBirth": "2025-06-10T08:12:00.000Z",
-//                 "address": "Jalan Yos Sudarso",
-//                 "role": "Admin",
-//                 "isEmailVerified": true,
-//                 "createdAt": "2025-07-29T08:12:38.133Z",
-//                 "updatedAt": "2025-07-29T08:12:38.133Z"
-//             }
-//         }
-//     ]
-// }

@@ -55,7 +55,6 @@ export default function Homepage() {
 
   // Untuk menu
   const [activeMenu, setActiveMenu] = useState("flights");
-  console.log("Active Menu:", activeMenu);
 
   // Generate metadata
 

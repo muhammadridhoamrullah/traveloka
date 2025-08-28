@@ -5,7 +5,7 @@ import { Flight } from "@/db/type/flight";
 
 import { Metadata } from "next";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import Loading from "./loading";
 import { generateMetaData } from "@/db/utils/metadata";
@@ -150,14 +150,6 @@ export default function DetailFlight() {
     );
   }, [query.passengerCount]);
 
-  // if (loading) {
-  //   return (
-  //     <div className="w-full min-h-screen pt-36 pb-5 px-20 bg-red-800 flex items-center justify-center">
-  //       <div className="text-white text-xl">Loading flight details...</div>
-  //     </div>
-  //   );
-  // }
-
   if (loading) {
     return <Loading />;
   }
@@ -279,18 +271,6 @@ export default function DetailFlight() {
     { length: passengerCount },
     (_, index) => index + 1
   );
-
-  function isFormValid() {
-    const contactComplete = Object.values(contactDetails).every(
-      (value) => value.trim() !== ""
-    );
-
-    const passengersComplete = passengerDetails.every((passenger) =>
-      Object.values(passenger).every((value) => value.trim() !== "")
-    );
-
-    return contactComplete && passengersComplete;
-  }
 
   return (
     <div className="w-full min-h-screen pt-36 pb-5 px-20 bg-blue-950 flex flex-col gap-4 text-white">

@@ -13,7 +13,6 @@ export default function MenuFlight() {
   const navigate = useRouter();
   const [loading, setLoading] = useState(false);
 
-  
   // Initital state untuk form menu flight
   const [formDataFlight, setFormDataFlight] = useState({
     departureAirport: "CGK",
@@ -29,13 +28,11 @@ export default function MenuFlight() {
     passengerCount: "",
     general: "",
   });
-  console.log("formErrors:", formErrors);
 
   // State untuk validasi form
   const [isFormValid, setIsFormValid] = useState(false);
-  console.log("isFormValid:", isFormValid);
 
-  const vaildationForm = useCallback(() => {
+  const validationForm = useCallback(() => {
     const errors = {
       departureTime: "",
       passengerCount: "",
@@ -74,16 +71,17 @@ export default function MenuFlight() {
     setFormErrors(errors);
     // Form valid jika semua error kosong
     const valid = Object.values(errors).every((error) => error === "");
+
     setIsFormValid(valid);
   }, [formDataFlight]);
 
   // cek validasi form setiap ada perubahan di formDataFlight
   useEffect(() => {
     const timer = setTimeout(() => {
-      vaildationForm();
+      validationForm();
     }, 300);
     return () => clearTimeout(timer);
-  }, [formDataFlight, vaildationForm]);
+  }, [formDataFlight, validationForm]);
 
   // Change Handlers untuk form menu flight
   function changeHandler(
@@ -102,7 +100,7 @@ export default function MenuFlight() {
     e.preventDefault();
 
     // Cek validasi form sebelum submit
-    if (!isFormValid) {
+    if (isFormValid === false) {
       // show first error found
       const firstError = Object.values(formErrors).find(
         (error) => error !== ""
@@ -117,15 +115,6 @@ export default function MenuFlight() {
 
     try {
       setLoading(true);
-      if (
-        !formDataFlight.departureAirport ||
-        !formDataFlight.arrivalAirport ||
-        !formDataFlight.departureTime ||
-        !formDataFlight.passengerCount ||
-        !formDataFlight.cabinClass
-      ) {
-        throw new Error("Please fill in all fields.");
-      }
 
       const searchParams = new URLSearchParams({
         departureAirport: formDataFlight.departureAirport,
@@ -250,6 +239,34 @@ export default function MenuFlight() {
       location: "Malang, Jawa Timur",
     },
   ];
+
+  // prefetch data
+  useEffect(() => {
+    console.log("Prefetching flight search data...");
+
+    if (
+      formDataFlight.departureAirport &&
+      formDataFlight.arrivalAirport &&
+      formDataFlight.departureTime &&
+      formDataFlight.cabinClass &&
+      formDataFlight.passengerCount
+    ) {
+      const searchParams = new URLSearchParams({
+        departureAirport: formDataFlight.departureAirport,
+        arrivalAirport: formDataFlight.arrivalAirport,
+        departureTime: formDataFlight.departureTime,
+        cabinClass: formDataFlight.cabinClass,
+        passengerCount: formDataFlight.passengerCount.toString(),
+      });
+
+      console.log(
+        "Prefetching flight search with params:",
+        searchParams.toString()
+      );
+
+      navigate.prefetch(`/flight/search?${searchParams.toString()}`);
+    }
+  }, [formDataFlight, navigate]);
 
   return (
     <form
@@ -399,9 +416,9 @@ export default function MenuFlight() {
           </div>
           <button
             type="submit"
-            disabled={!isFormValid || loading}
+            disabled={loading}
             className={`p-[13px] rounded-2xl border-2 border-[#0194F3] cursor-pointer transition-colors duration-300 ${
-              isFormValid && !loading
+              !loading
                 ? "bg-green-600 hover:bg-green-800"
                 : "bg-gray-400 cursor-not-allowed"
             }`}

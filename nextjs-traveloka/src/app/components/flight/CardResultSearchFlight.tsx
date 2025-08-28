@@ -11,6 +11,8 @@ import {
   formatRupiah,
   getAirlineLogoFromUtils,
 } from "@/db/utils/helperFunctions";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface Props {
   data: Flight;
@@ -26,6 +28,7 @@ interface Props {
 
 export default function CardResultSearchFlight({ data, key, query }: Props) {
   let airlineLogo = getAirlineLogoFromUtils(data.airline);
+  const navigate = useRouter();
 
   function getBaggage(cabinClass: string) {
     let maxBaggage = Infinity;
@@ -74,14 +77,17 @@ export default function CardResultSearchFlight({ data, key, query }: Props) {
   let transit = data.stops && data.stops.length > 0 ? "Transit" : "Direct";
   let howManyStops = data.stops ? data.stops.length : 0;
 
-  const flightData = encodeURIComponent(JSON.stringify(data));
-  const fligjtDataDecoded = decodeURIComponent(flightData);
-  console.log("Flight Data Decoded:", fligjtDataDecoded);
-
   function handleChooseFlight() {
     sessionStorage.setItem("flightData", JSON.stringify(data));
     sessionStorage.setItem("queryData", JSON.stringify(query));
   }
+
+  // Prefetch data
+  useEffect(() => {
+    console.log("Prefetching flight detail page...");
+
+    navigate.prefetch(`/flight/detail/${data._id}`);
+  }, [data._id, navigate]);
 
   return (
     <div className="bg-black/70 text-white rounded-md flex flex-col gap-5 justify-between items-start py-3 px-4 w-full h-fit">

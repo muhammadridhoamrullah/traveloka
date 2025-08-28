@@ -3,6 +3,7 @@
 import { pushTokenToPayment } from "@/db/model/payment";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import Swal from "sweetalert2";
 
 declare global {
@@ -55,6 +56,50 @@ export default function PaymentButton({ data }: Props) {
 
   const api_url = process.env.NEXT_PUBLIC_CLIENT_URL;
 
+  const [loading, setLoading] = useState(false);
+
+  // VALIDATION LOGIC INSIDE PaymentButton
+  const validateBeforePayment = () => {
+    const errors = [];
+
+    // Contact Details Validation
+    if (!data.contactDetails.contactDetailFirstName.trim()) {
+      errors.push("Contact first name is required");
+    }
+    if (!data.contactDetails.contactDetailLastName.trim()) {
+      errors.push("Contact last name is required");
+    }
+    if (!data.contactDetails.contactDetailEmail.trim()) {
+      errors.push("Email is required");
+    } else if (!data.contactDetails.contactDetailEmail.includes("@")) {
+      errors.push("Please enter a valid email");
+    }
+    if (!data.contactDetails.contactDetailMobileNumber.trim()) {
+      errors.push("Mobile number is required");
+    }
+
+    // Passenger Details Validation
+    data.passengerDetails.forEach((passenger, index) => {
+      if (!passenger.passengerDetailFirstName.trim()) {
+        errors.push(`Passenger ${index + 1} first name is required`);
+      }
+      if (!passenger.passengerDetailLastName.trim()) {
+        errors.push(`Passenger ${index + 1} last name is required`);
+      }
+      if (!passenger.passengerDetailDateOfBirth) {
+        errors.push(`Passenger ${index + 1} birth date is required`);
+      }
+    });
+
+    // Show first error if any
+    if (errors.length > 0) {
+      toast.error(errors[0]);
+      return false;
+    }
+
+    return true; // All validation passed
+  };
+
   //   Check snap
   useEffect(() => {
     const checkSnap = () => {
@@ -69,7 +114,12 @@ export default function PaymentButton({ data }: Props) {
 
   //   function to handle payment
   async function handlePayment() {
+    //  VALIDATE FIRST before payment
+    if (!validateBeforePayment()) {
+      return; // Stop if validation fails
+    }
     try {
+      setLoading(true);
       if (!isSnapReady || !window.snap) {
         alert("Payment gateway is not ready yet.");
         return;
@@ -150,20 +200,27 @@ export default function PaymentButton({ data }: Props) {
       });
     } catch (error) {
       if (error instanceof Error) {
-        alert(error.message);
+        toast.error(error.message);
       } else {
-        alert("An unexpected error occurred during payment processing.");
+        toast.error("An unexpected error occurred");
       }
+    } finally {
+      setLoading(false);
     }
   }
   return (
     <>
+      <Toaster position="top-center" reverseOrder={false} />
       <button
         onClick={handlePayment}
-        disabled={!isSnapReady}
-        className="bg-[#0194F3] rounded-md px-4 py-2 text-sm font-semibold hover:bg-blue-700 cursor-pointer"
+        disabled={!isSnapReady || loading}
+        className="bg-[#0194F3] hover:bg-blue-700 cursor-pointer rounded-md px-4 py-2 text-sm font-semibold "
       >
-        {isSnapReady ? "Pay" : "Loading Payment Gateway ..."}
+        {isSnapReady
+          ? loading
+            ? "Processing..."
+            : "Pay"
+          : "Loading Payment Gateway ..."}
       </button>
     </>
   );
