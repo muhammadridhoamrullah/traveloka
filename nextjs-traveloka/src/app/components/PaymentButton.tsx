@@ -1,6 +1,7 @@
 "use client";
 
 import { pushTokenToPayment } from "@/db/model/payment";
+import { showToast } from "@/db/utils/helperFunctions";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
@@ -151,10 +152,9 @@ export default function PaymentButton({ data }: Props) {
       }
       const result = await response.json();
 
-      // input token ke db
-      // if (result.token && result.order_id) {
-      //   await pushTokenToPayment(result.token, result.order_id);
-      // }
+      // Prefetch both pending and success page to make navigation faster
+      navigate.prefetch(`/profile/payment/pending/${data.orderId}`);
+      navigate.prefetch(`/profile/payment/success/${data.orderId}`);
 
       window.snap.pay(result.token, {
         onSuccess: async (result) => {
@@ -163,15 +163,12 @@ export default function PaymentButton({ data }: Props) {
           // Cukup 1 API call
           await fetch(`${api_url}/api/payment/checkStatus/${result.order_id}`);
 
-          Swal.fire({
-            title: "Payment Successful",
-            text: `Order ID: ${result.order_id}`,
-            icon: "success",
-            timer: 3000,
-            showConfirmButton: false,
-          }).then(() => {
-            navigate.push(`/profile/payment/success/${result.order_id}`);
-          });
+          showToast(
+            `Payment Successful. You will be redirected shortly to the payment success page.`,
+            "success",
+            2000
+          );
+          navigate.push(`/profile/payment/success/${result.order_id}`);
         },
         onPending: async (result) => {
           console.log("⏳ Payment Pending:", result);
@@ -179,15 +176,12 @@ export default function PaymentButton({ data }: Props) {
           // Cukup 1 API call
           await fetch(`${api_url}/api/payment/checkStatus/${result.order_id}`);
 
-          Swal.fire({
-            title: "Payment Pending",
-            text: `Order ID: ${result.order_id}. Please complete your payment.`,
-            icon: "info",
-            timer: 5000,
-            showConfirmButton: false,
-          }).then(() => {
-            navigate.push(`/profile/payment/pending/${result.order_id}`);
-          });
+          showToast(
+            `Payment Pending, you will be redirected shortly to the payment pending page.`,
+            "default",
+            2000
+          );
+          navigate.push(`/profile/payment/pending/${result.order_id}`);
         },
         onError: async (result) => {
           console.log("❌ Error:", result);
@@ -199,13 +193,12 @@ export default function PaymentButton({ data }: Props) {
         },
       });
     } catch (error) {
+      setLoading(false);
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
         toast.error("An unexpected error occurred");
       }
-    } finally {
-      setLoading(false);
     }
   }
   return (
@@ -214,7 +207,11 @@ export default function PaymentButton({ data }: Props) {
       <button
         onClick={handlePayment}
         disabled={!isSnapReady || loading}
-        className="bg-[#0194F3] hover:bg-blue-700 cursor-pointer rounded-md px-4 py-2 text-sm font-semibold "
+        className={` rounded-md px-4 py-2 text-sm font-semibold ${
+          !isSnapReady || loading
+            ? "bg-gray-700 hover:bg-gray-500 cursor-not-allowed"
+            : "bg-[#0194F3] hover:bg-blue-700 cursor-pointer"
+        } `}
       >
         {isSnapReady
           ? loading

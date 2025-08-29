@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 export default function MenuFlight() {
   const navigate = useRouter();
   const [loading, setLoading] = useState(false);
+  const [loadingTest, setLoadingTest] = useState(true);
 
   // Initital state untuk form menu flight
   const [formDataFlight, setFormDataFlight] = useState({
@@ -127,6 +128,7 @@ export default function MenuFlight() {
       // Redirect ke halaman serach flight dengan query params
       navigate.push(`/flight/search?${searchParams.toString()}`);
     } catch (error) {
+      setLoading(false);
       if (error instanceof Error) {
         Swal.fire({
           icon: "error",
@@ -140,8 +142,6 @@ export default function MenuFlight() {
           text: "An unexpected error occurred.",
         });
       }
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -424,7 +424,7 @@ export default function MenuFlight() {
             }`}
           >
             {loading ? (
-              <div className="animate-spin h-6 w-6 border-4 border-t-transparent border-white rounded-full"></div>
+              <div className="animate-spin h-5 w-5 border-4 border-t-transparent border-white rounded-full"></div>
             ) : (
               <GoSearch className="text-white text-xl" />
             )}

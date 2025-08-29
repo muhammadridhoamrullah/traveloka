@@ -46,6 +46,7 @@ export default function PendingPayment() {
 
   const [isPolling, setIsPolling] = useState(false);
   const [lastPolled, setLastPolled] = useState<Date | null>(null);
+  const [isNavigating, setIsNavigating] = useState(false);
 
   // JALAN KEDUA
   async function fetchPaymentByOrderId() {
@@ -70,9 +71,10 @@ export default function PendingPayment() {
           icon: "error",
           title: "Payment Expired",
           text: "Your payment has expired. Please make a new booking.",
-          timer: 2000,
+          timer: 1000,
         });
         setHasExpired(true);
+        setIsNavigating(true);
         navigate.push(`/profile/payment/expired/${paymentId}`);
         return;
       } else if (
@@ -84,8 +86,9 @@ export default function PendingPayment() {
           icon: "success",
           title: "Payment Successful",
           text: "Your payment was successful. Thank you!",
-          timer: 2000,
+          timer: 1000,
         });
+        setIsNavigating(true);
         navigate.push(`/profile/payment/success/${paymentId}`);
         return;
       }
@@ -203,6 +206,9 @@ export default function PendingPayment() {
   if (loading) {
     return <Loading />;
   }
+  if (isNavigating) {
+    return <Loading />;
+  }
 
   function renderCardPaymentInstruction() {
     switch (dataPayment?.completeData?.payment_type) {
@@ -216,6 +222,12 @@ export default function PendingPayment() {
       //   return <div>Ini Mandiri Bill Payment cuy</div>;
     }
   }
+
+  // prefetch both pending and success page to make navigation faster
+  useEffect(() => {
+    navigate.prefetch(`/profile/payment/pending/${dataPayment?.orderId}`);
+    navigate.prefetch(`/profile/payment/success/${dataPayment?.orderId}`);
+  }, [dataPayment?.orderId, navigate]);
 
   return (
     <div className="bg-blue-950 w-full min-h-screen pt-36 px-20 pb-5 flex flex-col justify-start items-center text-white gap-6">

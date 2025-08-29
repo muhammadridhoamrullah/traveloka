@@ -11,7 +11,7 @@ import {
   formatRupiah,
   getAirlineLogoFromUtils,
 } from "@/db/utils/helperFunctions";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface Props {
@@ -77,17 +77,23 @@ export default function CardResultSearchFlight({ data, key, query }: Props) {
   let transit = data.stops && data.stops.length > 0 ? "Transit" : "Direct";
   let howManyStops = data.stops ? data.stops.length : 0;
 
+  const [isNavigating, setIsNavigating] = useState(false);
+
   function handleChooseFlight() {
+    setIsNavigating(true);
     sessionStorage.setItem("flightData", JSON.stringify(data));
     sessionStorage.setItem("queryData", JSON.stringify(query));
   }
 
   // Prefetch data
-  useEffect(() => {
-    console.log("Prefetching flight detail page...");
+  const [isHovered, setIsHovered] = useState(false);
+
+  function handleMouseEnter() {
+    setIsHovered(true);
+    console.log(`Prefetching /flight/detail/${data._id}`);
 
     navigate.prefetch(`/flight/detail/${data._id}`);
-  }, [data._id, navigate]);
+  }
 
   return (
     <div className="bg-black/70 text-white rounded-md flex flex-col gap-5 justify-between items-start py-3 px-4 w-full h-fit">
@@ -166,67 +172,17 @@ export default function CardResultSearchFlight({ data, key, query }: Props) {
         <Link
           href={`/flight/detail/${data._id}`}
           onClick={handleChooseFlight}
+          onMouseEnter={handleMouseEnter}
           className="bg-blue-950 px-4 py-2 rounded-md text-sm font-semibold hover:bg-blue-700 cursor-pointer"
         >
-          Choose
+          {isNavigating ? (
+            <div className="animate-spin h-5 w-5 border-4 border-t-transparent border-white rounded-full"></div>
+          ) : (
+            <div>Choose</div>
+          )}
         </Link>
       </div>
       {/* Akhir Flight Menu */}
     </div>
   );
 }
-
-// data {
-//   _id: '689449ff68fa399516b20693',
-//   flightNumber: 'SJ182',
-//   airline: 'Sriwijaya Air',
-//   aircraft: 'Boeing 737-500',
-//   totalSeats: 112,
-//   departure: {
-//     airportCode: 'CGK',
-//     airportName: 'Soekarno-Hatta International Airport',
-//     city: 'Jakarta',
-//     country: 'Indonesia',
-//     terminal: '1B',
-//     gate: 'D5',
-//     time: '2025-09-15T19:40:00.000Z',
-//     timezone: 'Asia/Jakarta'
-//   },
-//   arrival: {
-//     airportCode: 'PNK',
-//     airportName: 'Supadio Airport',
-//     city: 'Pontianak',
-//     country: 'Indonesia',
-//     terminal: 'Domestic',
-//     gate: '2',
-//     time: '2025-09-15T21:25:00.000Z',
-//     timezone: 'Asia/Jakarta'
-//   },
-//   duration: 105,
-//   cabinClasses: [
-//     {
-//       class: 'Economy',
-//       price: 980000,
-//       seatsAvailable: 112,
-//       facilities: [Array],
-//       baggage: [Object]
-//     }
-//   ],
-//   stops: [],
-//   deletedAt: null,
-//   UserId: '68888276782e842cd0e3e915',
-//   UserCreated: {
-//     _id: '68888276782e842cd0e3e915',
-//     firstName: 'Kang',
-//     lastName: 'Haerin',
-//     username: 'kanghaerin',
-//     email: 'kanghaerin@gmail.com',
-//     phoneNumber: '085363508587',
-//     dateOfBirth: '2025-06-10T08:12:00.000Z',
-//     address: 'Jalan Yos Sudarso',
-//     role: 'Admin',
-//     isEmailVerified: true,
-//     createdAt: '2025-07-29T08:12:38.133Z',
-//     updatedAt: '2025-07-29T08:12:38.133Z'
-//   }
-// }

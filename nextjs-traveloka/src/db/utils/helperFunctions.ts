@@ -1,4 +1,5 @@
 import React, { ReactElement } from "react";
+import toast from "react-hot-toast";
 
 export function formatDate(dateString: string) {
   const date = new Date(dateString);
@@ -222,4 +223,17 @@ export function getHourAndMinuteFromDate(dateString: string) {
   const hours = date.getHours().toString().padStart(2, "0");
   const minutes = date.getMinutes().toString().padStart(2, "0");
   return `${hours}:${minutes}`;
+}
+
+export function showToast(
+  message: string,
+  type: "success" | "error" | "loading" | "default" = "default",
+  delay = 0
+) {
+  setTimeout(() => {
+    if (type === "success") return toast.success(message);
+    if (type === "error") return toast.error(message);
+    if (type === "loading") return toast.loading(message);
+    return toast(message); // default
+  }, delay);
 }
