@@ -172,16 +172,27 @@ export default function PaymentButton({ data }: Props) {
         },
         onPending: async (result) => {
           console.log("⏳ Payment Pending:", result);
-
-          // Cukup 1 API call
-          await fetch(`${api_url}/api/payment/checkStatus/${result.order_id}`);
-
           showToast(
             `Payment Pending, you will be redirected shortly to the payment pending page.`,
             "default",
             2000
           );
-          navigate.push(`/profile/payment/pending/${result.order_id}`);
+          try {
+            const res = await fetch(
+              `${api_url}/api/payment/checkStatus/${result.order_id}`
+            );
+
+            if (!res.ok) {
+              throw new Error("Failed to update payment status");
+            }
+            navigate.push(`/profile/payment/pending/${result.order_id}`);
+          } catch (error) {
+            if (error instanceof Error) {
+              toast.error(error.message);
+            } else {
+              toast.error("An unexpected error occurred");
+            }
+          }
         },
         onError: async (result) => {
           console.log("❌ Error:", result);
