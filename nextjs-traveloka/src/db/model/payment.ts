@@ -70,7 +70,6 @@ export async function createPayment(input: InputPayment) {
 
 export async function updatePaymentStatus(input: InputUpdatePaymentTerbaru) {
   const db = await GetDb();
-  console.log("Updating payment status with input:", input);
 
   const findPayment = await db.collection(COLLECTION_NAME).findOne({
     orderId: input.orderId,
@@ -84,7 +83,6 @@ export async function updatePaymentStatus(input: InputUpdatePaymentTerbaru) {
     completeData: input.completeData,
     updatedAt: new Date(),
   };
-  console.log("Update data to be applied:", updateData);
 
   const updating = await db.collection(COLLECTION_NAME).updateOne(
     {
@@ -104,7 +102,6 @@ export async function updatePaymentStatus(input: InputUpdatePaymentTerbaru) {
     orderId: input.orderId,
   });
 
-  console.log("Updated payment:", updatedPayment);
 
   // Nnati update jika settlement atau capture dan serviceType flight, update seat di flight
 

@@ -33,6 +33,7 @@ import CardVaPaymentInstruction from "@/app/components/flight/profile/CardVAPaym
 import { CountdownDisplay } from "@/app/components/flight/profile/CountDown";
 import CoundtDownReact from "@/app/components/flight/profile/CountDownReact";
 import CardQrisPaymentInstruction from "@/app/components/flight/profile/CardQrisPaymentInstruction";
+import SkeletonHomePage from "@/app/components/SkeletonHomePage";
 
 export default function PendingPayment() {
   const navigate = useRouter();
@@ -75,6 +76,7 @@ export default function PendingPayment() {
           timer: 1000,
         });
         setHasExpired(true);
+        setLoading(false);
         setIsNavigating(true);
         navigate.push(`/profile/payment/expired/${paymentId}`);
         return;
@@ -89,6 +91,7 @@ export default function PendingPayment() {
           text: "Your payment was successful. Thank you!",
           timer: 1000,
         });
+        setLoading(false);
         setIsNavigating(true);
         navigate.push(`/profile/payment/success/${paymentId}`);
         return;
@@ -151,8 +154,11 @@ export default function PendingPayment() {
   // INI JALAN PERTAMA
   useEffect(() => {
     console.log("ke trigger");
+    if (!paymentId) return;
 
     fetchPaymentByOrderId();
+    navigate.prefetch(`/profile/payment/pending/${dataPayment?.orderId}`);
+    navigate.prefetch(`/profile/payment/success/${dataPayment?.orderId}`);
   }, [paymentId]);
 
   function handleExpire() {
@@ -221,18 +227,12 @@ export default function PendingPayment() {
     }
   }
 
-  // prefetch both pending and success page to make navigation faster
-  useEffect(() => {
-    console.log(`${dataPayment?.orderId} prefetching`);
-
-    navigate.prefetch(`/profile/payment/pending/${dataPayment?.orderId}`);
-    navigate.prefetch(`/profile/payment/success/${dataPayment?.orderId}`);
-  }, [dataPayment?.orderId, navigate]);
-
   return (
     <>
-      {loading || isNavigating ? (
+      {loading ? (
         <Loading />
+      ) : isNavigating ? (
+        <SkeletonHomePage />
       ) : (
         <div className="bg-blue-950 w-full min-h-screen pt-36 px-20 pb-5 flex flex-col justify-start items-center text-white gap-6">
           <Toaster position="top-center" reverseOrder={false} />

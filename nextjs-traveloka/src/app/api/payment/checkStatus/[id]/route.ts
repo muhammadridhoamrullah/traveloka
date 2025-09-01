@@ -1,4 +1,4 @@
-import { updatePaymentStatus } from "@/db/model/payment";
+import { getPaymentByOrderId, updatePaymentStatus } from "@/db/model/payment";
 import { NextRequest, NextResponse } from "next/server";
 
 interface Props {
@@ -41,10 +41,14 @@ export async function GET(request: NextRequest, { params }: Props) {
       // Tidak perlu throw error, karena ini hanya proses update
     }
 
+    // get data payment terbaru setelah update
+    const getUpdatePayment = await getPaymentByOrderId(result.order_id);
+
     return NextResponse.json(
       {
         success: true,
         data: result,
+        dataLengkap: getUpdatePayment,
       },
       {
         status: 200,

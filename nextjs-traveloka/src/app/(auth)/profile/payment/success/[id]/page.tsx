@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { LuPlane } from "react-icons/lu";
 import { FaRegClock } from "react-icons/fa6";
 import { GoPeople } from "react-icons/go";
@@ -30,8 +30,10 @@ export default function SuccessPayment() {
   const params = useParams();
   const apiUrl = process.env.NEXT_PUBLIC_CLIENT_URL;
   const paymentId = params.id;
+  const navigate = useRouter();
   const [dataPayment, setDataPayment] = useState({} as any);
   const [loading, setLoading] = useState(true);
+  const [isNavigating, setIsNavigating] = useState(false);
   console.log("Data Payment:", dataPayment);
 
   // fetch data payment by ID
@@ -49,6 +51,35 @@ export default function SuccessPayment() {
 
       if (!response.ok) {
         throw new Error(result.message || "Failed to fetch payment data");
+      }
+
+      let status = result.findPaymentById?.completeData?.transaction_status;
+      if (status === "pending") {
+        Swal.fire({
+          icon: "info",
+          title: "Info",
+          text: "Payment is still pending, redirecting to pending page",
+          timer: 3000,
+          showConfirmButton: true,
+          timerProgressBar: true,
+        });
+        setLoading(false);
+        setIsNavigating(true);
+        navigate.push(`/profile/payment/pending/${paymentId}`);
+        return;
+      } else if (status === "expire") {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Payment has expired, redirecting to failed page",
+          timer: 3000,
+          showConfirmButton: true,
+          timerProgressBar: true,
+        });
+        setLoading(false);
+        setIsNavigating(true);
+        navigate.push(`/profile/payment/expired/${paymentId}`);
+        return;
       }
 
       setDataPayment(result.findPaymentById);
@@ -73,6 +104,8 @@ export default function SuccessPayment() {
 
   useEffect(() => {
     if (paymentId) {
+      navigate.prefetch(`/profile/payment/pending/${paymentId}`);
+      navigate.prefetch(`/profile/payment/expired/${paymentId}`);
       fetchPaymentByOrderId();
     } else {
       Swal.fire({
@@ -87,6 +120,8 @@ export default function SuccessPayment() {
     <>
       {loading ? (
         <Loading />
+      ) : isNavigating ? (
+        <div>Navigating</div>
       ) : (
         <div className="bg-blue-950 w-full min-h-screen pt-36 px-20 pb-5 flex flex-col justify-start items-center text-white gap-6">
           {/* Awal Payment Successful */}
