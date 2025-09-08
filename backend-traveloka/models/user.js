@@ -185,23 +185,23 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   // Hook untuk menghapus data flight terkait saat user dihapus
-  User.beforeDestroy(async (user, options) => {
-    const { Flight } = sequelize.models;
+  // User.beforeDestroy(async (user, options) => {
+  //   const { Flight } = sequelize.models;
 
-    // Hapus semua flight yang terkait dengan user ini
-    await Flight.update(
-      {
-        deletedAt: new Date(),
-      },
-      {
-        where: {
-          UserId: user.id,
-        },
-        transaction: options.transaction,
-        individualHooks: true,
-        hooks: true,
-      }
-    );
-  });
+  //   // Hapus semua flight yang terkait dengan user ini
+  //   await Flight.update(
+  //     {
+  //       deletedAt: new Date(),
+  //     },
+  //     {
+  //       where: {
+  //         UserId: user.id,
+  //       },
+  //       transaction: options.transaction,
+  //       individualHooks: true,
+  //       hooks: true,
+  //     }
+  //   );
+  // });
   return User;
 };
