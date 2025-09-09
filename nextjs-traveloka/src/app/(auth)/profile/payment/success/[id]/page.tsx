@@ -25,6 +25,7 @@ import {
 } from "@/db/utils/helperFunctions";
 import { PassengerDetails } from "@/db/type/payment";
 import CardPassengerDetail from "@/app/components/flight/profile/CardPassengerDetail";
+import { generateMetaData } from "@/db/utils/metadata";
 
 export default function SuccessPayment() {
   const params = useParams();
@@ -40,12 +41,9 @@ export default function SuccessPayment() {
   async function fetchPaymentByOrderId() {
     try {
       setLoading(true);
-      const response = await fetch(`${apiUrl}/api/payment/${paymentId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${apiUrl}/api/payment/checkStatus/${paymentId}`
+      );
 
       const result = await response.json();
 
@@ -53,7 +51,7 @@ export default function SuccessPayment() {
         throw new Error(result.message || "Failed to fetch payment data");
       }
 
-      let status = result.findPaymentById?.completeData?.transaction_status;
+      let status = result.dataLengkap?.completeData?.transaction_status;
       if (status === "pending") {
         Swal.fire({
           icon: "info",
@@ -82,7 +80,7 @@ export default function SuccessPayment() {
         return;
       }
 
-      setDataPayment(result.findPaymentById);
+      setDataPayment(result.dataLengkap);
     } catch (error) {
       if (error instanceof Error) {
         Swal.fire({
@@ -116,6 +114,19 @@ export default function SuccessPayment() {
     }
   }, [paymentId]);
 
+  // Generate Metadata
+  generateMetaData({
+    title: "Traveloka - Payment Success",
+    description: `Payment successful for order ${dataPayment?.orderId}. View your flight details and e-ticket information.`,
+    canonical: `${apiUrl}/profile/payment/success/${dataPayment?.orderId}`,
+    icons: {
+      icon: "/traveloka_logo.png",
+    },
+    ogTitle: "Traveloka - Payment Success",
+    ogDescription: `Payment successful for order ${dataPayment?.orderId}. View your flight details and e-ticket information.`,
+    ogUrl: `${apiUrl}/profile/payment/success/${dataPayment?.orderId}`,
+    ogImage: "traveloka_logo.png",
+  });
   return (
     <>
       {loading ? (

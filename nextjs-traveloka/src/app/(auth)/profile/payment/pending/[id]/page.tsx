@@ -34,6 +34,7 @@ import { CountdownDisplay } from "@/app/components/flight/profile/CountDown";
 import CoundtDownReact from "@/app/components/flight/profile/CountDownReact";
 import CardQrisPaymentInstruction from "@/app/components/flight/profile/CardQrisPaymentInstruction";
 import SkeletonHomePage from "@/app/components/SkeletonHomePage";
+import { generateMetaData } from "@/db/utils/metadata";
 
 export default function PendingPayment() {
   const navigate = useRouter();
@@ -54,20 +55,19 @@ export default function PendingPayment() {
   async function fetchPaymentByOrderId() {
     try {
       setLoading(true);
-      const response = await fetch(`${apiUrl}/api/payment/${paymentId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${apiUrl}/api/payment/checkStatus/${paymentId}`
+      );
 
       const result = await response.json();
       if (!response.ok) {
         throw new Error(result.message || "Failed to fetch payment data");
       }
+      console.log(result, "result di pending page");
 
-      const status = result.findPaymentById?.completeData?.transaction_status;
-      console.log(status, "status terbaru");
+      const status = result.dataLengkap?.completeData?.transaction_status;
+      console.log(status, "status di pending page");
+
       if (status === "expire") {
         Swal.fire({
           icon: "error",
@@ -97,7 +97,7 @@ export default function PendingPayment() {
         return;
       }
 
-      setDataPayment(result.findPaymentById);
+      setDataPayment(result.dataLengkap);
     } catch (error) {
       if (error instanceof Error) {
         Swal.fire({
@@ -117,40 +117,6 @@ export default function PendingPayment() {
     }
   }
 
-  async function whenExpire() {
-    try {
-      const response = await fetch(
-        `${apiUrl}/api/payment/checkStatus/${paymentId}`
-      );
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || "Failed to check payment status");
-      }
-
-      // Fetch ulang data payment
-      fetchPaymentByOrderId();
-
-      // Alert
-    } catch (error) {
-      if (error instanceof Error) {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: error.message,
-        });
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "An unexpected error occurred",
-        });
-      }
-    }
-  }
-
-  // useEffect untuk fetch data payment by orderId
   // INI JALAN PERTAMA
   useEffect(() => {
     console.log("ke trigger");
@@ -161,13 +127,13 @@ export default function PendingPayment() {
     navigate.prefetch(`/profile/payment/success/${dataPayment?.orderId}`);
   }, [paymentId]);
 
-  function handleExpire() {
+  async function handleExpire() {
     console.log(hasExpired, "kondisi");
 
     if (hasExpired) return;
     console.log("Jalan ketika has expired");
     setHasExpired(true);
-    whenExpire();
+    await fetchPaymentByOrderId();
   }
 
   // useEffect yang dijalankan setiap 20 detik
@@ -210,10 +176,6 @@ export default function PendingPayment() {
     };
   }, [dataPayment?.completeData?.transaction_status, paymentId]);
 
-  // if (isNavigating) {
-  //   return <Loading />;
-  // }
-
   function renderCardPaymentInstruction() {
     switch (dataPayment?.completeData?.payment_type) {
       case "bank_transfer":
@@ -226,6 +188,20 @@ export default function PendingPayment() {
       //   return <div>Ini Mandiri Bill Payment cuy</div>;
     }
   }
+
+  // Generate Metadata
+  generateMetaData({
+    title: "Traveloka - Pending Payment",
+    description: `Complete your payment for booking ID ${dataPayment?.orderId}. Follow the instructions to finalize your transaction and secure your booking.`,
+    canonical: `${apiUrl}}/profile/payment/pending/${dataPayment?.orderId}`,
+    icons: {
+      icon: "traveloka_logo.png",
+    },
+    ogTitle: "Traveloka - Pending Payment",
+    ogDescription: `Complete your payment for booking ID ${dataPayment?.orderId}. Follow the instructions to finalize your transaction and secure your booking.`,
+    ogUrl: `${apiUrl}/profile/payment/pending/${dataPayment?.orderId}`,
+    ogImage: "traveloka_logo.png",
+  });
 
   return (
     <>

@@ -273,344 +273,356 @@ export default function DetailFlight() {
   );
 
   return (
-    <div className="w-full min-h-screen pt-36 pb-5 px-20 bg-blue-950 flex flex-col gap-4 text-white">
-      {/* Awal Tombol Back */}
+    <>
+      {loading ? (
+        <Loading />
+      ) : (
+        <div className="w-full min-h-screen pt-36 pb-5 px-20 bg-blue-950 flex flex-col gap-4 text-white">
+          {/* Awal Tombol Back */}
 
-      <ButtonBack />
-      {/* Akhir Tombol Back */}
+          <ButtonBack />
+          {/* Akhir Tombol Back */}
 
-      {/* Awal Judul */}
-      <div className=" flex items-center justify-center font-bold text-2xl ">
-        Detail Flight - {flightData?.airline} - {flightData?.flightNumber} -{" "}
-        {flightData?.departure?.airportCode} to{" "}
-        {flightData?.arrival?.airportCode}
-      </div>
-      {/* Akhir Judul */}
-
-      {/* Awal Flex Samping */}
-
-      <div className="flex justify-between items-start w-full h-full gap-4">
-        {/* Awal Kiri Card Detail */}
-
-        <div className="w-2/3 h-fit flex flex-col gap-2 items-start">
-          {/* Awal Card Detail Flight */}
-          <div className="bg-black/70 w-full h-60 rounded-xl p-5 flex flex-col justify-between items-start  shadow-lg gap-2">
-            <div className=" w-full h-1/3 flex justify-between items-center">
-              {/* Awal Logo dan Airline Name */}
-              <div className="flex items-center gap-3 ">
-                <Image
-                  src={airlineLogo}
-                  height={59}
-                  width={59}
-                  alt={flightData?.airline}
-                />
-                <div className="flex flex-col justify-between items-start ">
-                  <div className="text-xl font-semibold">
-                    {flightData?.airline}
-                  </div>
-                  <div className="text-sm text-slate-300">
-                    {flightData?.flightNumber} • {flightData?.aircraft}
-                  </div>
-                </div>
-              </div>
-              {/* Akhir Logo dan Airline Name */}
-
-              {/* Awal Review */}
-              <div className=" flex items-center gap-1">
-                <FaStar className="text-yellow-400" />
-                <div className="text-sm font-semibold">4.5</div>
-                <div className="text-sm text-slate-300">(1247 reviews)</div>
-              </div>
-              {/* Akhir Review */}
-            </div>
-            {/* Awal Jadwal */}
-            <div className=" w-full h-2/3 flex justify-between items-center gap-2">
-              <div className=" w-1/5 h-full flex flex-col justify-between items-center">
-                <div className="font-semibold text-2xl">
-                  {getTimeAndDateDeparture.time}
-                </div>
-                <div className=" text-xs text-slate-500">
-                  {getTimeAndDateDeparture.date}
-                </div>
-                <div className="font-semibold">
-                  {flightData?.departure?.airportCode}
-                </div>
-                <div className=" text-xs text-slate-500">
-                  {flightData?.departure?.city}
-                </div>
-                <div className=" text-xs text-slate-500">
-                  Terminal {flightData?.departure?.terminal}
-                </div>
-              </div>
-              <div className=" w-3/5 h-full flex flex-col gap-2 justify-center items-center">
-                <LuPlane className="text-xl" />
-                <div className=" w-full flex justify-between items-center gap-1">
-                  <div className="w-2/5 border border-dashed border-slate-500"></div>
-                  <div className="w-1/5 flex justify-center items-center font-semibold">
-                    {duration}
-                  </div>
-                  <div className="w-2/5 border border-dashed border-slate-500"></div>
-                </div>
-                <div className="text-xs text-slate-500">
-                  {howManyStops > 0
-                    ? `${howManyStops} ${directOrTransit}`
-                    : directOrTransit}
-                </div>
-              </div>
-              <div className="w-1/5 h-full flex flex-col justify-between items-center">
-                <div className="font-semibold text-2xl">
-                  {getTimeAndDateArrival.time}
-                </div>
-                <div className="text-xs text-slate-500">
-                  {getTimeAndDateArrival.date}
-                </div>
-                <div className="font-semibold">
-                  {flightData?.arrival?.airportCode}
-                </div>
-                <div className="text-xs text-slate-500">
-                  {flightData?.arrival?.city}
-                </div>
-                <div className="text-xs text-slate-500">
-                  Terminal {flightData?.arrival?.terminal}
-                </div>
-              </div>
-            </div>
-            {/* Akhir Jadwal */}
+          {/* Awal Judul */}
+          <div className=" flex items-center justify-center font-bold text-2xl ">
+            Detail Flight - {flightData?.airline} - {flightData?.flightNumber} -{" "}
+            {flightData?.departure?.airportCode} to{" "}
+            {flightData?.arrival?.airportCode}
           </div>
-          {/* Akhir Card Detail Flight */}
+          {/* Akhir Judul */}
 
-          {/* Awal Contact Details */}
-          <div className="bg-black/70 w-full h-fit p-5 rounded-xl shadow-lg flex flex-col justify-center items-start gap-5">
-            {/* Awal Judul Contact Details */}
-            <div className="text-lg font-semibold">Contact Details</div>
-            {/* Akhir Judul Contact Details */}
-            {/* Awal Data Contact Details */}
-            <div className=" w-full h-fit flex flex-col gap-6 justify-center items-start">
-              {/* Awal First Name dan Last Name */}
-              <div className="flex justify-between items-center w-full h-fit gap-4">
-                {/* Awal First Name */}
-                <div className=" w-full flex flex-col gap-2 justify-center items-start">
-                  <div className="text-sm text-slate-400">
-                    First / Given Name & Middle Name (if any)*
+          {/* Awal Flex Samping */}
+
+          <div className="flex justify-between items-start w-full h-full gap-4">
+            {/* Awal Kiri Card Detail */}
+
+            <div className="w-2/3 h-fit flex flex-col gap-2 items-start">
+              {/* Awal Card Detail Flight */}
+              <div className="bg-black/70 w-full h-60 rounded-xl p-5 flex flex-col justify-between items-start  shadow-lg gap-2">
+                <div className=" w-full h-1/3 flex justify-between items-center">
+                  {/* Awal Logo dan Airline Name */}
+                  <div className="flex items-center gap-3 ">
+                    <Image
+                      src={airlineLogo}
+                      height={59}
+                      width={59}
+                      alt={flightData?.airline}
+                    />
+                    <div className="flex flex-col justify-between items-start ">
+                      <div className="text-xl font-semibold">
+                        {flightData?.airline}
+                      </div>
+                      <div className="text-sm text-slate-300">
+                        {flightData?.flightNumber} • {flightData?.aircraft}
+                      </div>
+                    </div>
                   </div>
-                  <input
-                    type="text"
-                    name="contactDetailFirstName"
-                    id="contactDetailFirstName"
-                    className="w-full bg-transparent rounded-md p-2 text-sm border border-slate-500 focus:outline-none focus:border-blue-500"
-                    onChange={changeHandlerContactDetails}
-                    value={contactDetails.contactDetailFirstName}
-                  />
-                  <div className="text-xs text-slate-400">
-                    (without title and punctuation)
+                  {/* Akhir Logo dan Airline Name */}
+
+                  {/* Awal Review */}
+                  <div className=" flex items-center gap-1">
+                    <FaStar className="text-yellow-400" />
+                    <div className="text-sm font-semibold">4.5</div>
+                    <div className="text-sm text-slate-300">(1247 reviews)</div>
+                  </div>
+                  {/* Akhir Review */}
+                </div>
+                {/* Awal Jadwal */}
+                <div className=" w-full h-2/3 flex justify-between items-center gap-2">
+                  <div className=" w-1/5 h-full flex flex-col justify-between items-center">
+                    <div className="font-semibold text-2xl">
+                      {getTimeAndDateDeparture.time}
+                    </div>
+                    <div className=" text-xs text-slate-500">
+                      {getTimeAndDateDeparture.date}
+                    </div>
+                    <div className="font-semibold">
+                      {flightData?.departure?.airportCode}
+                    </div>
+                    <div className=" text-xs text-slate-500">
+                      {flightData?.departure?.city}
+                    </div>
+                    <div className=" text-xs text-slate-500">
+                      Terminal {flightData?.departure?.terminal}
+                    </div>
+                  </div>
+                  <div className=" w-3/5 h-full flex flex-col gap-2 justify-center items-center">
+                    <LuPlane className="text-xl" />
+                    <div className=" w-full flex justify-between items-center gap-1">
+                      <div className="w-2/5 border border-dashed border-slate-500"></div>
+                      <div className="w-1/5 flex justify-center items-center font-semibold">
+                        {duration}
+                      </div>
+                      <div className="w-2/5 border border-dashed border-slate-500"></div>
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      {howManyStops > 0
+                        ? `${howManyStops} ${directOrTransit}`
+                        : directOrTransit}
+                    </div>
+                  </div>
+                  <div className="w-1/5 h-full flex flex-col justify-between items-center">
+                    <div className="font-semibold text-2xl">
+                      {getTimeAndDateArrival.time}
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      {getTimeAndDateArrival.date}
+                    </div>
+                    <div className="font-semibold">
+                      {flightData?.arrival?.airportCode}
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      {flightData?.arrival?.city}
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      Terminal {flightData?.arrival?.terminal}
+                    </div>
                   </div>
                 </div>
-                {/* Akhir First Name */}
-                {/* Awal Last Name */}
-                <div className=" w-full flex flex-col gap-2 justify-center items-start">
-                  <div className="text-sm text-slate-400">
-                    Family Name / Last Name*
-                  </div>
-                  <input
-                    type="text"
-                    name="contactDetailLastName"
-                    id="contactDetailLastName"
-                    className="w-full bg-transparent rounded-md p-2 text-sm border border-slate-500 focus:outline-none focus:border-blue-500"
-                    onChange={changeHandlerContactDetails}
-                    value={contactDetails.contactDetailLastName}
-                  />
-                  <div className="text-xs text-slate-400">
-                    (without title and punctuation)
-                  </div>
-                </div>
-                {/* Akhir Last Name */}
+                {/* Akhir Jadwal */}
               </div>
-              {/* Akhir First Name dan Last Name */}
+              {/* Akhir Card Detail Flight */}
 
-              {/* Awal Mobile Number dan Email */}
-              <div className="flex justify-between items-center w-full h-fit gap-4">
-                {/* Awal Mobile Number */}
-                <div className="w-full flex flex-col gap-2 justify-center items-start">
-                  <div className="text-sm text-slate-400">Mobile Number*</div>
-                  <input
-                    type="text"
-                    name="contactDetailMobileNumber"
-                    id="contactDetailMobileNumber"
-                    className="w-full bg-transparent rounded-md p-2 text-sm border border-slate-500 focus:outline-none focus:border-blue-500"
-                    onInput={(el) => {
-                      el.currentTarget.value = el.currentTarget.value.replace(
-                        /[^0-9]/g,
-                        ""
-                      );
+              {/* Awal Contact Details */}
+              <div className="bg-black/70 w-full h-fit p-5 rounded-xl shadow-lg flex flex-col justify-center items-start gap-5">
+                {/* Awal Judul Contact Details */}
+                <div className="text-lg font-semibold">Contact Details</div>
+                {/* Akhir Judul Contact Details */}
+                {/* Awal Data Contact Details */}
+                <div className=" w-full h-fit flex flex-col gap-6 justify-center items-start">
+                  {/* Awal First Name dan Last Name */}
+                  <div className="flex justify-between items-center w-full h-fit gap-4">
+                    {/* Awal First Name */}
+                    <div className=" w-full flex flex-col gap-2 justify-center items-start">
+                      <div className="text-sm text-slate-400">
+                        First / Given Name & Middle Name (if any)*
+                      </div>
+                      <input
+                        type="text"
+                        name="contactDetailFirstName"
+                        id="contactDetailFirstName"
+                        className="w-full bg-transparent rounded-md p-2 text-sm border border-slate-500 focus:outline-none focus:border-blue-500"
+                        onChange={changeHandlerContactDetails}
+                        value={contactDetails.contactDetailFirstName}
+                      />
+                      <div className="text-xs text-slate-400">
+                        (without title and punctuation)
+                      </div>
+                    </div>
+                    {/* Akhir First Name */}
+                    {/* Awal Last Name */}
+                    <div className=" w-full flex flex-col gap-2 justify-center items-start">
+                      <div className="text-sm text-slate-400">
+                        Family Name / Last Name*
+                      </div>
+                      <input
+                        type="text"
+                        name="contactDetailLastName"
+                        id="contactDetailLastName"
+                        className="w-full bg-transparent rounded-md p-2 text-sm border border-slate-500 focus:outline-none focus:border-blue-500"
+                        onChange={changeHandlerContactDetails}
+                        value={contactDetails.contactDetailLastName}
+                      />
+                      <div className="text-xs text-slate-400">
+                        (without title and punctuation)
+                      </div>
+                    </div>
+                    {/* Akhir Last Name */}
+                  </div>
+                  {/* Akhir First Name dan Last Name */}
+
+                  {/* Awal Mobile Number dan Email */}
+                  <div className="flex justify-between items-center w-full h-fit gap-4">
+                    {/* Awal Mobile Number */}
+                    <div className="w-full flex flex-col gap-2 justify-center items-start">
+                      <div className="text-sm text-slate-400">
+                        Mobile Number*
+                      </div>
+                      <input
+                        type="text"
+                        name="contactDetailMobileNumber"
+                        id="contactDetailMobileNumber"
+                        className="w-full bg-transparent rounded-md p-2 text-sm border border-slate-500 focus:outline-none focus:border-blue-500"
+                        onInput={(el) => {
+                          el.currentTarget.value =
+                            el.currentTarget.value.replace(/[^0-9]/g, "");
+                        }}
+                        onChange={changeHandlerContactDetails}
+                        value={contactDetails.contactDetailMobileNumber}
+                      />
+                      <div className="text-xs text-slate-400">
+                        e.g. 085363508680
+                      </div>
+                    </div>
+                    {/* Akhir Mobile Number */}
+                    {/* Awal Email */}
+                    <div className="w-full flex flex-col gap-2 justify-center items-start">
+                      <div className="text-sm text-slate-400">Email*</div>
+                      <input
+                        type="email"
+                        name="contactDetailEmail"
+                        id="contactDetailEmail"
+                        className="w-full bg-transparent rounded-md p-2 text-sm border border-slate-500 focus:outline-none focus:border-blue-500"
+                        onChange={changeHandlerContactDetails}
+                        value={contactDetails.contactDetailEmail}
+                      />
+                      <div className="text-xs text-slate-400">
+                        e.g. ridhoamrullah99@gmail.com
+                      </div>
+                    </div>
+                    {/* Akhir Email */}
+                  </div>
+                  {/* Akhir Mobile Number dan Email */}
+                </div>
+                {/* Akhir Data Contact Details */}
+              </div>
+              {/* Akhir Contact Details */}
+
+              {/* Awal Passengers Details */}
+              <div className="bg-black/70 w-full h-fit p-5 rounded-xl shadow-lg flex flex-col justify-center items-start gap-5">
+                {/* Awal Passengers Details */}
+                <div className="text-lg font-semibold">Passengers Details</div>
+                <div>
+                  Please pay attention to the following: Enter your name exactly
+                  as in your ID card. Incorrect spelling and wrong ordered names
+                  may result in denied boarding or name change fees.
+                </div>
+                {/* Akhir Passengers Details */}
+                {/* Awal Mapping Data Passengers Detail */}
+                {passengerArray.map((passenger, index) => (
+                  <CardPassengerDetail
+                    key={index}
+                    data={passenger}
+                    passengerData={passengerDetails[index]}
+                    onUpdatePassenger={(updatedData) => {
+                      const newPasseneger = [...passengerDetails];
+                      newPasseneger[index] = updatedData;
+                      setPassengersDetails(newPasseneger);
                     }}
-                    onChange={changeHandlerContactDetails}
-                    value={contactDetails.contactDetailMobileNumber}
                   />
-                  <div className="text-xs text-slate-400">
-                    e.g. 085363508680
-                  </div>
-                </div>
-                {/* Akhir Mobile Number */}
-                {/* Awal Email */}
-                <div className="w-full flex flex-col gap-2 justify-center items-start">
-                  <div className="text-sm text-slate-400">Email*</div>
-                  <input
-                    type="email"
-                    name="contactDetailEmail"
-                    id="contactDetailEmail"
-                    className="w-full bg-transparent rounded-md p-2 text-sm border border-slate-500 focus:outline-none focus:border-blue-500"
-                    onChange={changeHandlerContactDetails}
-                    value={contactDetails.contactDetailEmail}
-                  />
-                  <div className="text-xs text-slate-400">
-                    e.g. ridhoamrullah99@gmail.com
-                  </div>
-                </div>
-                {/* Akhir Email */}
-              </div>
-              {/* Akhir Mobile Number dan Email */}
-            </div>
-            {/* Akhir Data Contact Details */}
-          </div>
-          {/* Akhir Contact Details */}
-
-          {/* Awal Passengers Details */}
-          <div className="bg-black/70 w-full h-fit p-5 rounded-xl shadow-lg flex flex-col justify-center items-start gap-5">
-            {/* Awal Passengers Details */}
-            <div className="text-lg font-semibold">Passengers Details</div>
-            <div>
-              Please pay attention to the following: Enter your name exactly as
-              in your ID card. Incorrect spelling and wrong ordered names may
-              result in denied boarding or name change fees.
-            </div>
-            {/* Akhir Passengers Details */}
-            {/* Awal Mapping Data Passengers Detail */}
-            {passengerArray.map((passenger, index) => (
-              <CardPassengerDetail
-                key={index}
-                data={passenger}
-                passengerData={passengerDetails[index]}
-                onUpdatePassenger={(updatedData) => {
-                  const newPasseneger = [...passengerDetails];
-                  newPasseneger[index] = updatedData;
-                  setPassengersDetails(newPasseneger);
-                }}
-              />
-            ))}
-
-            {/* Awal Mapping Data Passengers Detail */}
-          </div>
-          {/* Akhir Passengers Details */}
-
-          {/* Awal Inflight Facilities */}
-          <div className="bg-black/70 w-full h-fit p-5 rounded-xl shadow-lg flex flex-col gap-5 ">
-            <div className="text-lg font-semibold">In-Flight Facilities</div>
-            {listFacilities.length > 0 ? (
-              <div className="flex  flex-wrap  gap-2 ">
-                {listFacilities.map((facility, index) => (
-                  <div key={index} className="flex items-center   py-1 ">
-                    <div className="w-5 h-5 text-[#0194F3] flex items-center ">
-                      {getIconFacility(facility)}
-                    </div>
-                    <div className="text-sm flex items-center">{facility}</div>
-                  </div>
                 ))}
-              </div>
-            ) : (
-              <div className="text-slate-400">No Facility</div>
-            )}
-          </div>
-          {/* Akhir Inflight Facilites */}
 
-          {/* Awal Baggage & Policies */}
-          <div className="bg-black/70 w-full h-fit p-5 rounded-xl shadow-lg flex flex-col gap-5">
-            <div className="text-lg font-semibold">Baggage & Policies</div>
-            <div className="flex flex-col gap-4 ">
-              {/* Awal Baggage Allowance */}
-              <div className="flex flex-col gap-2 ">
-                <div className=" flex items-center justify-start gap-2">
-                  <LuLuggage className="text-2xl" />
-                  <div>Baggage Allowance</div>
+                {/* Awal Mapping Data Passengers Detail */}
+              </div>
+              {/* Akhir Passengers Details */}
+
+              {/* Awal Inflight Facilities */}
+              <div className="bg-black/70 w-full h-fit p-5 rounded-xl shadow-lg flex flex-col gap-5 ">
+                <div className="text-lg font-semibold">
+                  In-Flight Facilities
                 </div>
-                <div className=" flex justify-start items-center gap-5 text-sm">
-                  <div className="flex flex-col gap-1 ">
-                    <div>Cabin Baggage</div>
-                    <div className="text-slate-500">
-                      {listBaggage.cabinBaggage}
+                {listFacilities.length > 0 ? (
+                  <div className="flex  flex-wrap  gap-2 ">
+                    {listFacilities.map((facility, index) => (
+                      <div key={index} className="flex items-center   py-1 ">
+                        <div className="w-5 h-5 text-[#0194F3] flex items-center ">
+                          {getIconFacility(facility)}
+                        </div>
+                        <div className="text-sm flex items-center">
+                          {facility}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-slate-400">No Facility</div>
+                )}
+              </div>
+              {/* Akhir Inflight Facilites */}
+
+              {/* Awal Baggage & Policies */}
+              <div className="bg-black/70 w-full h-fit p-5 rounded-xl shadow-lg flex flex-col gap-5">
+                <div className="text-lg font-semibold">Baggage & Policies</div>
+                <div className="flex flex-col gap-4 ">
+                  {/* Awal Baggage Allowance */}
+                  <div className="flex flex-col gap-2 ">
+                    <div className=" flex items-center justify-start gap-2">
+                      <LuLuggage className="text-2xl" />
+                      <div>Baggage Allowance</div>
+                    </div>
+                    <div className=" flex justify-start items-center gap-5 text-sm">
+                      <div className="flex flex-col gap-1 ">
+                        <div>Cabin Baggage</div>
+                        <div className="text-slate-500">
+                          {listBaggage.cabinBaggage}
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-1 ">
+                        <div>Checked Baggage</div>
+                        <div className="text-slate-500">
+                          {listBaggage.checkedBaggage}
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-1 ">
+                        <div>Excess Baggage</div>
+                        <div className="text-slate-500">Rp, 50.000/kg</div>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex flex-col gap-1 ">
-                    <div>Checked Baggage</div>
-                    <div className="text-slate-500">
-                      {listBaggage.checkedBaggage}
+                  {/* Akhir Baggage Allowance */}
+                  <div className="border-[0.1px] border-slate-800"></div>
+                  {/* Awal Booking Policies */}
+                  <div className="flex flex-col gap-2">
+                    <div className="flex justify-start items-center gap-2">
+                      <LuShieldCheck className="text-2xl" />
+                      <div>Booking Policies</div>
+                    </div>
+                    <div className="text-sm flex flex-col gap-2">
+                      <div className="flex flex-col gap-1">
+                        <div>Cancellation</div>
+                        <div className="text-slate-500">
+                          Free cancellation up to 24 hours before departure
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <div>Changes</div>
+                        <div className="text-slate-500">
+                          Changes allowed with fee starting from Rp 150,000
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex flex-col gap-1 ">
-                    <div>Excess Baggage</div>
-                    <div className="text-slate-500">Rp, 50.000/kg</div>
-                  </div>
+                  {/* Akhir Booking Policies */}
                 </div>
               </div>
-              {/* Akhir Baggage Allowance */}
-              <div className="border-[0.1px] border-slate-800"></div>
-              {/* Awal Booking Policies */}
-              <div className="flex flex-col gap-2">
-                <div className="flex justify-start items-center gap-2">
-                  <LuShieldCheck className="text-2xl" />
-                  <div>Booking Policies</div>
-                </div>
-                <div className="text-sm flex flex-col gap-2">
-                  <div className="flex flex-col gap-1">
-                    <div>Cancellation</div>
-                    <div className="text-slate-500">
-                      Free cancellation up to 24 hours before departure
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <div>Changes</div>
-                    <div className="text-slate-500">
-                      Changes allowed with fee starting from Rp 150,000
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {/* Akhir Booking Policies */}
+              {/* Akhir Baggage & Policies */}
             </div>
-          </div>
-          {/* Akhir Baggage & Policies */}
-        </div>
-        {/* Akhir Kiri Card Detail */}
+            {/* Akhir Kiri Card Detail */}
 
-        {/* Awal Kanan Pay Ticket */}
-        <div className="bg-black/70 w-1/3 h-full rounded-xl p-5 flex flex-col gap-2 items-start justify-between shadow-lg ">
-          <div className="text-lg font-semibold ">Pay Your Ticket</div>
-          <div className="bg-blue-950 w-full h-fit p-2 rounded-lg flex flex-col gap-2">
-            <div className="flex justify-between items-start ">
-              <div className="flex flex-col ">
-                <div className="text-lg font-semibold">{query.cabinClass}</div>
-                <div className="text-slate-400 text-sm">
-                  {listFacilities.join(", ")}
+            {/* Awal Kanan Pay Ticket */}
+            <div className="bg-black/70 w-1/3 h-full rounded-xl p-5 flex flex-col gap-2 items-start justify-between shadow-lg ">
+              <div className="text-lg font-semibold ">Pay Your Ticket</div>
+              <div className="bg-blue-950 w-full h-fit p-2 rounded-lg flex flex-col gap-2">
+                <div className="flex justify-between items-start ">
+                  <div className="flex flex-col ">
+                    <div className="text-lg font-semibold">
+                      {query.cabinClass}
+                    </div>
+                    <div className="text-slate-400 text-sm">
+                      {listFacilities.join(", ")}
+                    </div>
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="font-bold text-2xl flex items-center">
+                      {formatRupiah(totalPrice)}
+                    </div>
+                    <div className="text-sm text-slate-400 flex justify-end">
+                      {formatRupiah(ticketPrice)}/pax
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col">
-                <div className="font-bold text-2xl flex items-center">
-                  {formatRupiah(totalPrice)}
-                </div>
-                <div className="text-sm text-slate-400 flex justify-end">
-                  {formatRupiah(ticketPrice)}/pax
-                </div>
+                {/* Awal Component Pay Button */}
+                <PaymentButton data={dataForPayment} />
+                {/* Akhir Component Pay Button */}
               </div>
             </div>
-            {/* Awal Component Pay Button */}
-            <PaymentButton data={dataForPayment} />
-            {/* Akhir Component Pay Button */}
+            {/* Akhir Kanan Pay Ticket */}
           </div>
-        </div>
-        {/* Akhir Kanan Pay Ticket */}
-      </div>
 
-      {/* Akhir Flex Samping */}
-    </div>
+          {/* Akhir Flex Samping */}
+        </div>
+      )}
+    </>
   );
 }
 

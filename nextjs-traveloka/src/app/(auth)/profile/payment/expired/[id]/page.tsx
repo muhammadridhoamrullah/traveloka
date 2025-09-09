@@ -21,6 +21,7 @@ import { TiDocumentText } from "react-icons/ti";
 import { MdMailOutline, MdPhoneIphone } from "react-icons/md";
 import { RiCustomerService2Line } from "react-icons/ri";
 import { AiOutlineInfoCircle } from "react-icons/ai";
+import { generateMetaData } from "@/db/utils/metadata";
 // import CardVaPaymentInstruction from "@/app/components/flight/profile/CardVAPaymentInstruction";
 // import CardQrisPaymentInstruction from "@/app/components/flight/profile/CardQrisPaymentInstruction";
 
@@ -103,18 +104,20 @@ export default function ExpiredPaymentPage() {
     navigate.prefetch(`/profile/payment/success/${paymentId}`);
   }, [paymentId]);
 
-  // function renderCardPaymentInstruction() {
-  //   switch (data?.completeData?.payment_type) {
-  //     case "bank_transfer":
-  //       return <CardVaPaymentInstruction data={data} />;
-  //     case "qris":
-  //       return <CardQrisPaymentInstruction data={data} />;
-  //     // case "cstore":
-  //     //   return <div>Ini Alfamart/Indomaret cuy</div>;
-  //     // case "echannel":
-  //     //   return <div>Ini Mandiri Bill Payment cuy</div>;
-  //   }
-  // }
+  // generate metadata
+  generateMetaData({
+    title: "Traveloka - Payment Expired",
+    description: `Payment for booking ID ${data?.orderId} has expired. Please make a new booking to continue.`,
+    canonical: `${apiUrl}/profile/payment/expired/${paymentId}`,
+    icons: {
+      icon: "traveloka_logo.png",
+    },
+    ogTitle: "Traveloka - Payment Expired",
+    ogDescription: `Payment for booking ID ${data?.orderId} has expired. Please make a new booking to continue.`,
+    ogUrl: `${apiUrl}/profile/payment/expired/${paymentId}`,
+    ogImage: "traveloka_logo.png",
+  });
+
   return (
     <>
       {loading ? (
