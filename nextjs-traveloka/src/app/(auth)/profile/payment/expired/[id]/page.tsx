@@ -2,7 +2,6 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Loading from "./loading";
 import Swal from "sweetalert2";
 import Image from "next/image";
 import { FaRegClock, FaRegCreditCard } from "react-icons/fa";
@@ -22,6 +21,7 @@ import { MdMailOutline, MdPhoneIphone } from "react-icons/md";
 import { RiCustomerService2Line } from "react-icons/ri";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { generateMetaData } from "@/db/utils/metadata";
+import SkeletonPayment from "@/app/components/skeleton/profile/SkeletonPayment";
 // import CardVaPaymentInstruction from "@/app/components/flight/profile/CardVAPaymentInstruction";
 // import CardQrisPaymentInstruction from "@/app/components/flight/profile/CardQrisPaymentInstruction";
 
@@ -121,7 +121,7 @@ export default function ExpiredPaymentPage() {
   return (
     <>
       {loading ? (
-        <Loading />
+        <SkeletonPayment />
       ) : isNavigating ? (
         <div>Redirecting...</div>
       ) : (

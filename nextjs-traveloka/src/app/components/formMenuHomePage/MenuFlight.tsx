@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 export default function MenuFlight() {
   const navigate = useRouter();
   const [loading, setLoading] = useState(false);
-  const [loadingTest, setLoadingTest] = useState(true);
 
   // Initital state untuk form menu flight
   const [formDataFlight, setFormDataFlight] = useState({

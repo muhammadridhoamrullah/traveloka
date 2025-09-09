@@ -11,7 +11,7 @@ import Swal from "sweetalert2";
 import z from "zod";
 import { AiOutlineLoading } from "react-icons/ai";
 import Cookies from "js-cookie";
-import SkeletonHomePage from "@/app/components/SkeletonHomePage";
+import SkeletonHomePage from "@/app/components/skeleton/home/SkeletonHomePage";
 
 export default function Login() {
   const cookies = Cookies.get("access_token");
@@ -132,6 +132,7 @@ export default function Login() {
   if (isNavigating) {
     return <SkeletonHomePage />;
   }
+
   return (
     <div className="flex flex-col gap-5 items-center justify-center min-h-screen bg-[url('/bg_traveloka5.png')] bg-cover bg-center ">
       <div className="flex justify-center items-center gap-2">

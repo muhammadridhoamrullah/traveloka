@@ -28,13 +28,13 @@ import {
 } from "@/db/utils/helperFunctions";
 import { PassengerDetails } from "@/db/type/payment";
 import CardPassengerDetail from "@/app/components/flight/profile/CardPassengerDetail";
-import Loading from "./loading";
 import CardVaPaymentInstruction from "@/app/components/flight/profile/CardVAPaymentInstruction";
 import { CountdownDisplay } from "@/app/components/flight/profile/CountDown";
 import CoundtDownReact from "@/app/components/flight/profile/CountDownReact";
 import CardQrisPaymentInstruction from "@/app/components/flight/profile/CardQrisPaymentInstruction";
 import SkeletonHomePage from "@/app/components/SkeletonHomePage";
 import { generateMetaData } from "@/db/utils/metadata";
+import SkeletonPayment from "@/app/components/skeleton/profile/SkeletonPayment";
 
 export default function PendingPayment() {
   const navigate = useRouter();
@@ -206,7 +206,7 @@ export default function PendingPayment() {
   return (
     <>
       {loading ? (
-        <Loading />
+        <SkeletonPayment />
       ) : isNavigating ? (
         <SkeletonHomePage />
       ) : (

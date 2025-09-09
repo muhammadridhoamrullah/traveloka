@@ -7,7 +7,6 @@ import { Metadata } from "next";
 import Image from "next/image";
 import React, { useCallback, useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
-import Loading from "./loading";
 import { generateMetaData } from "@/db/utils/metadata";
 import { useParams } from "next/navigation";
 import { LuPlane } from "react-icons/lu";
@@ -39,6 +38,7 @@ import { LuLuggage } from "react-icons/lu";
 import { LuShieldCheck } from "react-icons/lu";
 import PaymentButton from "@/app/components/PaymentButton";
 import CardPassengerDetail from "@/app/components/flight/detail/CardPassengerDetail";
+import SkeletonFlightDetailPage from "@/app/components/skeleton/flight/detail/SkeletonFlightDetailPage";
 
 export default function DetailFlight() {
   const params = useParams();
@@ -150,10 +150,6 @@ export default function DetailFlight() {
     );
   }, [query.passengerCount]);
 
-  if (loading) {
-    return <Loading />;
-  }
-
   const airlineLogo = getAirlineLogoFromUtils(flightData?.airline);
   const getTimeAndDateDeparture = getTimeAndDate(flightData?.departure?.time);
   const getTimeAndDateArrival = getTimeAndDate(flightData?.arrival?.time);
@@ -164,7 +160,7 @@ export default function DetailFlight() {
 
   function getFacilities(cabinClass: string) {
     let facilities: string[] = [];
-    flightData.cabinClasses.forEach((cabin) => {
+    flightData?.cabinClasses?.forEach((cabin) => {
       if (cabin.class === cabinClass && cabin.facilities) {
         facilities = cabin.facilities;
       }
@@ -217,7 +213,7 @@ export default function DetailFlight() {
     let cabinBaggage = Infinity;
     let checkedBaggage = Infinity;
 
-    flightData.cabinClasses.forEach((cabin) => {
+    flightData?.cabinClasses?.forEach((cabin) => {
       if (cabin.class === cabinClass) {
         cabinBaggage = cabin.baggage?.cabin || 0;
         checkedBaggage = cabin.baggage?.checked || 0;
@@ -235,7 +231,7 @@ export default function DetailFlight() {
   function payMyTicket(cabinClass: string) {
     let price = 0;
 
-    flightData.cabinClasses.forEach((cabin) => {
+    flightData?.cabinClasses?.forEach((cabin) => {
       if (cabin.class === cabinClass) {
         price = cabin.price;
       }
@@ -275,7 +271,7 @@ export default function DetailFlight() {
   return (
     <>
       {loading ? (
-        <Loading />
+        <SkeletonFlightDetailPage />
       ) : (
         <div className="w-full min-h-screen pt-36 pb-5 px-20 bg-blue-950 flex flex-col gap-4 text-white">
           {/* Awal Tombol Back */}

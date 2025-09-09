@@ -13,7 +13,6 @@ import { FaRegCalendarPlus } from "react-icons/fa6";
 import { RiCustomerService2Line } from "react-icons/ri";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import Loading from "./loading";
 import {
   formatDate,
   formatDuration,
@@ -26,6 +25,7 @@ import {
 import { PassengerDetails } from "@/db/type/payment";
 import CardPassengerDetail from "@/app/components/flight/profile/CardPassengerDetail";
 import { generateMetaData } from "@/db/utils/metadata";
+import SkeletonPayment from "@/app/components/skeleton/profile/SkeletonPayment";
 
 export default function SuccessPayment() {
   const params = useParams();
@@ -130,7 +130,7 @@ export default function SuccessPayment() {
   return (
     <>
       {loading ? (
-        <Loading />
+        <SkeletonPayment />
       ) : isNavigating ? (
         <div>Navigating</div>
       ) : (

@@ -13,8 +13,11 @@ import MenuCarRental from "@/app/components/formMenuHomePage/MenuCarRental";
 import MenuAirportTransfer from "@/app/components/formMenuHomePage/MenuAirportTransfer";
 import MenuThingsToDo from "@/app/components/formMenuHomePage/MenuThingsToDo";
 import MenuHotel from "@/app/components/formMenuHomePage/MenuHotel";
+import SkeletonPayment from "@/app/components/skeleton/profile/SkeletonPayment";
+import SkeletonHomePage from "@/app/components/skeleton/home/SkeletonHomePage";
 
 export default function Homepage() {
+  const [loading, setLoading] = useState(true);
   const airlineCompanies = [
     "/forTrustedBy/airasia-logo.png",
     "/forTrustedBy/batik-air-logo.png",
@@ -55,6 +58,13 @@ export default function Homepage() {
 
   // Untuk menu
   const [activeMenu, setActiveMenu] = useState("flights");
+
+  // untuk loading
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Generate metadata
 
@@ -97,81 +107,91 @@ export default function Homepage() {
   }
 
   return (
-    <div className="w-full min-h-screen">
-      <div className="pt-36 px-20 pb-5 w-full min-h-screen bg-[url('/bg_home.jpg')] bg-cover bg-center text-white flex flex-col justify-between items-center">
-        {/* Awal Opening Letter */}
-        <div className="font-bold text-3xl">
-          Plan, Book & Travel: Flights, Hotels & Activities Worldwide
-        </div>
-        {/* Akhir Opening Letter */}
+    <>
+      {loading ? (
+        <SkeletonHomePage />
+      ) : (
+        <div className="w-full min-h-screen">
+          {/* Awal Semua Section */}
+          {/* Awal Section 1 */}
+          <div className="pt-36 px-20 pb-5 w-full min-h-screen bg-[url('/bg_home.jpg')] bg-cover bg-center text-white flex flex-col justify-between items-center">
+            {/* Awal Opening Letter */}
+            <div className="font-bold text-3xl">
+              Plan, Book & Travel: Flights, Hotels & Activities Worldwide
+            </div>
+            {/* Akhir Opening Letter */}
 
-        {/* Awal Form Menu */}
-        <div className="text-slate-300 font-semibold h-fit w-full flex justify-start items-center gap-2 border-b border-b-white pb-4">
-          <div
-            className={styleListMenuForm("hotels")}
-            onClick={() => setActiveMenu("hotels")}
-          >
-            <FaHotel className="text-2xl" />
-            <div>Hotels</div>
-          </div>
-          <div
-            className={styleListMenuForm("flights")}
-            onClick={() => setActiveMenu("flights")}
-          >
-            <FaPlaneUp className="text-2xl" />
-            <div>Flights</div>
-          </div>
-          <div
-            className={styleListMenuForm("car-rental")}
-            onClick={() => setActiveMenu("car-rental")}
-          >
-            <MdCarRental className="text-2xl" />
-            <div>Car Rental</div>
-          </div>
-          <div
-            className={styleListMenuForm("airport-transfer")}
-            onClick={() => setActiveMenu("airport-transfer")}
-          >
-            <FaShuttleVan className="text-2xl" />
-            <div>Airport Transfer</div>
-          </div>
-          <div
-            className={styleListMenuForm("things-to-do")}
-            onClick={() => setActiveMenu("things-to-do")}
-          >
-            <FaMapMarkedAlt className="text-2xl" />
-            <div>Things To Do</div>
-          </div>
-        </div>
-        {/* Akhir Form Menu */}
+            {/* Awal Form Menu */}
+            <div className="text-slate-300 font-semibold h-fit w-full flex justify-start items-center gap-2 border-b border-b-white pb-4">
+              <div
+                className={styleListMenuForm("hotels")}
+                onClick={() => setActiveMenu("hotels")}
+              >
+                <FaHotel className="text-2xl" />
+                <div>Hotels</div>
+              </div>
+              <div
+                className={styleListMenuForm("flights")}
+                onClick={() => setActiveMenu("flights")}
+              >
+                <FaPlaneUp className="text-2xl" />
+                <div>Flights</div>
+              </div>
+              <div
+                className={styleListMenuForm("car-rental")}
+                onClick={() => setActiveMenu("car-rental")}
+              >
+                <MdCarRental className="text-2xl" />
+                <div>Car Rental</div>
+              </div>
+              <div
+                className={styleListMenuForm("airport-transfer")}
+                onClick={() => setActiveMenu("airport-transfer")}
+              >
+                <FaShuttleVan className="text-2xl" />
+                <div>Airport Transfer</div>
+              </div>
+              <div
+                className={styleListMenuForm("things-to-do")}
+                onClick={() => setActiveMenu("things-to-do")}
+              >
+                <FaMapMarkedAlt className="text-2xl" />
+                <div>Things To Do</div>
+              </div>
+            </div>
+            {/* Akhir Form Menu */}
 
-        {/* Awal Form Pemesanan */}
-        <div className="w-full h-full ">{renderFormMenu()}</div>
-        {/* Akhir Form Pemesanan */}
+            {/* Awal Form Pemesanan */}
+            <div className="w-full h-full ">{renderFormMenu()}</div>
+            {/* Akhir Form Pemesanan */}
 
-        {/* Awal Trusted By */}
-        <div className="flex justify-center items-center flex-col gap-2 ">
-          <div className="text-sm">Trusted By</div>
-          <div className="flex justify-center items-center gap-6 flex-wrap transition-opacity duration-1000 p-2 border border-slate-700   rounded-md">
-            {currentGroup.map((logo, index) => (
-              <Image
-                key={index}
-                src={logo}
-                alt={`Airline logo ${index}`}
-                width={30}
-                height={22}
-                className="object-contain transition-opacity duration-1000 opacity-100 hover:scale-110"
-              />
-            ))}
+            {/* Awal Trusted By */}
+            <div className="flex justify-center items-center flex-col gap-2 ">
+              <div className="text-sm">Trusted By</div>
+              <div className="flex justify-center items-center gap-6 flex-wrap transition-opacity duration-1000 p-2 border border-slate-700   rounded-md">
+                {currentGroup.map((logo, index) => (
+                  <Image
+                    key={index}
+                    src={logo}
+                    alt={`Airline logo ${index}`}
+                    width={30}
+                    height={22}
+                    className="object-contain transition-opacity duration-1000 opacity-100 hover:scale-110"
+                  />
+                ))}
+              </div>
+            </div>
+            {/* Akhir Trusted By */}
           </div>
+          {/* Akhir Section 1 */}
+          <div>Section 2</div>
+          <div>Section 3</div>
+          <div>Section 4</div>
+          <div>Section 5</div>
+          {/* Akhir Semua Section */}
         </div>
-        {/* Akhir Trusted By */}
-      </div>
-      <div>Section 2</div>
-      <div>Section 3</div>
-      <div>Section 4</div>
-      <div>Section 5</div>
-    </div>
+      )}
+    </>
   );
 }
 

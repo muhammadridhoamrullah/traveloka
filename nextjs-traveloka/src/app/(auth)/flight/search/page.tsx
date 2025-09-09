@@ -103,6 +103,8 @@ async function getLowestPriceAndShortestFlight(dataFlight: {
 }
 
 export default async function SearchFlightsPage({ searchParams }: Props) {
+  await new Promise((resolve) => setTimeout(resolve, 10000));
+
   const params = await searchParams;
 
   const query = {
