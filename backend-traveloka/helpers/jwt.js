@@ -11,7 +11,18 @@ function verifyEmailToken(token) {
   return jwt.verify(token, EMAIL_SECRET);
 }
 
+// Untuk Login
+function signToken(payload) {
+  return jwt.sign(payload, SECRET_KEY);
+}
+
+function verifyToken(token) {
+  return jwt.verify(token, SECRET_KEY);
+}
+
 module.exports = {
   signEmailToken,
   verifyEmailToken,
+  signToken,
+  verifyToken,
 };
