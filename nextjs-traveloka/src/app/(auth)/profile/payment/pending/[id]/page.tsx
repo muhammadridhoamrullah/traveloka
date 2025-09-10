@@ -205,10 +205,8 @@ export default function PendingPayment() {
 
   return (
     <>
-      {loading ? (
+      {loading || isNavigating ? (
         <SkeletonPayment />
-      ) : isNavigating ? (
-        <SkeletonHomePage />
       ) : (
         <div className="bg-blue-950 w-full min-h-screen pt-36 px-20 pb-5 flex flex-col justify-start items-center text-white gap-6">
           <Toaster position="top-center" reverseOrder={false} />
