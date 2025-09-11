@@ -60,6 +60,7 @@ export default function MenuFlight() {
     cabinClass: "Economy",
     passengerCount: 1,
   });
+  console.log(formDataFlight, "<<< form data flight");
 
   // State untuk menampung error form
   const [formErrors, setFormErrors] = useState({
